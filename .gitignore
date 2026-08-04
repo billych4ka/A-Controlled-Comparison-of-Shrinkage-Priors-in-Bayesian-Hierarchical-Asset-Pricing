@@ -1,0 +1,24 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# PyCharm project files
+.idea/
+
+# Data (raw and processed — regenerable from source, or too large for git)
+data/raw/
+data/processed/
+
+# MCMC output (large, regenerable by rerunning models)
+outputs/traces/
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+
+# Jupyter checkpoints, if you end up using notebooks/
+.ipynb_checkpoints/
