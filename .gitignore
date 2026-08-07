@@ -9,6 +9,9 @@ __pycache__/
 # PyCharm project files
 .idea/
 
+# Claude Code settings
+.claude/
+
 # Data (raw and processed — regenerable from source, or too large for git)
 data/raw/
 data/processed/
