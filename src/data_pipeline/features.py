@@ -37,10 +37,10 @@ ASSET_COLUMNS = [
 ]  # 8, genuinely asset-specific
 
 ROLLING_WINDOW = 12
-BURN_IN = 30  # months dropped at the start of each series, beyond what NaNs
+STABILISATION_WINDOW = 30  # months dropped at the start of each series, beyond what NaNs
               # alone would force -- see thesis \S4.3 standardisation deviation
               # note: an expanding-window mean/std is unstable for roughly its
-              # first 24-36 observations, so the burn-in is set at 30 rather
+              # first 24-36 observations, so the stabilisation-window is set at 30 rather
               # than just the ~13 months strictly required to clear all NaNs.
 
 def expanding_standardise(data: pd.Series | pd.DataFrame) -> pd.Series | pd.DataFrame:
@@ -160,7 +160,7 @@ def build_asset_panel(
     # expanding-window standardisation has at least BURN_IN months of
     # accumulated history behind it, not just the bare minimum needed to
     # clear NaNs (see thesis standardisation-deviation note).
-    cutoff_date = asset_excess_return.index[BURN_IN]
+    cutoff_date = asset_excess_return.index[STABILISATION_WINDOW]
     f_i = f_i.loc[f_i.index >= cutoff_date]
     r_i = r_i.loc[r_i.index >= cutoff_date]
 
