@@ -83,10 +83,6 @@ def sur_log_likelihood_numpy(R: np.ndarray, F: np.ndarray, b: np.ndarray,
     )
     return float(log_lik)
 
-import pytensor.tensor as pt
-import pytensor.tensor.nlinalg as ptnla
-
-
 def sur_log_likelihood_pytensor(R, F, b, Sigma):
     """
     PyTensor version of sur_log_likelihood_numpy, for use inside NUTS models
@@ -105,6 +101,11 @@ def sur_log_likelihood_pytensor(R, F, b, Sigma):
     # universally available across pytensor versions than basic ops):
     #   b[:, None, :] reshapes b from (N,K) to (N,1,K) so it broadcasts
     #   against F's (N,T,K) -- elementwise multiply, then sum over K.
+
+    import pytensor.tensor as pt
+    import pytensor.tensor.nlinalg as ptnla
+
+
     signal = (F * b[:, None, :]).sum(axis=-1)   # (N, T)
     E = R - signal                               # (N, T)
 

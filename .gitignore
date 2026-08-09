@@ -24,4 +24,4 @@ outputs/traces/
 Thumbs.db
 
 # Jupyter checkpoints, if you end up using notebooks/
-.ipynb_checkpoints/
+.ipynb_checkpoints/results/

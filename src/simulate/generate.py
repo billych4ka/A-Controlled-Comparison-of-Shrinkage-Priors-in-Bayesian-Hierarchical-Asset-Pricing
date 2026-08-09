@@ -163,13 +163,15 @@ def simulate_sur_data(
         meta={"deviation_sampler": deviation_sampler.__name__, "seed": seed},
     )
 
-from src.simulate.generate import simulate_sur_data
+if __name__ == "__main__":
 
-data1 = simulate_sur_data(N=5, K=5, T=100, seed=42)
-data2 = simulate_sur_data(N=5, K=5, T=100, seed=42)
+    from src.simulate.generate import simulate_sur_data
 
-print(np.allclose(data1.R, data2.R))       # expect True -- same seed, same data
-print(np.allclose(data1.Sigma, data2.Sigma))  # expect True
+    data1 = simulate_sur_data(N=5, K=5, T=100, seed=42)
+    data2 = simulate_sur_data(N=5, K=5, T=100, seed=42)
 
-data3 = simulate_sur_data(N=5, K=5, T=100, seed=1)
-print(np.allclose(data1.R, data3.R))       # expect False -- different seed
+    print(np.allclose(data1.R, data2.R))       # expect True -- same seed, same data
+    print(np.allclose(data1.Sigma, data2.Sigma))  # expect True
+
+    data3 = simulate_sur_data(N=5, K=5, T=100, seed=1)
+    print(np.allclose(data1.R, data3.R))       # expect False -- different seed
