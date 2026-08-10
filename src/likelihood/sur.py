@@ -20,7 +20,7 @@ Two implementations are provided:
 
 Likelihood structure
 ---------------------
-Given R = FB + E with Omega = Cov(E) = Sigma (x) I_N (Feng & He, eq. 7, 12),
+Given R = FB + E with Omega = Cov(E) = Sigma (x) I_T (Feng & He, eq. 7, 12),
 residuals are independent across time and correlated across assets within a
 period. Rather than construct the full NT x NT Omega, the joint
 log-likelihood factorises as a sum, over T independent time periods, of

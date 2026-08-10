@@ -87,7 +87,7 @@ def main() -> None:
         hp = default_hyperparameters(R, K)
         tag = "feng_he"
 
-    outdir = Path(args.outdir or f"results/{args.universe}")
+    outdir = Path(args.outdir or f"results/{args.universe}/baseline_gaussian")
     outdir.mkdir(parents=True, exist_ok=True)
 
     print(f"Gaussian baseline | {args.universe} | N={N} T={T} K={K}")
