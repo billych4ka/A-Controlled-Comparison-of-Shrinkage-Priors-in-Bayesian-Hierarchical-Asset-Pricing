@@ -351,10 +351,113 @@ def sample_tau2(theta: np.ndarray, s: float, lam: float,
 
     return 1.0 / x
 
+def sample_lambda_collapsed(theta: np.ndarray, s: float, hp: LassoHyperparams,
+                            rng: np.random.Generator) -> float:
+    """
+    Draw lambda from p(lambda | theta), with tau^2 integrated out analytically.
+    THIS IS THE DEFAULT. See sample_lambda below for the conditional version
+    and why it is not used.
+
+    Why collapse
+    ------------
+    lambda | tau^2 is Gamma(r + NK, delta + sum(tau^2)/2), whose relative
+    standard deviation is 1/(2 sqrt(3601)) = 0.83%. Each tau_ij^2 is in turn
+    drawn given lambda. Two nearly deterministic conditionals alternated is the
+    same pathology as the centred (B, b_bar) scan, one level up, and it is
+    severe: measured on real data over 1,500 sweeps, lag-1 autocorrelation of
+    lambda was 0.973, ESS was 8 from 750 draws, and lambda had still not
+    converged -- means by fifth of the run were 492, 441, 430, 420, 403, with
+    no floor in sight. The implied budget for ESS 400 was 38,300 sweeps.
+    B, b_bar and Sigma were unaffected (ESS 711-746), confirming the problem
+    is the tau^2 <-> lambda pair specifically.
+
+    The fix is the same in kind as blocking (B, b_bar): remove the coupling
+    rather than traverse it. Since the scale mixture
+
+        integral N(theta; 0, s^2 tau^2) Exp(tau^2; lambda^2/2) d tau^2
+            = Laplace(theta; 0, s/lambda)
+
+    (verified numerically to a ratio of 1.00000000), lambda's conditional
+    given theta alone is available in closed form:
+
+        p(lambda | theta) prop lambda^(NK + 2r - 1)
+                               exp( -lambda sum|theta_ij| / s - delta lambda^2 )
+
+    Verified against a brute-force evaluation of the log joint: constant to
+    7.8e-14 over 6,000 grid points. lambda now moves with theta, which mixes
+    freely, instead of with sum(tau^2), which does not.
+
+    HONEST ACCOUNT OF HOW MUCH THIS FIXES. Collapsing improves lambda's lag-1
+    autocorrelation from 0.973 to 0.913 -- roughly 3x the effective sample size
+    -- and removes the drift entirely: lambda now reaches its stationary region
+    within about 30 sweeps instead of still falling after 1,500. It does NOT
+    make lambda mix as well as B, b_bar and Sigma, because lambda remains
+    coupled to theta through sum|theta_ij|, and theta is drawn given tau^2,
+    which is drawn given lambda. The loop is longer, not broken. lambda is
+    still the slowest-mixing parameter in this sampler and its budget is set
+    by that, not by B.
+
+    Sampling it
+    -----------
+    At delta = 0 this is exactly Gamma(NK + 2r - 1, rate = sum|theta|/s). The
+    delta lambda^2 term is retained exactly, by rejection sampling against a
+    Gamma proposal whose rate absorbs a linearisation of that term about the
+    target's mode:
+
+        rate_eff = rate + 2 delta * mode,
+        mode     = [ -rate + sqrt(rate^2 + 8 delta (a-1)) ] / (4 delta)
+
+    Proposing from Gamma(a, rate_eff) and accepting with probability
+    exp(-delta (lambda - mode)^2) is exact, since that factor is bounded by 1
+    and the remaining discrepancy between target and proposal is precisely a
+    centred Gaussian factor.
+
+    The naive version -- proposing from Gamma(a, rate) and accepting with
+    probability exp(-delta lambda^2) -- is also exact but useless in practice.
+    delta is calibrated so that delta * lambda_cal^2 = 1, NOT so that it is
+    negligible, so the acceptance probability is exp(-1) = 0.37 at the centre
+    and falls to 0.007 by lambda = 1345. That version raised RuntimeError after
+    1,000 rejections in testing. The shift the delta term actually produces in
+    the posterior mean is small (-0.01% to -0.28% over lambda in 200 to 1345),
+    but it is retained rather than dropped so that the hyperprior is honoured
+    exactly and the function stays correct under a sensitivity run with a much
+    larger delta.
+
+    theta : (N,K) current deviations B - b_bar
+    s     : pooled plug-in residual scale
+    hp    : supplies lambda_r and lambda_delta
+    -> lambda (a positive scalar)
+    """
+    shape = theta.size + 2.0 * hp.lambda_r - 1.0
+    rate = float(np.abs(theta).sum()) / s
+
+    if hp.lambda_delta <= 0.0:
+        return float(rng.gamma(shape=shape, scale=1.0 / rate))
+
+    delta = hp.lambda_delta
+    # mode of lambda^(a-1) exp(-rate lambda - delta lambda^2), from the positive
+    # root of (a-1)/lambda - rate - 2 delta lambda = 0
+    mode = (-rate + np.sqrt(rate ** 2 + 8.0 * delta * (shape - 1.0))) / (4.0 * delta)
+    rate_eff = rate + 2.0 * delta * mode
+
+    for _ in range(10000):
+        lam = rng.gamma(shape=shape, scale=1.0 / rate_eff)
+        if rng.random() < np.exp(-delta * (lam - mode) ** 2):
+            return float(lam)
+    raise RuntimeError(
+        "sample_lambda_collapsed: 10,000 rejections, which should be impossible "
+        "at the calibrated delta. Check lambda_delta against the data term."
+    )
+
 def sample_lambda(tau2: np.ndarray, hp: LassoHyperparams,
                   rng: np.random.Generator) -> float:
     """
-    Draw the global shrinkage parameter lambda from its full conditional.
+    Draw lambda from its full conditional given tau^2.
+
+    NOT USED IN THE SAMPLER -- retained because it is the textbook Park &
+    Casella step, and because check_chunk3.py validates it as an independent
+    confirmation that the collapsed version above targets the same
+    distribution. See sample_lambda_collapsed for why it is not the default.
 
     The conditional
     ---------------
@@ -614,8 +717,9 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
 
     Each sweep updates:
         (1) (B, b_bar) jointly   given tau^2, Sigma   -- blocked, see below
-        (2) tau^2                given theta, lambda  -- data augmentation
-        (3) lambda               given tau^2          -- the global scale
+        (2) lambda               given theta          -- COLLAPSED, tau^2
+                                                         integrated out
+        (3) tau^2                given theta, lambda  -- data augmentation
         (4) Sigma                given B, R, F        -- identical to baseline
 
     Feng & He's Delta_b step has no counterpart: it is REPLACED by (2), not
@@ -623,6 +727,12 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
     which is the "one shared hierarchy" claim enforced in code -- theta's prior
     involves no Sigma under the plug-in scale, so Sigma's conditional is
     exactly the baseline's IW(nu_Sigma + T, V_Sigma + EE').
+
+    Steps (2) and (3) are in this order deliberately: lambda is drawn from
+    theta with tau^2 marginalised out, then tau^2 is drawn given that fresh
+    lambda. Drawing lambda from tau^2 instead (the textbook Park & Casella
+    step, kept as sample_lambda) leaves lambda with an ESS of 8 from 750 draws
+    and unconverged after 1,500 sweeps -- see sample_lambda_collapsed.
 
     Step (1) is always blocked. No sequential option is offered: there is no
     literal Feng & He LASSO to reproduce, and the centred parameterisation it
@@ -674,8 +784,12 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
             rng, G, Fr, state["Sigma"], state["tau2"], hp.s,
             hp.b_bar_bar, hp.Delta_b_bar)
         theta = state["B"] - state["b_bar"][None, :]
+        # lambda BEFORE tau^2, and from theta directly: tau^2 is integrated out,
+        # so lambda moves with theta (which mixes freely) instead of with
+        # sum(tau^2) (which does not). tau^2 is then drawn given the fresh
+        # lambda. See sample_lambda_collapsed.
+        state["lam"] = sample_lambda_collapsed(theta, hp.s, hp, rng)
         state["tau2"] = sample_tau2(theta, hp.s, state["lam"], rng)
-        state["lam"] = sample_lambda(state["tau2"], hp, rng)
         state["Sigma"] = sample_Sigma(rng, R, F, state["B"],
                                       hp.nu_Sigma, hp.V_Sigma)
 

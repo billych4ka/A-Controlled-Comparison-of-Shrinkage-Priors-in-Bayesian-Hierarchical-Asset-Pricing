@@ -74,18 +74,21 @@ def load_dataset(universe: str) -> dict:
         return pickle.load(f)
 
 if __name__ == "__main__":
-    # Primary universe only for now. Robustness universes (size_op_25,
-    # size_inv_25, size_bm_100) deferred until after the Aug 20 supervisor
-    # meeting -- size_bm_100 in particular still needs the drop_columns
-    # decision (Option A/B/C, see clean.py notes) settled first.
-    panels = build_dataset("size_bm_25")
+    # size_bm_25 already built and current (see previous run).
+    # size_bm_100 deferred until after the Aug 20 supervisor meeting --
+    # it still needs the drop_columns decision (Option A/B/C, see
+    # clean.py notes) settled first.
+    universes = ["size_op_25", "size_inv_25"]
 
-    # round-trip check: load it back and confirm it matches
-    reloaded = load_dataset("size_bm_25")
-    sample_asset = list(panels.keys())[0]
-    f_i_original, r_i_original = panels[sample_asset]
-    f_i_reloaded, r_i_reloaded = reloaded[sample_asset]
+    for universe in universes:
+        panels = build_dataset(universe)
 
-    print(f"\nround-trip check on '{sample_asset}':")
-    print("F_i matches:", f_i_original.equals(f_i_reloaded))
-    print("r_i matches:", r_i_original.equals(r_i_reloaded))
+        # round-trip check: load it back and confirm it matches
+        reloaded = load_dataset(universe)
+        sample_asset = list(panels.keys())[0]
+        f_i_original, r_i_original = panels[sample_asset]
+        f_i_reloaded, r_i_reloaded = reloaded[sample_asset]
+
+        print(f"round-trip check on '{universe}' / '{sample_asset}': "
+              f"F_i matches={f_i_original.equals(f_i_reloaded)}, "
+              f"r_i matches={r_i_original.equals(r_i_reloaded)}\n")
