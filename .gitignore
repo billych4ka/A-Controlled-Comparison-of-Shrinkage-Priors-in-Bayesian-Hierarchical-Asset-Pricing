@@ -24,7 +24,7 @@ outputs/traces/
 Thumbs.db
 
 # Jupyter checkpoints, if you end up using notebooks/
-.ipynb_checkpoints/results/
+.ipynb_checkpoints/
 
 # results: ignore large regenerable output, keep the record of what was run
 results/**/*.npz
