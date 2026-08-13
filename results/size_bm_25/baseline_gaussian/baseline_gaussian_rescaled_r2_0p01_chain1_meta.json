@@ -1,0 +1,49 @@
+{
+  "seed": 1,
+  "n_draws": 3000,
+  "n_burn": 1000,
+  "N": 25,
+  "T": 719,
+  "K": 144,
+  "blocked": true,
+  "precompute_seconds": 0.0805511474609375,
+  "sampling_seconds": 879.1885089874268,
+  "prior": "rescaled_r2_0p01",
+  "target_r2": 0.01,
+  "_class": "GibbsDraws",
+  "_absent_fields": [
+    "Delta_b"
+  ],
+  "_shapes": {
+    "B": [
+      2000,
+      25,
+      144
+    ],
+    "b_bar": [
+      2000,
+      144
+    ],
+    "Sigma": [
+      2000,
+      25,
+      25
+    ],
+    "Delta_b_diag": [
+      2000,
+      144
+    ],
+    "Delta_b_off": [
+      2000,
+      200
+    ],
+    "Delta_b_off_idx": [
+      200,
+      2
+    ],
+    "Delta_b_mean": [
+      144,
+      144
+    ]
+  }
+}

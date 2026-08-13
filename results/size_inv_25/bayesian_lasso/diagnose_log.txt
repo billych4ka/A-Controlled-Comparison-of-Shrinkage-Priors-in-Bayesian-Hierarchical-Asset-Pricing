@@ -1,0 +1,158 @@
+==============================================================================
+BAYESIAN LASSO | size_inv_25 | rescaled_r2_0p05
+==============================================================================
+   4 chains x 3000 kept draws   (n_draws=4000, n_burn=1000)
+   s=0.0544   sd_target=1.2949e-04   lambda hyperprior r=1.0, delta=2.8281e-06
+
+==============================================================================
+1. CONVERGENCE   (threshold R-hat < 1.01, Vehtari et al. 2021)
+==============================================================================
+   b_bar          n=  144  max R-hat 1.0009  (0 > 1.01)  ESS bulk min    9406 median   11139 of 12000  tail min    9981
+   Sigma          n=  625  max R-hat 1.0004  (0 > 1.01)  ESS bulk min   10395 median   11038 of 12000  tail min   10629
+   lam            n=    1  max R-hat 1.0200  (1 > 1.01)  ESS bulk min     163 median     163 of 12000  tail min     334
+   tau2_track     n=  200  max R-hat 1.0025  (0 > 1.01)  ESS bulk min    1782 median    4146 of 12000  tail min    4126
+
+   [lambda is expected to be the slowest-mixing parameter by a wide
+    margin. Collapsing tau^2 out of its update (sample_lambda_collapsed)
+    removed a 1,500-sweep drift and cut its lag-1 autocorrelation from
+    0.973 to 0.93, but it stays coupled to theta through sum|theta_ij|.
+    The sweep budget is sized for lambda; B and b_bar reach ESS 400 in
+    about 500 sweeps.]
+   [tau2_track is a fixed random SUBSAMPLE of 200 of the 3,600 auxiliary
+    scales, chosen with a seed independent of the run seed. A strict
+    reading of Vehtari et al. checks every sampled parameter; this is a
+    subsample and should be described as one.]
+
+==============================================================================
+2. LAMBDA -- THE LEARNED SHRINKAGE LEVEL
+==============================================================================
+   posterior mean 453.9   sd 41.0   95% CI [384.1, 544.8]
+   per chain: 451.6  452.5  464.9  446.6
+   [chains agreeing here is the multimodality check. Park & Casella's
+    unimodality guarantee was forfeited when the plug-in scale replaced
+    their sampled sigma^2, so this is the evidence that nothing went
+    wrong as a result.]
+
+   implied theta prior sd = sqrt(2)*s/lambda = 1.6965e-04
+   baseline equivalent        lambda
+   target_r2 0.10                425 <--
+   target_r2 0.05                601
+   target_r2 0.01               1345
+   [higher lambda = MORE shrinkage. This is the pre-registered test:
+    whether the data, choosing for itself, asks for more or less
+    shrinkage than target_r2 = 0.05 imposes.]
+
+==============================================================================
+3. TAU^2 -- WHERE THE LOCAL SHRINKAGE LANDS
+==============================================================================
+   E[1/tau_ij^2] is the prior PRECISION, so larger = shrunk harder.
+   across all 3600 coefficients: p1 6.300e+05  p25 9.405e+05  median 1.120e+06  p75 1.448e+06  p99 1.419e+07
+   spread p99/p1 = 23x
+   [this spread is the local adaptivity the Gaussian baseline lacks
+    entirely: its Delta_b is isotropic and ~97.5% prior-pinned, so one
+    shrinkage level applies to all 3,600 deviations at once.]
+
+   group                     n   mean E[1/tau2]  vs overall
+   intercept                 1       1.4492e+06       0.62x
+   macro main effects       15       1.9706e+06       0.84x
+   characteristic main       8       1.5523e+06       0.66x
+   interactions            120       2.4480e+06       1.05x
+   [pre-registered prediction: the macro block would be shrunk HARDER
+    than the characteristic block, since the baseline's anti-predictive
+    content was 91-112% in the common component. Note the prediction is
+    about b_bar, which has no tau^2 -- so a null here is coherent, not a
+    failure. Compare the group spread against the 1-99 percentile spread
+    above: if groups differ by ~1.3x while coefficients differ by 1000x,
+    the adaptivity is real but not along this split.]
+
+   least-shrunk predictors         E[1/tau2]     most-shrunk predictors          E[1/tau2]
+   CMA_x_mom_12_1                  1.033e+06     BM_x_roll_mean12                6.902e+07
+   HML_x_roll_vol12                1.071e+06     CPI_x_mom_12_1                  1.314e+07
+   SVAR_x_roll_vol12               1.072e+06     CMA_x_roll_skew12               6.143e+06
+   NTIS_x_roll_vol12               1.086e+06     DY_x_roll_vol12                 5.364e+06
+   CPI_x_lag1                      1.094e+06     UMD_x_lag12                     5.335e+06
+   Mkt-RF_x_lag3                   1.114e+06     Mkt-RF_x_mom_12_1               4.954e+06
+   TBL_x_roll_mean12               1.126e+06     RMW                             4.877e+06
+   BM_x_lag6                       1.139e+06     EP_x_lag3                       4.820e+06
+   DFY_x_lag6                      1.146e+06     BM_x_lag1                       4.709e+06
+   DFY_x_roll_skew12               1.158e+06     UMD_x_lag1                      4.362e+06
+   [averaged over the 25 assets, so this is per-PREDICTOR shrinkage.
+    tau^2 is per (asset, predictor), so a predictor can be free for one
+    asset and shrunk for another -- that is the point of the local layer,
+    and it is invisible in this table.]
+
+==============================================================================
+4. VERSUS THE GAUSSIAN BASELINE (rescaled_r2_0p05)
+==============================================================================
+   norm ratio ||lasso|| / ||baseline||: 0.9969
+   median |b_bar| ratio:                1.0059
+   correlation of posterior mean b_bar: 0.9987
+   [correlation near 1 = the Laplace prior rescaled the baseline's
+    answer; well below 1 = it reordered which predictors matter. The
+    baseline's own rescaling gave 0.586 against feng_he.]
+   b_bar agreement: max 12.43 SE, median 1.84 SE, 72% within 3 SE
+   [these are DIFFERENT models, so disagreement is the finding, not
+    an error. The agreement statistic is reported because a value
+    near zero would mean the Laplace prior changed nothing.]
+
+   in the top-20 of BOTH models (20 of 20):
+      intercept                lasso +0.00134   baseline +0.00135
+      RMW_x_roll_mean12        lasso +0.00114   baseline +0.00115
+      UMD_x_roll_mean12        lasso -0.00113   baseline -0.00112
+      DY_x_mom_12_1            lasso -0.00112   baseline -0.00112
+      RMW_x_mom_12_1           lasso -0.00103   baseline -0.00103
+      SMB_x_lag1               lasso +0.00094   baseline +0.00091
+      Mkt-RF_x_lag3            lasso -0.00092   baseline -0.00094
+      SMB_x_lag12              lasso -0.00091   baseline -0.00088
+      roll_mean12              lasso -0.00079   baseline -0.00072
+      CPI_x_mom_12_1           lasso -0.00076   baseline -0.00073
+      CMA_x_lag3               lasso +0.00076   baseline +0.00077
+      NTIS                     lasso -0.00075   baseline -0.00077
+      EP_x_roll_mean12         lasso +0.00072   baseline +0.00074
+      DFY_x_roll_mean12        lasso -0.00071   baseline -0.00067
+      TMS                      lasso +0.00069   baseline +0.00069
+      CPI_x_roll_vol12         lasso -0.00067   baseline -0.00067
+      UMD_x_lag3               lasso -0.00067   baseline -0.00068
+      TMS_x_roll_mean12        lasso +0.00066   baseline +0.00070
+      SMB                      lasso +0.00065   baseline +0.00066
+      DY_x_lag12               lasso -0.00062   baseline -0.00065
+   [the baseline's prior-robust core was SMB_x_lag1,
+    RMW_x_roll_mean12, RMW_x_mom_12_1 -- all interactions. Two models
+    with different priors agreeing is stronger evidence than either
+    alone, and bears directly on the p_0 = 23 rewrite.]
+
+==============================================================================
+5. TOP 20 PREDICTORS BY |posterior mean b_bar|
+==============================================================================
+   (10 of 144 intervals exclude zero)
+   * intercept                +0.00134  [+0.00002, +0.00268]
+   * RMW_x_roll_mean12        +0.00114  [+0.00026, +0.00203]
+   * UMD_x_roll_mean12        -0.00113  [-0.00205, -0.00025]
+   * DY_x_mom_12_1            -0.00112  [-0.00212, -0.00007]
+   * RMW_x_mom_12_1           -0.00103  [-0.00196, -0.00013]
+   * SMB_x_lag1               +0.00094  [+0.00024, +0.00165]
+   * Mkt-RF_x_lag3            -0.00092  [-0.00161, -0.00022]
+   * SMB_x_lag12              -0.00091  [-0.00158, -0.00024]
+     roll_mean12              -0.00079  [-0.00186, +0.00030]
+     CPI_x_mom_12_1           -0.00076  [-0.00175, +0.00026]
+     CMA_x_lag3               +0.00076  [-0.00002, +0.00153]
+     NTIS                     -0.00075  [-0.00195, +0.00045]
+     EP_x_roll_mean12         +0.00072  [-0.00029, +0.00174]
+     DFY_x_roll_mean12        -0.00071  [-0.00176, +0.00032]
+     TMS                      +0.00069  [-0.00053, +0.00193]
+     CPI_x_roll_vol12         -0.00067  [-0.00135, +0.00002]
+   * UMD_x_lag3               -0.00067  [-0.00123, -0.00010]
+     TMS_x_roll_mean12        +0.00066  [-0.00034, +0.00167]
+     SMB                      +0.00065  [-0.00065, +0.00192]
+     DY_x_lag12               -0.00062  [-0.00149, +0.00025]
+
+   within-setting rank stability (Monte Carlo ceiling): spearman +0.999, top-20 overlap 0.95
+   [this is the ceiling any between-model comparison can reach. A
+    between-model overlap close to this number means the two models
+    agree as well as one model agrees with itself.]
+
+   NOTE: intervals are not significance tests. A tighter prior produces
+   narrower intervals AND smaller point estimates, so counting stars
+   across models compares priors, not evidence. The baseline gave 0, 11,
+   8 and 17 across four settings -- non-monotonic in prior strength.
+   Predictor selection comes from out-of-sample performance.

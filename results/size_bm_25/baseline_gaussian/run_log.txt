@@ -1,0 +1,188 @@
+Gaussian baseline | size_bm_25 | N=25 T=719 K=144
+  prior=rescaled_r2_0p05  nu_b=1145  V_b=1.713e-05  Delta_b_bar=5.710e-07
+  nu_Sigma=27  V_Sigma=S_hat  |  prior implied R^2 = 0.05
+  4 chains x 3000 sweeps (1000 burn-in)
+
+  sweep 300/3000  (88s elapsed, 792s remaining)
+  sweep 600/3000  (173s elapsed, 694s remaining)
+  sweep 900/3000  (255s elapsed, 595s remaining)
+  sweep 1200/3000  (336s elapsed, 504s remaining)
+  sweep 1500/3000  (417s elapsed, 417s remaining)
+  sweep 1800/3000  (498s elapsed, 332s remaining)
+  sweep 2100/3000  (579s elapsed, 248s remaining)
+  sweep 2400/3000  (659s elapsed, 165s remaining)
+  sweep 2700/3000  (741s elapsed, 82s remaining)
+  sweep 3000/3000  (830s elapsed, 0s remaining)
+  chain 0 (seed 0): 832s, 69 MB -> results/size_bm_25/baseline_gaussian_rescaled_r2_0p05_chain0.npz
+  sweep 300/3000  (90s elapsed, 807s remaining)
+  sweep 600/3000  (181s elapsed, 723s remaining)
+  sweep 900/3000  (273s elapsed, 638s remaining)
+  sweep 1200/3000  (363s elapsed, 545s remaining)
+  sweep 1500/3000  (450s elapsed, 450s remaining)
+  sweep 1800/3000  (537s elapsed, 358s remaining)
+  sweep 2100/3000  (641s elapsed, 275s remaining)
+  sweep 2400/3000  (731s elapsed, 183s remaining)
+  sweep 2700/3000  (815s elapsed, 91s remaining)
+  sweep 3000/3000  (897s elapsed, 0s remaining)
+  chain 1 (seed 1): 899s, 69 MB -> results/size_bm_25/baseline_gaussian_rescaled_r2_0p05_chain1.npz
+  sweep 300/3000  (82s elapsed, 741s remaining)
+  sweep 600/3000  (165s elapsed, 661s remaining)
+  sweep 900/3000  (244s elapsed, 570s remaining)
+  sweep 1200/3000  (324s elapsed, 486s remaining)
+  sweep 1500/3000  (405s elapsed, 405s remaining)
+  sweep 1800/3000  (500s elapsed, 333s remaining)
+  sweep 2100/3000  (588s elapsed, 252s remaining)
+  sweep 2400/3000  (681s elapsed, 170s remaining)
+  sweep 2700/3000  (765s elapsed, 85s remaining)
+  sweep 3000/3000  (846s elapsed, 0s remaining)
+  chain 2 (seed 2): 849s, 69 MB -> results/size_bm_25/baseline_gaussian_rescaled_r2_0p05_chain2.npz
+  sweep 300/3000  (81s elapsed, 733s remaining)
+  sweep 600/3000  (163s elapsed, 653s remaining)
+  sweep 900/3000  (244s elapsed, 570s remaining)
+  sweep 1200/3000  (325s elapsed, 488s remaining)
+  sweep 1500/3000  (407s elapsed, 407s remaining)
+  sweep 1800/3000  (487s elapsed, 325s remaining)
+  sweep 2100/3000  (577s elapsed, 247s remaining)
+  sweep 2400/3000  (679s elapsed, 170s remaining)
+  sweep 2700/3000  (762s elapsed, 85s remaining)
+  sweep 3000/3000  (845s elapsed, 0s remaining)
+  chain 3 (seed 3): 849s, 69 MB -> results/size_bm_25/baseline_gaussian_rescaled_r2_0p05_chain3.npz
+
+total 3429s
+posterior mean b_bar, 5 largest by |value| (chain 0):
+   * RMW_x_mom_12_1         -0.00161  [-0.00252, -0.00076]
+   * intercept              +0.00150  [+0.00024, +0.00279]
+   * RMW_x_roll_mean12      +0.00149  [+0.00065, +0.00240]
+   * SMB_x_lag1             +0.00132  [+0.00062, +0.00199]
+     NTIS                   -0.00104  [-0.00230, +0.00012]
+   (* = 95% credible interval excludes zero)
+Gaussian baseline | size_bm_25 | N=25 T=719 K=144
+  prior=rescaled_r2_0p01  nu_b=1145  V_b=3.426e-06  Delta_b_bar=1.142e-07
+  nu_Sigma=27  V_Sigma=S_hat  |  prior implied R^2 = 0.01
+  2 chains x 3000 sweeps (1000 burn-in)
+
+  sweep 300/3000  (82s elapsed, 736s remaining)
+  sweep 600/3000  (163s elapsed, 653s remaining)
+  sweep 900/3000  (244s elapsed, 569s remaining)
+  sweep 1200/3000  (327s elapsed, 491s remaining)
+  sweep 1500/3000  (413s elapsed, 413s remaining)
+  sweep 1800/3000  (496s elapsed, 331s remaining)
+  sweep 2100/3000  (583s elapsed, 250s remaining)
+  sweep 2400/3000  (671s elapsed, 168s remaining)
+  sweep 2700/3000  (775s elapsed, 86s remaining)
+  sweep 3000/3000  (875s elapsed, 0s remaining)
+  chain 0 (seed 0): 878s, 69 MB -> results/size_bm_25/baseline_gaussian_rescaled_r2_0p01_chain0.npz
+  sweep 300/3000  (94s elapsed, 850s remaining)
+  sweep 600/3000  (183s elapsed, 731s remaining)
+  sweep 900/3000  (271s elapsed, 633s remaining)
+  sweep 1200/3000  (353s elapsed, 530s remaining)
+  sweep 1500/3000  (438s elapsed, 438s remaining)
+  sweep 1800/3000  (522s elapsed, 348s remaining)
+  sweep 2100/3000  (604s elapsed, 259s remaining)
+  sweep 2400/3000  (689s elapsed, 172s remaining)
+  sweep 2700/3000  (795s elapsed, 88s remaining)
+  sweep 3000/3000  (879s elapsed, 0s remaining)
+  chain 1 (seed 1): 882s, 69 MB -> results/size_bm_25/baseline_gaussian_rescaled_r2_0p01_chain1.npz
+
+total 1760s
+posterior mean b_bar, 5 largest by |value| (chain 0):
+   * SMB_x_lag1             +0.00075  [+0.00027, +0.00123]
+   * RMW_x_lag3             +0.00058  [+0.00013, +0.00103]
+   * UMD_x_lag12            +0.00055  [+0.00011, +0.00098]
+   * RMW_x_roll_mean12      +0.00053  [+0.00004, +0.00105]
+   * CMA_x_roll_vol12       -0.00052  [-0.00100, -0.00005]
+   (* = 95% credible interval excludes zero)
+Gaussian baseline | size_bm_25 | N=25 T=719 K=144
+  prior=rescaled_r2_0p1  nu_b=1145  V_b=3.426e-05  Delta_b_bar=1.142e-06
+  nu_Sigma=27  V_Sigma=S_hat  |  prior implied R^2 = 0.1
+  2 chains x 3000 sweeps (1000 burn-in)
+
+  sweep 300/3000  (82s elapsed, 736s remaining)
+  sweep 600/3000  (165s elapsed, 658s remaining)
+  sweep 900/3000  (247s elapsed, 577s remaining)
+  sweep 1200/3000  (330s elapsed, 495s remaining)
+  sweep 1500/3000  (412s elapsed, 412s remaining)
+  sweep 1800/3000  (505s elapsed, 337s remaining)
+  sweep 2100/3000  (629s elapsed, 270s remaining)
+  sweep 2400/3000  (768s elapsed, 192s remaining)
+  sweep 2700/3000  (876s elapsed, 97s remaining)
+  sweep 3000/3000  (977s elapsed, 0s remaining)
+  chain 0 (seed 0): 980s, 69 MB -> results/size_bm_25/baseline_gaussian_rescaled_r2_0p1_chain0.npz
+  sweep 300/3000  (107s elapsed, 963s remaining)
+  sweep 600/3000  (214s elapsed, 857s remaining)
+  sweep 900/3000  (329s elapsed, 768s remaining)
+  sweep 1200/3000  (435s elapsed, 652s remaining)
+  sweep 1500/3000  (534s elapsed, 534s remaining)
+  sweep 1800/3000  (625s elapsed, 417s remaining)
+  sweep 2100/3000  (710s elapsed, 304s remaining)
+  sweep 2400/3000  (791s elapsed, 198s remaining)
+  sweep 2700/3000  (873s elapsed, 97s remaining)
+  sweep 3000/3000  (956s elapsed, 0s remaining)
+  chain 1 (seed 1): 959s, 69 MB -> results/size_bm_25/baseline_gaussian_rescaled_r2_0p1_chain1.npz
+
+total 1939s
+posterior mean b_bar, 5 largest by |value| (chain 0):
+   * intercept              +0.00228  [+0.00061, +0.00397]
+   * RMW_x_mom_12_1         -0.00226  [-0.00337, -0.00123]
+   * RMW_x_roll_mean12      +0.00204  [+0.00103, +0.00315]
+   * SMB_x_lag1             +0.00147  [+0.00072, +0.00219]
+   * BM_x_lag3              +0.00136  [+0.00013, +0.00247]
+   (* = 95% credible interval excludes zero)
+Gaussian baseline | size_bm_25 | N=25 T=719 K=144
+  prior=feng_he  nu_b=1145  V_b=3.000e+00  Delta_b_bar=1.000e-01
+  nu_Sigma=27  V_Sigma=S_hat  |  prior implied R^2 = 8756
+  4 chains x 3000 sweeps (1000 burn-in)
+
+  sweep 300/3000  (92s elapsed, 830s remaining)
+  sweep 600/3000  (176s elapsed, 705s remaining)
+  sweep 900/3000  (260s elapsed, 607s remaining)
+  sweep 1200/3000  (344s elapsed, 516s remaining)
+  sweep 1500/3000  (427s elapsed, 427s remaining)
+  sweep 1800/3000  (509s elapsed, 339s remaining)
+  sweep 2100/3000  (589s elapsed, 253s remaining)
+  sweep 2400/3000  (667s elapsed, 167s remaining)
+  sweep 2700/3000  (748s elapsed, 83s remaining)
+  sweep 3000/3000  (830s elapsed, 0s remaining)
+  chain 0 (seed 0): 833s, 69 MB -> results/size_bm_25/baseline_gaussian_feng_he_chain0.npz
+  sweep 300/3000  (84s elapsed, 753s remaining)
+  sweep 600/3000  (168s elapsed, 674s remaining)
+  sweep 900/3000  (252s elapsed, 588s remaining)
+  sweep 1200/3000  (336s elapsed, 504s remaining)
+  sweep 1500/3000  (419s elapsed, 419s remaining)
+  sweep 1800/3000  (503s elapsed, 335s remaining)
+  sweep 2100/3000  (585s elapsed, 251s remaining)
+  sweep 2400/3000  (668s elapsed, 167s remaining)
+  sweep 2700/3000  (751s elapsed, 83s remaining)
+  sweep 3000/3000  (833s elapsed, 0s remaining)
+  chain 1 (seed 1): 836s, 69 MB -> results/size_bm_25/baseline_gaussian_feng_he_chain1.npz
+  sweep 300/3000  (85s elapsed, 767s remaining)
+  sweep 600/3000  (167s elapsed, 669s remaining)
+  sweep 900/3000  (253s elapsed, 591s remaining)
+  sweep 1200/3000  (336s elapsed, 505s remaining)
+  sweep 1500/3000  (418s elapsed, 418s remaining)
+  sweep 1800/3000  (506s elapsed, 337s remaining)
+  sweep 2100/3000  (594s elapsed, 255s remaining)
+  sweep 2400/3000  (682s elapsed, 171s remaining)
+  sweep 2700/3000  (771s elapsed, 86s remaining)
+  sweep 3000/3000  (860s elapsed, 0s remaining)
+  chain 2 (seed 2): 863s, 69 MB -> results/size_bm_25/baseline_gaussian_feng_he_chain2.npz
+  sweep 300/3000  (91s elapsed, 815s remaining)
+  sweep 600/3000  (179s elapsed, 716s remaining)
+  sweep 900/3000  (270s elapsed, 630s remaining)
+  sweep 1200/3000  (363s elapsed, 545s remaining)
+  sweep 1500/3000  (459s elapsed, 459s remaining)
+  sweep 1800/3000  (556s elapsed, 370s remaining)
+  sweep 2100/3000  (645s elapsed, 276s remaining)
+  sweep 2400/3000  (728s elapsed, 182s remaining)
+  sweep 2700/3000  (809s elapsed, 90s remaining)
+  sweep 3000/3000  (894s elapsed, 0s remaining)
+  chain 3 (seed 3): 896s, 69 MB -> results/size_bm_25/baseline_gaussian_feng_he_chain3.npz
+
+total 3428s
+posterior mean b_bar, 5 largest by |value| (chain 0):
+     roll_mean12            -0.00950  [-0.03029, +0.01233]
+     mom_12_1               +0.00743  [-0.01431, +0.02919]
+     intercept              +0.00631  [-0.01576, +0.02790]
+     TBL                    -0.00514  [-0.02676, +0.01698]
+     SVAR                   -0.00460  [-0.02722, +0.01643]
+   (* = 95% credible interval excludes zero)

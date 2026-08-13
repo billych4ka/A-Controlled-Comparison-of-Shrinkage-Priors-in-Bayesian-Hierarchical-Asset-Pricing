@@ -1,0 +1,14 @@
+{
+  "start": 240,
+  "refit_every": 12,
+  "n_refits": 40,
+  "n_oos_months": 479,
+  "seconds": 5690.0336282253265,
+  "prior": "rescaled",
+  "target_r2": 0.1,
+  "n_draws": 500,
+  "n_burn": 100,
+  "seed": 0,
+  "blocked": true,
+  "label": "rescaled_r2_0p1"
+}

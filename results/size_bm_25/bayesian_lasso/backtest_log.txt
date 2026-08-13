@@ -1,0 +1,95 @@
+Bayesian LASSO backtest | size_bm_25 | N=25 T=719 K=144
+  train from month 0, first forecast month 240, 479 out-of-sample months
+  refit every 12 months -> 40 fits
+  1200 sweeps per fit (700 burn-in), 1 chain
+  target_r2=0.05 (fixed a priori); lambda learned per window
+
+--- look-ahead verification (reduced settings) ---
+    forecasts before corruption: max diff 0.000e+00   (must be exactly 0)
+    coefficients before:         max diff 0.000e+00   (must be exactly 0)
+    forecasts after corruption:  max change 1.119e-01   (must be > 0, or the test proves nothing)
+    PASSES: True   (879s)
+
+  refit 1/40 at t=240 (321s elapsed, 12531s remaining)
+  refit 2/40 at t=252 (676s elapsed, 12849s remaining)
+  refit 3/40 at t=264 (1030s elapsed, 12708s remaining)
+  refit 4/40 at t=276 (1368s elapsed, 12311s remaining)
+  refit 5/40 at t=288 (1701s elapsed, 11907s remaining)
+  refit 6/40 at t=300 (2036s elapsed, 11537s remaining)
+  refit 7/40 at t=312 (2376s elapsed, 11201s remaining)
+  refit 8/40 at t=324 (2714s elapsed, 10855s remaining)
+  refit 9/40 at t=336 (3049s elapsed, 10503s remaining)
+  refit 10/40 at t=348 (3379s elapsed, 10137s remaining)
+  refit 11/40 at t=360 (3757s elapsed, 9905s remaining)
+  refit 12/40 at t=372 (4131s elapsed, 9640s remaining)
+  refit 13/40 at t=384 (4499s elapsed, 9344s remaining)
+  refit 14/40 at t=396 (4885s elapsed, 9073s remaining)
+  refit 15/40 at t=408 (5282s elapsed, 8803s remaining)
+  refit 16/40 at t=420 (5647s elapsed, 8470s remaining)
+  refit 17/40 at t=432 (5999s elapsed, 8116s remaining)
+  refit 18/40 at t=444 (6356s elapsed, 7769s remaining)
+  refit 19/40 at t=456 (6684s elapsed, 7388s remaining)
+  refit 20/40 at t=468 (7029s elapsed, 7029s remaining)
+  refit 21/40 at t=480 (7376s elapsed, 6674s remaining)
+  refit 22/40 at t=492 (7704s elapsed, 6303s remaining)
+  refit 23/40 at t=504 (8029s elapsed, 5935s remaining)
+  refit 24/40 at t=516 (8354s elapsed, 5569s remaining)
+  refit 25/40 at t=528 (8679s elapsed, 5208s remaining)
+  refit 26/40 at t=540 (9002s elapsed, 4847s remaining)
+  refit 27/40 at t=552 (9318s elapsed, 4487s remaining)
+  refit 28/40 at t=564 (9637s elapsed, 4130s remaining)
+  refit 29/40 at t=576 (9946s elapsed, 3773s remaining)
+  refit 30/40 at t=588 (10256s elapsed, 3419s remaining)
+  refit 31/40 at t=600 (10578s elapsed, 3071s remaining)
+  refit 32/40 at t=612 (10902s elapsed, 2725s remaining)
+  refit 33/40 at t=624 (11227s elapsed, 2381s remaining)
+  refit 34/40 at t=636 (11558s elapsed, 2040s remaining)
+  refit 35/40 at t=648 (11883s elapsed, 1698s remaining)
+  refit 36/40 at t=660 (12208s elapsed, 1356s remaining)
+  refit 37/40 at t=672 (12536s elapsed, 1016s remaining)
+  refit 38/40 at t=684 (12892s elapsed, 679s remaining)
+  refit 39/40 at t=696 (13277s elapsed, 340s remaining)
+  refit 40/40 at t=708 (13655s elapsed, 0s remaining)
+
+==============================================================================
+RESULTS  (13655s)
+==============================================================================
+   OOS R^2                -0.0494
+   median per-asset R^2   -0.0501   (0/25 assets positive)
+   Sharpe (annualised)    +0.157
+   certainty equivalent   +0.0041
+   Clark-West             -1.59  (p 0.9446, one-sided)
+   prediction volatility  0.121 of realised
+
+==============================================================================
+VERSUS THE GAUSSIAN BASELINE (rescaled_r2_0p05)
+==============================================================================
+                                 LASSO   baseline
+   OOS R^2                     -0.0494    -0.0493
+   Sharpe                       +0.157     +0.124
+   certainty equivalent        +0.0041    +0.0023
+   prediction volatility         0.121      0.118
+
+   Diebold-Mariano: +0.03 (p 0.9769, two-sided)
+   [NEGATIVE favours the LASSO. DM is the right test here because the
+    two models are NON-NESTED. Clark-West above is for the nested
+    comparison against the historical mean -- applying DM there gives
+    a mean statistic of +5.38 under the null and declares the
+    benchmark the winner 99.7% of the time.]
+
+   LOSS DECOMPOSITION   (share of benchmark squared error)
+                   var common  var cross  cov common  cov cross
+   LASSO              +0.0139    +0.0051     +0.0324    -0.0020
+   baseline           +0.0132    +0.0047     +0.0335    -0.0020
+   [the baseline's out-of-sample loss was 98.8% attributable to b_bar,
+    whose prior is shared by all four models. The LASSO acts on theta,
+    which carried 1.2%. Similar totals are therefore what the DESIGN
+    predicts, not a null result -- but the decomposition shows whether
+    the composition of the loss changed even when the total did not.]
+
+   OOS R^2 is against the expanding historical mean. Realistic monthly
+   values are 0.005-0.01 and often negative; anything above ~0.05 should
+   be assumed an alignment bug. Sharpe and CE are annualised, from a
+   zero-cost long-short portfolio with unit gross exposure.
+
+   saved to results/size_bm_25/bayesian_lasso/backtest

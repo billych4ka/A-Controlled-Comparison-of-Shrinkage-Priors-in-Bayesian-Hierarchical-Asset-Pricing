@@ -1,0 +1,15 @@
+{
+  "start": 240,
+  "refit_every": 12,
+  "n_refits": 40,
+  "n_oos_months": 479,
+  "seconds": 13654.745727062225,
+  "model": "bayesian_lasso",
+  "target_r2": 0.05,
+  "lambda_multiplier": 1.0,
+  "n_draws": 1200,
+  "n_burn": 700,
+  "seed": 0,
+  "blocked": true,
+  "label": "rescaled_r2_0p05"
+}

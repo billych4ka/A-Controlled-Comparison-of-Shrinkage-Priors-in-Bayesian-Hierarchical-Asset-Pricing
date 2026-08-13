@@ -1,0 +1,58 @@
+{
+  "seed": 3,
+  "n_draws": 4000,
+  "n_burn": 1000,
+  "N": 25,
+  "T": 719,
+  "K": 144,
+  "blocked": true,
+  "s": 0.055657026937513544,
+  "lambda_r": 1.0,
+  "lambda_delta": 2.7651843117407068e-06,
+  "sd_target": 0.0001308871597501999,
+  "precompute_seconds": 0.0997781753540039,
+  "sampling_seconds": 1406.7269949913025,
+  "setting": "rescaled_r2_0p05",
+  "target_r2": 0.05,
+  "lambda_multiplier": 1.0,
+  "universe": "size_bm_25",
+  "_class": "LassoDraws",
+  "_absent_fields": [
+    "tau2"
+  ],
+  "_shapes": {
+    "B": [
+      3000,
+      25,
+      144
+    ],
+    "b_bar": [
+      3000,
+      144
+    ],
+    "Sigma": [
+      3000,
+      25,
+      25
+    ],
+    "lam": [
+      3000
+    ],
+    "tau2_mean": [
+      25,
+      144
+    ],
+    "tau2_inv_mean": [
+      25,
+      144
+    ],
+    "tau2_track": [
+      3000,
+      200
+    ],
+    "tau2_track_idx": [
+      200,
+      2
+    ]
+  }
+}
