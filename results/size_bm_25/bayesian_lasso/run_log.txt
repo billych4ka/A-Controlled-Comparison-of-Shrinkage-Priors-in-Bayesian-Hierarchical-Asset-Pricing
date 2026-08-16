@@ -226,3 +226,121 @@ prediction volatility: sd(fitted)/sd(realised) = 0.105
    [baseline in-sample: feng_he 0.58, r2_0p05 0.12, r2_0p01 0.06]
 
 Run diagnose_bayesian_lasso.py for R-hat, ESS and the full picture.
+Bayesian LASSO | size_bm_25 | N=25 T=719 K=144
+  setting=rescaled_r2_0p05
+  Delta_b_bar=5.7105e-07  (shared with all four models)
+  s=0.0557 (pooled, df-corrected)  sd_target=1.3089e-04
+  lambda hyperprior: r=1, delta=2.7652e-06  -> prior mean lambda 601.4
+  nu_Sigma=27  V_Sigma=S_hat  |  prior implied R^2 = 0.05
+  8 chains x 9500 sweeps (1000 burn-in)
+
+  sweep 950/9500  (268s elapsed, 2409s remaining)
+  sweep 1900/9500  (527s elapsed, 2107s remaining)
+  sweep 2850/9500  (788s elapsed, 1838s remaining)
+  sweep 3800/9500  (1058s elapsed, 1587s remaining)
+  sweep 4750/9500  (1319s elapsed, 1319s remaining)
+  sweep 5700/9500  (1607s elapsed, 1071s remaining)
+  sweep 6650/9500  (1908s elapsed, 818s remaining)
+  sweep 7600/9500  (2221s elapsed, 555s remaining)
+  sweep 8550/9500  (2507s elapsed, 279s remaining)
+  sweep 9500/9500  (2797s elapsed, 0s remaining)
+  chain 0 (seed 0): 2810s, lambda mean 417.2, 283 MB -> results/size_bm_25/bayesian_lasso/bayesian_lasso_rescaled_r2_0p05_chain0.npz
+  sweep 950/9500  (293s elapsed, 2639s remaining)
+  sweep 1900/9500  (598s elapsed, 2392s remaining)
+  sweep 2850/9500  (887s elapsed, 2069s remaining)
+  sweep 3800/9500  (1172s elapsed, 1757s remaining)
+  sweep 4750/9500  (1440s elapsed, 1440s remaining)
+  sweep 5700/9500  (1707s elapsed, 1138s remaining)
+  sweep 6650/9500  (1985s elapsed, 851s remaining)
+  sweep 7600/9500  (2272s elapsed, 568s remaining)
+  sweep 8550/9500  (2548s elapsed, 283s remaining)
+  sweep 9500/9500  (2837s elapsed, 0s remaining)
+  chain 1 (seed 1): 2848s, lambda mean 419.1, 283 MB -> results/size_bm_25/bayesian_lasso/bayesian_lasso_rescaled_r2_0p05_chain1.npz
+  sweep 950/9500  (299s elapsed, 2689s remaining)
+  sweep 1900/9500  (594s elapsed, 2377s remaining)
+  sweep 2850/9500  (887s elapsed, 2070s remaining)
+  sweep 3800/9500  (1187s elapsed, 1780s remaining)
+  sweep 4750/9500  (1498s elapsed, 1498s remaining)
+  sweep 5700/9500  (1806s elapsed, 1204s remaining)
+  sweep 6650/9500  (2093s elapsed, 897s remaining)
+  sweep 7600/9500  (2383s elapsed, 596s remaining)
+  sweep 8550/9500  (2677s elapsed, 297s remaining)
+  sweep 9500/9500  (2972s elapsed, 0s remaining)
+  chain 2 (seed 2): 2981s, lambda mean 418.7, 283 MB -> results/size_bm_25/bayesian_lasso/bayesian_lasso_rescaled_r2_0p05_chain2.npz
+  sweep 950/9500  (292s elapsed, 2631s remaining)
+  sweep 1900/9500  (590s elapsed, 2360s remaining)
+  sweep 2850/9500  (880s elapsed, 2053s remaining)
+  sweep 3800/9500  (1169s elapsed, 1753s remaining)
+  sweep 4750/9500  (1456s elapsed, 1456s remaining)
+  sweep 5700/9500  (1741s elapsed, 1161s remaining)
+  sweep 6650/9500  (2026s elapsed, 868s remaining)
+  sweep 7600/9500  (2308s elapsed, 577s remaining)
+  sweep 8550/9500  (2597s elapsed, 289s remaining)
+  sweep 9500/9500  (2870s elapsed, 0s remaining)
+  chain 3 (seed 3): 2880s, lambda mean 418.9, 283 MB -> results/size_bm_25/bayesian_lasso/bayesian_lasso_rescaled_r2_0p05_chain3.npz
+  sweep 950/9500  (277s elapsed, 2496s remaining)
+  sweep 1900/9500  (553s elapsed, 2211s remaining)
+  sweep 2850/9500  (855s elapsed, 1994s remaining)
+  sweep 3800/9500  (1135s elapsed, 1703s remaining)
+  sweep 4750/9500  (1407s elapsed, 1407s remaining)
+  sweep 5700/9500  (1684s elapsed, 1122s remaining)
+  sweep 6650/9500  (1959s elapsed, 840s remaining)
+  sweep 7600/9500  (2252s elapsed, 563s remaining)
+  sweep 8550/9500  (2563s elapsed, 285s remaining)
+  sweep 9500/9500  (2862s elapsed, 0s remaining)
+  chain 4 (seed 4): 2874s, lambda mean 419.9, 283 MB -> results/size_bm_25/bayesian_lasso/bayesian_lasso_rescaled_r2_0p05_chain4.npz
+  sweep 950/9500  (301s elapsed, 2710s remaining)
+  sweep 1900/9500  (582s elapsed, 2329s remaining)
+  sweep 2850/9500  (848s elapsed, 1980s remaining)
+  sweep 3800/9500  (1106s elapsed, 1658s remaining)
+  sweep 4750/9500  (1360s elapsed, 1360s remaining)
+  sweep 5700/9500  (1636s elapsed, 1091s remaining)
+  sweep 6650/9500  (1892s elapsed, 811s remaining)
+  sweep 7600/9500  (2150s elapsed, 538s remaining)
+  sweep 8550/9500  (2408s elapsed, 268s remaining)
+  sweep 9500/9500  (2667s elapsed, 0s remaining)
+  chain 5 (seed 5): 2678s, lambda mean 420.5, 283 MB -> results/size_bm_25/bayesian_lasso/bayesian_lasso_rescaled_r2_0p05_chain5.npz
+  sweep 950/9500  (263s elapsed, 2365s remaining)
+  sweep 1900/9500  (525s elapsed, 2099s remaining)
+  sweep 2850/9500  (785s elapsed, 1833s remaining)
+  sweep 3800/9500  (1049s elapsed, 1574s remaining)
+  sweep 4750/9500  (1309s elapsed, 1309s remaining)
+  sweep 5700/9500  (1569s elapsed, 1046s remaining)
+  sweep 6650/9500  (1831s elapsed, 785s remaining)
+  sweep 7600/9500  (2106s elapsed, 526s remaining)
+  sweep 8550/9500  (2389s elapsed, 265s remaining)
+  sweep 9500/9500  (2669s elapsed, 0s remaining)
+  chain 6 (seed 6): 2684s, lambda mean 420.1, 283 MB -> results/size_bm_25/bayesian_lasso/bayesian_lasso_rescaled_r2_0p05_chain6.npz
+  sweep 950/9500  (295s elapsed, 2658s remaining)
+  sweep 1900/9500  (573s elapsed, 2292s remaining)
+  sweep 2850/9500  (845s elapsed, 1972s remaining)
+  sweep 3800/9500  (1117s elapsed, 1675s remaining)
+  sweep 4750/9500  (1391s elapsed, 1391s remaining)
+  sweep 5700/9500  (1666s elapsed, 1111s remaining)
+  sweep 6650/9500  (1944s elapsed, 833s remaining)
+  sweep 7600/9500  (2222s elapsed, 556s remaining)
+  sweep 8550/9500  (2512s elapsed, 279s remaining)
+  sweep 9500/9500  (2794s elapsed, 0s remaining)
+  chain 7 (seed 7): 2804s, lambda mean 416.5, 283 MB -> results/size_bm_25/bayesian_lasso/bayesian_lasso_rescaled_r2_0p05_chain7.npz
+
+total 22559s
+
+lambda (chain 0): 417.2 +- 32.0   [prior centre 601.4]
+  implied theta prior sd 1.8868e-04   vs the baseline's sd_target 1.3089e-04
+  [baseline-equivalent scales: lambda 425 ~ target_r2 0.10,
+   601 ~ 0.05, 1345 ~ 0.01. Higher lambda = more shrinkage.]
+
+posterior mean b_bar, 5 largest by |value| (chain 0):
+   * RMW_x_mom_12_1         -0.00159  [-0.00251, -0.00067]
+   * intercept              +0.00144  [+0.00012, +0.00278]
+   * RMW_x_roll_mean12      +0.00144  [+0.00056, +0.00233]
+   * SMB_x_lag1             +0.00132  [+0.00061, +0.00203]
+     NTIS                   -0.00098  [-0.00221, +0.00026]
+   (* = 95% credible interval excludes zero; NOT a significance test --
+    a tighter prior narrows intervals and shrinks point estimates at the
+    same time, so counting stars compares priors, not evidence)
+
+prediction volatility: sd(fitted)/sd(realised) = 0.105
+   [baseline in-sample: feng_he 0.58, r2_0p05 0.12, r2_0p01 0.06]
+
+Run diagnose_bayesian_lasso.py for R-hat, ESS and the full picture.

@@ -1,6 +1,6 @@
 {
   "seed": 0,
-  "n_draws": 4000,
+  "n_draws": 9500,
   "n_burn": 1000,
   "N": 25,
   "T": 719,
@@ -10,8 +10,8 @@
   "lambda_r": 1.0,
   "lambda_delta": 2.7651843117407068e-06,
   "sd_target": 0.0001308871597501999,
-  "precompute_seconds": 0.18314027786254883,
-  "sampling_seconds": 1096.3731007575989,
+  "precompute_seconds": 0.08950400352478027,
+  "sampling_seconds": 2796.661108970642,
   "setting": "rescaled_r2_0p05",
   "target_r2": 0.05,
   "lambda_multiplier": 1.0,
@@ -22,21 +22,21 @@
   ],
   "_shapes": {
     "B": [
-      3000,
+      8500,
       25,
       144
     ],
     "b_bar": [
-      3000,
+      8500,
       144
     ],
     "Sigma": [
-      3000,
+      8500,
       25,
       25
     ],
     "lam": [
-      3000
+      8500
     ],
     "tau2_mean": [
       25,
@@ -47,7 +47,7 @@
       144
     ],
     "tau2_track": [
-      3000,
+      8500,
       200
     ],
     "tau2_track_idx": [

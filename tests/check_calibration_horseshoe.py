@@ -98,7 +98,8 @@ DEPTH_SATURATION = 0.5
 FIELDS = ("b_bar", "theta", "b", "Sigma", "tau")
 
 
-def simulation_hyperparameters(N, K, T, sd_bbar=2.0) -> HorseshoeHyperparams:
+def simulation_hyperparameters(N, K, T, sd_bbar=2.0, tau0_mult=TAU0_MULT
+                               ) -> HorseshoeHyperparams:
     """
     Hyperparameters for the simulated regime, constructed directly rather than
     derived from data. V_Sigma = (nu-N-1) I = I, so E[Sigma] = I and the
@@ -116,7 +117,13 @@ def simulation_hyperparameters(N, K, T, sd_bbar=2.0) -> HorseshoeHyperparams:
         Delta_b_bar=sd_bbar ** 2 * np.eye(K),
         nu_Sigma=float(N + 2),
         V_Sigma=np.eye(N),
-        tau_0=TAU0_MULT / np.sqrt(T),
+        # tau0_mult must SHRINK as N*K grows. The largest of n half-Cauchy
+        # draws grows roughly linearly in n, so at full scale (3,600 local
+        # scales) the same multiplier that gives a median largest deviation of
+        # 2.1 SE at N=10 K=30 gives 29.9 SE, with a 90th percentile of 330 --
+        # datasets no achievable budget can fit. 0.0008 = 0.01 * 300/3600
+        # restores the reduced-scale difficulty profile exactly.
+        tau_0=tau0_mult / np.sqrt(T),
         p0=-1, n_choice="T",
         sigma_pooled=1.0, sd_target=1.0 / np.sqrt(T),
         max_treedepth=12,
@@ -147,10 +154,11 @@ def covered(draws, truth, lo=2.5, hi=97.5):
     return (truth >= a) & (truth <= c)
 
 
-def run_stage(label, N, K, T, n_datasets, n_draws, n_tune, chains, cores, seed0):
+def run_stage(label, N, K, T, n_datasets, n_draws, n_tune, chains, cores, seed0,
+              tau0_mult=TAU0_MULT):
     import arviz as az
 
-    hp0 = simulation_hyperparameters(N, K, T)
+    hp0 = simulation_hyperparameters(N, K, T, tau0_mult=tau0_mult)
     se = 1.0 / np.sqrt(T)
     print(f"\n{'='*76}\n{label}")
     print(f"N={N} K={K} T={T} | {n_datasets} datasets | {chains} chains x "
@@ -166,7 +174,7 @@ def run_stage(label, N, K, T, n_datasets, n_draws, n_tune, chains, cores, seed0)
 
     for d in range(n_datasets):
         seed = seed0 + d
-        hp = simulation_hyperparameters(N, K, T)
+        hp = simulation_hyperparameters(N, K, T, tau0_mult=tau0_mult)
         truth = simulate_from_prior(hp, N, K, T, seed)
         t0 = time()
         out = run_nuts(truth["R"], truth["F"], hp, n_draws=n_draws, n_tune=n_tune,
@@ -271,7 +279,8 @@ def main() -> None:
     if args.full_scale:
         run_stage("FULL SCALE -- confirmation only, NOT a coverage rate",
                   25, 144, 719, args.datasets or 3, args.draws or 500,
-                  args.tune or 1000, args.chains, args.cores, seed0=500)
+                  args.tune or 1000, args.chains, args.cores, seed0=500,
+                  tau0_mult=0.0008)
     elif args.match_dims:
         run_stage("MATCHED DIMENSIONS -- for the harmonised Chapter 4 table",
                   6, 5, 200, args.datasets or 100, args.draws or 750,
