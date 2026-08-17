@@ -74,6 +74,9 @@ import numpy as np
 
 from src.nuts.horseshoe import horseshoe_hyperparameters, run_nuts
 
+from src.nuts.regularised_horseshoe import (reg_horseshoe_hyperparameters,
+                                            run_nuts as run_nuts_reg)
+
 
 def horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
                      n_choice: str = "T", n_draws: int = 500,
@@ -173,6 +176,130 @@ def validate_budget_horseshoe(R: np.ndarray, F: np.ndarray,
         "correlation": float(np.corrcoef(B_hat.ravel(), reference_B.ravel())[0, 1]),
         "n_draws": n_draws, "n_tune": n_tune,
         "tau_mean": float(d.tau.mean()),
+        "divergences": int(d.diverging.sum()),
+        "tree_depth_mean": float(np.mean(d.tree_depth)),
+        "seconds": float(d.meta.get("sampling_seconds_all_chains", np.nan)),
+    }
+
+# =========================================================================
+# APPEND to src/nuts/backtest_adapter.py, below horseshoe_fit_fn and
+# validate_budget_horseshoe. Add to the imports at the top of that file:
+#
+#     from src.nuts.regularised_horseshoe import (
+#         reg_horseshoe_hyperparameters, run_nuts as run_nuts_reg)
+#
+# One adapter module per SAMPLER FAMILY, not per model -- the regularised
+# horseshoe belongs here alongside the plain one, not in a third file.
+# =========================================================================
+
+
+def reg_horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
+                         nu: float = 4.0, n_choice: str = "T",
+                         slab_scale: float | None = None,
+                         n_draws: int = 750, n_tune: int = 500,
+                         seed: int = 0) -> Callable:
+    """
+    Build a fit_fn for the Regularised Horseshoe.
+
+    Identical in role to horseshoe_fit_fn. Everything in that docstring about
+    point-in-time hyperparameters applies unchanged -- Delta_b_bar, V_Sigma,
+    sigma and tau_0 are recomputed inside every window from training data
+    only, so "the model" is a PROCEDURE rather than one fixed specification.
+
+    ONE ADDITION: slab_scale is also recomputed per window. It is derived from
+    target_r2, Var(r) and the mean predictor variance, all of which move with
+    the window, so passing a fixed value would freeze a quantity that should
+    be point-in-time. Passing slab_scale explicitly (e.g. 2.0) overrides that
+    and is only for the demonstration run showing P&V's illustrative default
+    never binds.
+
+    THE BUDGET IS INHERITED FROM THE PLAIN HORSESHOE'S 750/500 AND MUST BE
+    VALIDATED, not assumed. Model 3's figure was validated against model 3's
+    posterior, and this model's geometry is different in ways that could cut
+    either way: the posterior is far better conditioned (tree depth 7 against
+    9, step size 0.028 against 0.008, zero divergences against 0.9%), which
+    argues for fewer draws; but c is a NEW global parameter and tau mixes
+    somewhat worse (ESS 709 against 1,012), which argues for more.
+    check_reg_backtest_budget.py settles it.
+
+    WHAT THE TUNING PHASE HAS TO ACHIEVE HERE. tau starts at tau_0 and the
+    data moves it to about 0.09 tau_0 -- a factor of eleven, against the plain
+    horseshoe's twenty. c starts at slab_scale and the data pulls it to 0.69
+    of prior E[c]. Retaining draws before either has travelled would sample B
+    under the wrong shrinkage level: a systematic error repeated in all 40
+    windows, not a Monte Carlo one.
+
+    seed is FIXED so the returned callable is deterministic given its inputs,
+    which assert_no_lookahead requires -- otherwise sampling noise is reported
+    as look-ahead.
+
+    Sampler settings (target_accept = 0.99, init = "adapt_diag",
+    max_treedepth = 10) come from RegHorseshoeHyperparams, not from arguments
+    here, so a backtest fit cannot silently differ from the production run.
+    """
+    def fit(R_train: np.ndarray, F_train: np.ndarray) -> np.ndarray:
+        K = F_train.shape[2]
+        hp = reg_horseshoe_hyperparameters(R_train, F_train, K, p0=p0,
+                                           target_r2=target_r2, nu=nu,
+                                           n_choice=n_choice,
+                                           slab_scale=slab_scale)
+        chains = run_nuts_reg(R_train, F_train, hp, n_draws=n_draws,
+                              n_tune=n_tune, chains=1, cores=1, seed0=seed,
+                              progressbar=False)
+        return chains[0].B.mean(axis=0)
+
+    fit.settings = {"model": "regularised_horseshoe", "p0": p0,
+                    "target_r2": target_r2, "nu": nu, "n_choice": n_choice,
+                    "slab_scale": slab_scale, "n_draws": n_draws,
+                    "n_tune": n_tune, "seed": seed, "target_accept": 0.99,
+                    "init": "adapt_diag"}
+    return fit
+
+
+def validate_budget_reg_horseshoe(R: np.ndarray, F: np.ndarray,
+                                  reference_B: np.ndarray, reference_ess: float,
+                                  p0: int = 23, target_r2: float = 0.05,
+                                  n_draws: int = 750, n_tune: int = 500,
+                                  seed: int = 0) -> dict:
+    """
+    Check that the reduced backtest budget recovers the same posterior mean of
+    B as the full production run. Mirrors validate_budget_horseshoe, with two
+    extra quantities returned because this model has two global parameters:
+    tau AND c, and both must have travelled before retained draws are sampling
+    B under the right shrinkage.
+
+    reference_ess : use B's MEDIAN bulk ESS from the production run, not its
+                    minimum -- the minimum comes from a handful of stragglers
+                    and would understate the reference's precision everywhere
+                    else.
+
+    READ THE MEDIAN z, NOT THE MAX. With 3,600 parameters two perfectly
+    agreeing estimates give a max |z| whose own median is 3.73. The plain
+    horseshoe's accepted budget gave median 0.60, 99.8% within 3 SE,
+    correlation 0.9990.
+    """
+    K = F.shape[2]
+    hp = reg_horseshoe_hyperparameters(R, F, K, p0=p0, target_r2=target_r2)
+    chains = run_nuts_reg(R, F, hp, n_draws=n_draws, n_tune=n_tune, chains=1,
+                          cores=1, seed0=seed, progressbar=False)
+    d = chains[0]
+    B_hat = d.B.mean(axis=0)
+
+    ess_reduced = max(n_draws / 2.0, 1.0)      # conservative: assume ESS = n/2
+    se = np.sqrt(d.B.var(axis=0, ddof=1) / ess_reduced
+                 + d.B.var(axis=0, ddof=1) / max(reference_ess, 1.0))
+    z = np.abs(B_hat - reference_B) / np.where(se > 0, se, np.nan)
+    ratio = d.lam_tilde / d.lam_local
+
+    return {
+        "median_z": float(np.nanmedian(z)),
+        "max_z": float(np.nanmax(z)),
+        "frac_within_3": float(np.nanmean(z < 3)),
+        "correlation": float(np.corrcoef(B_hat.ravel(), reference_B.ravel())[0, 1]),
+        "n_draws": n_draws, "n_tune": n_tune,
+        "tau_mean": float(d.tau.mean()),
+        "c_mean": float(d.c.mean()),
+        "frac_binding": float((ratio < 0.99).mean()),
         "divergences": int(d.diverging.sum()),
         "tree_depth_mean": float(np.mean(d.tree_depth)),
         "seconds": float(d.meta.get("sampling_seconds_all_chains", np.nan)),
