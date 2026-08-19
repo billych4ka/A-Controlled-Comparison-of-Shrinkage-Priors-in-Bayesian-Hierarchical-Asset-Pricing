@@ -1,0 +1,779 @@
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 21 seconds.
+
+============================================================================
+MATCHED DIMENSIONS -- for the harmonised Chapter 4 table
+N=6 K=5 T=200 | 100 datasets | 2 chains x 750 draws (1000 tune)
+simulation tau_0 = 7.071e-04 = 0.01 SE (1 SE = 0.0707) | truth drawn from the model's own prior
+============================================================================
+  2 chains x 750 draws (1000 tune) in 23s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 6.03 | E-BFMI 0.76 0.92
+    0: b_bar 1.000  b 0.967  tau in   R-hat 1.003  3 div | tau   6.3x, max|th|    0.6 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 18 seconds.
+  2 chains x 750 draws (1000 tune) in 19s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 6.00 | E-BFMI 0.87 0.94
+    1: b_bar 1.000  b 1.000  tau in   R-hat 1.006  3 div | tau   4.2x, max|th|    0.5 SE | 0.3 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 18 seconds.
+  2 chains x 750 draws (1000 tune) in 19s
+  divergences 7 of 1500 (0.5%) | tree depth 6.14 5.99 | E-BFMI 1.02 0.88
+    2: b_bar 0.800  b 0.967  tau in   R-hat 1.004  7 div | tau   1.2x, max|th|    0.4 SE | 0.3 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 18 seconds.
+  2 chains x 750 draws (1000 tune) in 19s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.18 | E-BFMI 0.94 0.89
+    3: b_bar 1.000  b 1.000  tau in   R-hat 1.003  2 div | tau   1.0x, max|th|    0.1 SE | 0.3 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 371 seconds.
+  2 chains x 750 draws (1000 tune) in 372s
+  divergences 21 of 1500 (1.4%) | tree depth 11.03 11.02 | E-BFMI 0.87 0.96
+    4: b_bar 0.600  b 0.933  tau in   R-hat 1.020  21 div | tau 274.3x, max|th|   36.5 SE | 6.2 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 20 seconds.
+  2 chains x 750 draws (1000 tune) in 22s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.92 0.92
+    5: b_bar 1.000  b 1.000  tau in   R-hat 1.007  2 div | tau   1.2x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 411 seconds.
+  2 chains x 750 draws (1000 tune) in 413s
+  divergences 6 of 1500 (0.4%) | tree depth 11.00 11.01 | E-BFMI 1.05 0.87
+    6: b_bar 1.000  b 0.967  tau in   R-hat 1.002  6 div | tau   3.3x, max|th|   55.2 SE | 6.9 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 4 of 1500 (0.3%) | tree depth 6.00 5.99 | E-BFMI 0.96 0.96
+    7: b_bar 0.800  b 0.800  tau in   R-hat 1.007  4 div | tau   0.2x, max|th|    0.0 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.84 0.92
+    8: b_bar 1.000  b 1.000  tau in   R-hat 1.001  0 div | tau   2.2x, max|th|    0.2 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 23 seconds.
+  2 chains x 750 draws (1000 tune) in 25s
+  divergences 2 of 1500 (0.1%) | tree depth 5.93 5.85 | E-BFMI 0.89 0.97
+    9: b_bar 1.000  b 1.000  tau in   R-hat 1.002  2 div | tau   1.5x, max|th|    0.2 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 27s
+  divergences 0 of 1500 (0.0%) | tree depth 5.96 6.00 | E-BFMI 0.89 1.03
+   10: b_bar 1.000  b 1.000  tau in   R-hat 1.005  0 div | tau   3.4x, max|th|    0.2 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 2 of 1500 (0.1%) | tree depth 5.72 6.00 | E-BFMI 0.90 0.85
+   11: b_bar 0.600  b 0.667  tau in   R-hat 1.011  2 div | tau   1.0x, max|th|    0.2 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 22 seconds.
+  2 chains x 750 draws (1000 tune) in 24s
+  divergences 5 of 1500 (0.3%) | tree depth 6.00 6.00 | E-BFMI 0.94 0.95
+   12: b_bar 1.000  b 1.000  tau in   R-hat 1.005  5 div | tau   0.3x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 22 seconds.
+  2 chains x 750 draws (1000 tune) in 24s
+  divergences 5 of 1500 (0.3%) | tree depth 5.99 6.00 | E-BFMI 0.99 0.95
+   13: b_bar 1.000  b 0.900  tau in   R-hat 1.004  5 div | tau   3.9x, max|th|    0.5 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 22 seconds.
+  2 chains x 750 draws (1000 tune) in 24s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 5.99 | E-BFMI 0.92 1.00
+   14: b_bar 1.000  b 1.000  tau in   R-hat 1.002  0 div | tau   0.8x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 21 seconds.
+  2 chains x 750 draws (1000 tune) in 23s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.87 0.93
+   15: b_bar 1.000  b 1.000  tau in   R-hat 1.004  0 div | tau   0.2x, max|th|    0.0 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 22 seconds.
+  2 chains x 750 draws (1000 tune) in 24s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 6.01 | E-BFMI 0.89 0.97
+   16: b_bar 1.000  b 1.000  tau in   R-hat 1.002  3 div | tau   1.2x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 27s
+  divergences 6 of 1500 (0.4%) | tree depth 6.00 5.99 | E-BFMI 1.07 0.89
+   17: b_bar 0.800  b 0.767  tau in   R-hat 1.005  6 div | tau   0.8x, max|th|    0.3 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 46 seconds.
+  2 chains x 750 draws (1000 tune) in 47s
+  divergences 3 of 1500 (0.2%) | tree depth 7.01 7.95 | E-BFMI 0.82 0.83
+   18: b_bar 1.000  b 1.000  tau in   R-hat 1.004  3 div | tau   1.7x, max|th|    3.1 SE | 0.8 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 849 seconds.
+  2 chains x 750 draws (1000 tune) in 851s
+  divergences 4 of 1500 (0.3%) | tree depth 12.00 12.00 | E-BFMI 1.03 0.81
+   19: EXCLUDED  R-hat 1.036, depth sat 100% | tau   2.1x, max|th|  307.2 SE | 14.2 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 27 seconds.
+  2 chains x 750 draws (1000 tune) in 29s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.87 0.93
+   20: b_bar 1.000  b 1.000  tau in   R-hat 1.002  1 div | tau   0.4x, max|th|    0.0 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 48 seconds.
+  2 chains x 750 draws (1000 tune) in 51s
+  divergences 3 of 1500 (0.2%) | tree depth 7.00 6.99 | E-BFMI 0.84 0.94
+   21: b_bar 1.000  b 1.000  tau in   R-hat 1.003  3 div | tau   0.9x, max|th|    1.5 SE | 0.8 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 29s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 5.98 | E-BFMI 1.01 0.93
+   22: b_bar 0.800  b 0.733  tau in   R-hat 1.003  0 div | tau   1.0x, max|th|    1.2 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 29s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.89 0.94
+   23: b_bar 1.000  b 1.000  tau in   R-hat 1.001  0 div | tau   0.3x, max|th|    0.2 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 23 seconds.
+  2 chains x 750 draws (1000 tune) in 24s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 5.63 | E-BFMI 0.92 0.91
+   24: b_bar 1.000  b 0.967  tau in   R-hat 1.001  2 div | tau   2.2x, max|th|    0.4 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 28s
+  divergences 6 of 1500 (0.4%) | tree depth 6.00 5.99 | E-BFMI 0.92 0.83
+   25: b_bar 0.800  b 0.867  tau in   R-hat 1.006  6 div | tau   0.1x, max|th|    0.0 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 29 seconds.
+  2 chains x 750 draws (1000 tune) in 32s
+  divergences 2 of 1500 (0.1%) | tree depth 5.99 6.00 | E-BFMI 0.93 0.87
+   26: b_bar 1.000  b 1.000  tau in   R-hat 1.007  2 div | tau   0.8x, max|th|    0.2 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 39 seconds.
+  2 chains x 750 draws (1000 tune) in 41s
+  divergences 6 of 1500 (0.4%) | tree depth 6.98 6.75 | E-BFMI 0.93 0.90
+   27: b_bar 0.800  b 0.833  tau in   R-hat 1.001  6 div | tau   1.0x, max|th|    0.4 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 32 seconds.
+  2 chains x 750 draws (1000 tune) in 34s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 5.85 | E-BFMI 0.94 0.91
+   28: b_bar 1.000  b 1.000  tau in   R-hat 1.009  3 div | tau   0.8x, max|th|    0.1 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 28 seconds.
+  2 chains x 750 draws (1000 tune) in 30s
+  divergences 1 of 1500 (0.1%) | tree depth 5.97 5.95 | E-BFMI 0.93 0.99
+   29: b_bar 0.600  b 0.833  tau in   R-hat 1.007  1 div | tau   2.6x, max|th|    0.4 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 32 seconds.
+  2 chains x 750 draws (1000 tune) in 35s
+  divergences 4 of 1500 (0.3%) | tree depth 6.59 6.00 | E-BFMI 0.90 0.86
+   30: b_bar 0.800  b 0.967  tau in   R-hat 1.005  4 div | tau   0.9x, max|th|    0.5 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 39 seconds.
+  2 chains x 750 draws (1000 tune) in 42s
+  divergences 3 of 1500 (0.2%) | tree depth 7.00 7.00 | E-BFMI 0.80 0.83
+   31: b_bar 0.800  b 0.900  tau in   R-hat 1.005  3 div | tau   5.2x, max|th|    1.4 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 37 seconds.
+  2 chains x 750 draws (1000 tune) in 39s
+  divergences 4 of 1500 (0.3%) | tree depth 7.00 6.99 | E-BFMI 0.85 0.97
+   32: b_bar 0.800  b 0.767  tau in   R-hat 1.006  4 div | tau   2.2x, max|th|    1.3 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 31 seconds.
+  2 chains x 750 draws (1000 tune) in 33s
+  divergences 5 of 1500 (0.3%) | tree depth 6.75 6.75 | E-BFMI 0.87 0.93
+   33: b_bar 0.800  b 0.800  tau in   R-hat 1.007  5 div | tau   0.1x, max|th|    0.0 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 6.00 | E-BFMI 0.87 0.86
+   34: b_bar 0.800  b 0.833  tau in   R-hat 1.004  3 div | tau   0.2x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 33 seconds.
+  2 chains x 750 draws (1000 tune) in 35s
+  divergences 0 of 1500 (0.0%) | tree depth 6.85 6.81 | E-BFMI 0.94 0.90
+   35: b_bar 1.000  b 1.000  tau in   R-hat 1.010  0 div | tau   0.1x, max|th|    0.0 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 28s
+  divergences 6 of 1500 (0.4%) | tree depth 5.99 6.00 | E-BFMI 0.84 0.89
+   36: b_bar 1.000  b 1.000  tau in   R-hat 1.009  6 div | tau   0.5x, max|th|    0.2 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 27s
+  divergences 0 of 1500 (0.0%) | tree depth 6.03 6.00 | E-BFMI 0.94 1.01
+   37: b_bar 0.800  b 0.800  tau in   R-hat 1.004  0 div | tau   0.3x, max|th|    0.0 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 23 seconds.
+  2 chains x 750 draws (1000 tune) in 25s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 5.96 | E-BFMI 0.95 0.91
+   38: b_bar 1.000  b 0.967  tau in   R-hat 1.004  1 div | tau   1.1x, max|th|    0.7 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 1 of 1500 (0.1%) | tree depth 5.97 6.00 | E-BFMI 1.01 0.82
+   39: b_bar 0.800  b 0.867  tau OUT  R-hat 1.004  1 div | tau   6.1x, max|th|    0.3 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.99 0.86
+   40: b_bar 1.000  b 1.000  tau in   R-hat 1.003  2 div | tau   1.3x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 28 seconds.
+  2 chains x 750 draws (1000 tune) in 30s
+  divergences 7 of 1500 (0.5%) | tree depth 6.00 6.26 | E-BFMI 0.80 0.90
+   41: b_bar 0.800  b 0.833  tau OUT  R-hat 1.003  7 div | tau   0.0x, max|th|    0.0 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.91 0.91
+   42: b_bar 0.800  b 0.800  tau in   R-hat 1.005  1 div | tau   1.1x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 83 seconds.
+  2 chains x 750 draws (1000 tune) in 85s
+  divergences 5 of 1500 (0.3%) | tree depth 8.72 8.14 | E-BFMI 0.92 0.93
+   43: b_bar 1.000  b 0.967  tau in   R-hat 1.004  5 div | tau   1.5x, max|th|    6.9 SE | 1.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 27s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.88 0.94
+   44: b_bar 1.000  b 1.000  tau in   R-hat 1.003  0 div | tau   0.6x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 36 seconds.
+  2 chains x 750 draws (1000 tune) in 38s
+  divergences 1 of 1500 (0.1%) | tree depth 7.00 6.99 | E-BFMI 0.86 0.78
+   45: b_bar 1.000  b 1.000  tau in   R-hat 1.003  1 div | tau   1.1x, max|th|    0.5 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 28s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.85 0.95
+   46: b_bar 1.000  b 1.000  tau in   R-hat 1.004  0 div | tau   0.2x, max|th|    0.1 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 23 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 4 of 1500 (0.3%) | tree depth 6.00 5.99 | E-BFMI 0.82 0.94
+   47: b_bar 0.800  b 0.833  tau in   R-hat 1.004  4 div | tau   0.9x, max|th|    0.3 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 23 seconds.
+  2 chains x 750 draws (1000 tune) in 25s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 5.99 | E-BFMI 0.80 0.87
+   48: b_bar 0.800  b 0.833  tau in   R-hat 1.003  3 div | tau   3.4x, max|th|    1.3 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.01 | E-BFMI 0.88 0.76
+   49: b_bar 1.000  b 1.000  tau in   R-hat 1.003  0 div | tau   0.3x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 74 seconds.
+  2 chains x 750 draws (1000 tune) in 75s
+  divergences 6 of 1500 (0.4%) | tree depth 8.00 8.76 | E-BFMI 0.88 0.80
+   50: b_bar 1.000  b 1.000  tau in   R-hat 1.002  6 div | tau   5.5x, max|th|    3.5 SE | 1.3 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 23 seconds.
+  2 chains x 750 draws (1000 tune) in 25s
+  divergences 2 of 1500 (0.1%) | tree depth 5.99 6.00 | E-BFMI 0.93 0.84
+   51: b_bar 0.800  b 0.833  tau in   R-hat 1.004  2 div | tau   0.1x, max|th|    0.0 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 23 seconds.
+  2 chains x 750 draws (1000 tune) in 25s
+  divergences 4 of 1500 (0.3%) | tree depth 6.00 5.91 | E-BFMI 0.91 0.95
+   52: b_bar 1.000  b 0.967  tau in   R-hat 1.003  4 div | tau   1.7x, max|th|    1.0 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 25s
+  divergences 9 of 1500 (0.6%) | tree depth 5.97 6.00 | E-BFMI 0.89 0.90
+   53: b_bar 1.000  b 1.000  tau in   R-hat 1.006  9 div | tau   0.4x, max|th|    0.3 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.97 0.84
+   54: b_bar 1.000  b 1.000  tau in   R-hat 1.008  0 div | tau   0.5x, max|th|    0.1 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 833 seconds.
+  2 chains x 750 draws (1000 tune) in 835s
+  divergences 11 of 1500 (0.7%) | tree depth 11.86 11.43 | E-BFMI 0.86 0.81
+   55: EXCLUDED  R-hat 1.008, depth sat 65% | tau  26.2x, max|th|   60.5 SE | 13.9 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 13 seconds.
+/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/arviz_stats/base/diagnostics.py:90: RuntimeWarning: invalid value encountered in scalar divide
+  (between_chain_variance / within_chain_variance + num_samples - 1) / (num_samples)
+  2 chains x 750 draws (1000 tune) in 20s
+  divergences 0 of 1500 (0.0%) | tree depth 2.64 2.55 | E-BFMI 0.01 0.00
+   56: EXCLUDED  R-hat 7004388781154969.000, depth sat 0% | tau   2.9x, max|th| 110115610.4 SE | 0.3 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 35 seconds.
+  2 chains x 750 draws (1000 tune) in 37s
+  divergences 5 of 1500 (0.3%) | tree depth 6.00 5.99 | E-BFMI 1.00 0.97
+   57: b_bar 1.000  b 0.967  tau in   R-hat 1.002  5 div | tau   2.9x, max|th|    0.3 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 32 seconds.
+  2 chains x 750 draws (1000 tune) in 35s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 5.99 | E-BFMI 0.96 1.02
+   58: b_bar 1.000  b 1.000  tau in   R-hat 1.007  3 div | tau   0.1x, max|th|    0.0 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 119 seconds.
+  2 chains x 750 draws (1000 tune) in 121s
+  divergences 4 of 1500 (0.3%) | tree depth 8.00 8.92 | E-BFMI 0.84 0.92
+   59: b_bar 1.000  b 1.000  tau in   R-hat 1.002  4 div | tau   0.8x, max|th|    9.4 SE | 2.0 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 35 seconds.
+  2 chains x 750 draws (1000 tune) in 38s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.95 0.85
+   60: b_bar 1.000  b 1.000  tau in   R-hat 1.004  0 div | tau   1.0x, max|th|    0.1 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 31 seconds.
+  2 chains x 750 draws (1000 tune) in 35s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.97 0.95
+   61: b_bar 1.000  b 0.933  tau in   R-hat 1.003  1 div | tau   1.4x, max|th|    0.4 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 30 seconds.
+  2 chains x 750 draws (1000 tune) in 33s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.85 0.91
+   62: b_bar 1.000  b 1.000  tau in   R-hat 1.003  1 div | tau   0.3x, max|th|    0.0 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 27 seconds.
+  2 chains x 750 draws (1000 tune) in 32s
+  divergences 1 of 1500 (0.1%) | tree depth 5.01 5.96 | E-BFMI 0.93 0.90
+   63: b_bar 1.000  b 1.000  tau in   R-hat 1.002  1 div | tau   0.4x, max|th|    0.1 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 28 seconds.
+  2 chains x 750 draws (1000 tune) in 31s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.03 | E-BFMI 0.91 0.97
+   64: b_bar 1.000  b 1.000  tau in   R-hat 1.006  2 div | tau   1.3x, max|th|    0.5 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 28s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 5.99 | E-BFMI 0.91 0.91
+   65: b_bar 1.000  b 0.933  tau in   R-hat 1.003  0 div | tau   3.5x, max|th|    0.9 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 27 seconds.
+  2 chains x 750 draws (1000 tune) in 29s
+  divergences 3 of 1500 (0.2%) | tree depth 5.99 5.99 | E-BFMI 0.86 0.90
+   66: b_bar 1.000  b 0.967  tau in   R-hat 1.005  3 div | tau   2.3x, max|th|    0.5 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 28s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.93 1.01
+   67: b_bar 0.800  b 0.800  tau in   R-hat 1.003  0 div | tau   0.4x, max|th|    0.1 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 41 seconds.
+  2 chains x 750 draws (1000 tune) in 43s
+  divergences 9 of 1500 (0.6%) | tree depth 7.00 7.00 | E-BFMI 0.79 0.85
+   68: b_bar 1.000  b 1.000  tau in   R-hat 1.003  9 div | tau   0.6x, max|th|    1.8 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 27s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.88 1.00
+   69: b_bar 1.000  b 0.967  tau OUT  R-hat 1.006  1 div | tau   0.0x, max|th|    0.0 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 28s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.88 0.75
+   70: b_bar 1.000  b 1.000  tau in   R-hat 1.011  2 div | tau   8.0x, max|th|    0.5 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 29s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 6.00 | E-BFMI 0.80 0.95
+   71: b_bar 1.000  b 0.967  tau in   R-hat 1.007  3 div | tau   1.6x, max|th|    0.8 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 30s
+  divergences 4 of 1500 (0.3%) | tree depth 6.00 6.00 | E-BFMI 0.89 1.01
+   72: b_bar 1.000  b 1.000  tau in   R-hat 1.011  4 div | tau   0.1x, max|th|    0.0 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 25 seconds.
+  2 chains x 750 draws (1000 tune) in 27s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 5.99 | E-BFMI 0.94 1.02
+   73: b_bar 1.000  b 0.933  tau in   R-hat 1.003  0 div | tau   1.9x, max|th|    0.7 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 28s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 5.97 | E-BFMI 0.84 0.94
+   74: b_bar 1.000  b 1.000  tau in   R-hat 1.008  1 div | tau   0.1x, max|th|    0.0 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 29s
+  divergences 2 of 1500 (0.1%) | tree depth 5.98 6.00 | E-BFMI 0.97 0.92
+   75: b_bar 1.000  b 0.967  tau in   R-hat 1.007  2 div | tau   0.6x, max|th|    0.5 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 27 seconds.
+  2 chains x 750 draws (1000 tune) in 30s
+  divergences 1 of 1500 (0.1%) | tree depth 5.99 6.00 | E-BFMI 0.98 0.96
+   76: b_bar 1.000  b 1.000  tau in   R-hat 1.010  1 div | tau   2.0x, max|th|    0.1 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 37 seconds.
+  2 chains x 750 draws (1000 tune) in 41s
+  divergences 12 of 1500 (0.8%) | tree depth 6.21 6.51 | E-BFMI 0.92 0.81
+   77: b_bar 1.000  b 0.900  tau OUT  R-hat 1.003  12 div | tau  16.0x, max|th|    1.2 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 43 seconds.
+  2 chains x 750 draws (1000 tune) in 48s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.86 1.02
+   78: b_bar 1.000  b 1.000  tau OUT  R-hat 1.007  1 div | tau   0.0x, max|th|    0.0 SE | 0.8 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 32 seconds.
+  2 chains x 750 draws (1000 tune) in 35s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.96 0.88
+   79: b_bar 1.000  b 1.000  tau in   R-hat 1.007  2 div | tau   0.3x, max|th|    0.1 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 31 seconds.
+  2 chains x 750 draws (1000 tune) in 33s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.92 0.88
+   80: b_bar 1.000  b 0.867  tau in   R-hat 1.003  1 div | tau   1.2x, max|th|    0.1 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 32 seconds.
+  2 chains x 750 draws (1000 tune) in 35s
+  divergences 2 of 1500 (0.1%) | tree depth 5.95 6.00 | E-BFMI 0.87 0.80
+   81: b_bar 1.000  b 0.967  tau in   R-hat 1.002  2 div | tau   2.1x, max|th|    0.8 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 37 seconds.
+  2 chains x 750 draws (1000 tune) in 40s
+  divergences 0 of 1500 (0.0%) | tree depth 6.00 6.00 | E-BFMI 0.96 0.89
+   82: b_bar 1.000  b 1.000  tau in   R-hat 1.008  0 div | tau   1.9x, max|th|    0.1 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 36 seconds.
+  2 chains x 750 draws (1000 tune) in 40s
+  divergences 3 of 1500 (0.2%) | tree depth 6.01 6.25 | E-BFMI 0.92 0.96
+   83: b_bar 1.000  b 0.967  tau in   R-hat 1.004  3 div | tau   2.7x, max|th|    0.5 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 78 seconds.
+  2 chains x 750 draws (1000 tune) in 81s
+  divergences 11 of 1500 (0.7%) | tree depth 7.90 7.04 | E-BFMI 0.82 0.80
+   84: b_bar 1.000  b 1.000  tau in   R-hat 1.006  11 div | tau   4.9x, max|th|    3.6 SE | 1.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 64 seconds.
+  2 chains x 750 draws (1000 tune) in 71s
+  divergences 4 of 1500 (0.3%) | tree depth 7.00 7.31 | E-BFMI 0.83 0.78
+   85: b_bar 1.000  b 1.000  tau in   R-hat 1.008  4 div | tau   1.2x, max|th|    1.6 SE | 1.2 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 38 seconds.
+  2 chains x 750 draws (1000 tune) in 41s
+  divergences 2 of 1500 (0.1%) | tree depth 6.03 6.00 | E-BFMI 1.07 0.89
+   86: b_bar 1.000  b 1.000  tau in   R-hat 1.003  2 div | tau   5.1x, max|th|    0.3 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 36 seconds.
+  2 chains x 750 draws (1000 tune) in 40s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.96 0.91
+   87: b_bar 1.000  b 0.967  tau in   R-hat 1.002  2 div | tau   0.8x, max|th|    0.7 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 90 seconds.
+  2 chains x 750 draws (1000 tune) in 94s
+  divergences 15 of 1500 (1.0%) | tree depth 7.99 7.99 | E-BFMI 0.75 0.76
+   88: b_bar 1.000  b 0.967  tau in   R-hat 1.007  15 div | tau  17.9x, max|th|    4.9 SE | 1.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 41 seconds.
+  2 chains x 750 draws (1000 tune) in 43s
+  divergences 2 of 1500 (0.1%) | tree depth 5.99 6.00 | E-BFMI 1.01 0.87
+   89: b_bar 1.000  b 1.000  tau in   R-hat 1.009  2 div | tau   0.1x, max|th|    0.0 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 54 seconds.
+  2 chains x 750 draws (1000 tune) in 58s
+  divergences 3 of 1500 (0.2%) | tree depth 6.92 7.00 | E-BFMI 0.83 0.84
+   90: b_bar 1.000  b 1.000  tau in   R-hat 1.008  3 div | tau   1.7x, max|th|    1.7 SE | 1.0 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 107 seconds.
+  2 chains x 750 draws (1000 tune) in 109s
+  divergences 12 of 1500 (0.8%) | tree depth 8.00 8.55 | E-BFMI 0.87 0.93
+   91: b_bar 0.800  b 0.867  tau in   R-hat 1.003  12 div | tau   1.0x, max|th|    5.4 SE | 1.8 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 38 seconds.
+  2 chains x 750 draws (1000 tune) in 41s
+  divergences 1 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.98 0.90
+   92: b_bar 1.000  b 0.967  tau in   R-hat 1.002  1 div | tau   2.2x, max|th|    0.7 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 111 seconds.
+  2 chains x 750 draws (1000 tune) in 114s
+  divergences 5 of 1500 (0.3%) | tree depth 8.00 8.00 | E-BFMI 0.98 0.93
+   93: b_bar 1.000  b 1.000  tau in   R-hat 1.006  5 div | tau   1.4x, max|th|    3.6 SE | 1.9 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 40 seconds.
+  2 chains x 750 draws (1000 tune) in 43s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.00 | E-BFMI 0.89 1.05
+   94: b_bar 1.000  b 1.000  tau in   R-hat 1.005  2 div | tau   1.6x, max|th|    0.1 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 36 seconds.
+  2 chains x 750 draws (1000 tune) in 41s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 5.99 | E-BFMI 0.97 0.99
+   95: b_bar 1.000  b 1.000  tau in   R-hat 1.005  2 div | tau   3.7x, max|th|    0.2 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 35 seconds.
+  2 chains x 750 draws (1000 tune) in 39s
+  divergences 5 of 1500 (0.3%) | tree depth 6.00 5.99 | E-BFMI 0.90 0.96
+   96: b_bar 1.000  b 0.967  tau in   R-hat 1.005  5 div | tau   2.5x, max|th|    1.9 SE | 0.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 37 seconds.
+  2 chains x 750 draws (1000 tune) in 40s
+  divergences 1 of 1500 (0.1%) | tree depth 5.86 5.96 | E-BFMI 0.84 0.93
+   97: b_bar 1.000  b 1.000  tau OUT  R-hat 1.006  1 div | tau   0.0x, max|th|    0.0 SE | 0.7 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 63 seconds.
+  2 chains x 750 draws (1000 tune) in 66s
+  divergences 6 of 1500 (0.4%) | tree depth 6.99 7.00 | E-BFMI 0.97 0.87
+   98: b_bar 1.000  b 0.967  tau in   R-hat 1.003  6 div | tau   8.6x, max|th|    1.4 SE | 1.1 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 65 seconds.
+  2 chains x 750 draws (1000 tune) in 69s
+  divergences 6 of 1500 (0.4%) | tree depth 6.99 7.00 | E-BFMI 0.96 0.81
+   99: b_bar 1.000  b 0.933  tau in   R-hat 1.008  6 div | tau   3.5x, max|th|    0.9 SE | 1.1 min
+
+  101.0 min | 97 of 100 datasets used, 3 excluded by the convergence gate
+  EXCLUDED -- these bias the rate toward easy datasets; report them:
+    seed 1019: tau 2.1x tau_0, max|theta| 307 SE, R-hat 1.036, depth saturating 100%
+    seed 1055: tau 26.2x tau_0, max|theta| 61 SE, R-hat 1.008, depth saturating 65%
+    seed 1056: tau 2.9x tau_0, max|theta| 110115610 SE, R-hat 7004388781154969.000, depth saturating 0%
+
+  field            pooled   per-dataset mean  z vs 0.95
+            (denominator)       (THE column)
+  b_bar       459 /485          0.946 +/- 0.010       -0.3
+  theta      2740 /2910         0.942 +/- 0.007       -1.3
+  b          2758 /2910         0.948 +/- 0.008       -0.3
+  Sigma      3334 /3492         0.955 +/- 0.007       +0.7
+  tau          91 /97           0.938 +/- 0.025       -0.5
+
+  No binomial p-value: intervals within a dataset are not independent,
+  and pooling them is unstable -- the LASSO's pooled p for theta swung
+  from 0.002 to 0.048 between runs differing by less than Monte Carlo
+  error, while its per-dataset test barely moved.
+
+  rank uniformity, per dataset (mean rank ~0.5)
+  b_bar    0.509 +/- 0.013   z = +0.65
+  theta    0.504 +/- 0.006   z = +0.62
+
+  tau: correlation(true, posterior mean) = +0.996 over 97 datasets
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 602 seconds.
+
+============================================================================
+REDUCED SCALE -- coverage where the geometry exists
+N=10 K=30 T=300 | 20 datasets | 2 chains x 400 draws (800 tune)
+simulation tau_0 = 5.774e-04 = 0.01 SE (1 SE = 0.0577) | truth drawn from the model's own prior
+============================================================================
+  2 chains x 400 draws (800 tune) in 605s
+  divergences 2 of 800 (0.2%) | tree depth 9.00 9.39 | E-BFMI 0.64 0.86
+    0: b_bar 0.967  b 0.960  tau in   R-hat 1.011  2 div | tau   4.8x, max|th|   24.9 SE | 10.1 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 3090 seconds.
+  2 chains x 400 draws (800 tune) in 3093s
+  divergences 2 of 800 (0.2%) | tree depth 12.00 11.99 | E-BFMI 0.79 0.81
+    1: EXCLUDED  R-hat 1.026, depth sat 100% | tau   1.9x, max|th|  244.8 SE | 51.6 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 305 seconds.
+
+============================================================================
+REDUCED SCALE -- coverage where the geometry exists
+N=10 K=30 T=300 | 20 datasets | 2 chains x 400 draws (800 tune)
+simulation tau_0 = 5.774e-04 = 0.01 SE (1 SE = 0.0577) | truth drawn from the model's own prior
+============================================================================
+  2 chains x 400 draws (800 tune) in 308s
+  divergences 4 of 800 (0.5%) | tree depth 9.00 9.00 | E-BFMI 0.72 0.88
+    0: EXCLUDED  R-hat 1.017, depth sat 100% | tau   4.8x, max|th|   24.9 SE | 5.1 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 191 seconds.
+  2 chains x 400 draws (800 tune) in 193s
+  divergences 0 of 800 (0.0%) | tree depth 9.00 9.00 | E-BFMI 1.02 1.87
+    1: EXCLUDED  R-hat 2.817, depth sat 100% | tau   1.9x, max|th|  244.8 SE | 3.2 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]

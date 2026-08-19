@@ -1,0 +1,72 @@
+Regularised Horseshoe | size_op_25 | N=25 T=719 K=144
+  setting=p0_23_r2_0p05
+  Delta_b_bar=5.6602e-07  (shared with all four models)
+  sigma=0.0553  sd_target=1.3031e-04
+  tau_0=3.9214e-04  (p0=23 per asset, n=T)   -- IDENTICAL to the plain horseshoe
+  slab: s=1.3509e-03, nu=4, E[c]=1.9105e-03 = 14.7 x sd_target
+  prior binding P(lam > c/tau): 12.89% at tau_0, 0.70% at the plain horseshoe's posterior tau
+  nu_Sigma=27  V_Sigma=S_hat
+  target_accept=0.99  init=adapt_diag  max_treedepth=10
+  4 chains x 1500 retained draws (1000 tune) on 1 core(s)
+
+Initializing NUTS using adapt_diag...
+Sequential sampling (4 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+                                                                                   
+                                    Step     Grad                                  
+  Progress        Draw     Diver…   size     evals   Speed          Elap…   Rema…  
+ ───────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━ ━━━━━━━   1500     0        0.028    127     4.69 draws/s   0:08…   0:00…  
+  ━━━━━ ━━━━━━━   1500     0        0.029    127     4.64 draws/s   0:08…   0:00…  
+  ━━━━━ ━━━━━━━   1500     0        0.027    127     4.32 draws/s   0:09…   0:00…  
+  ━━━━━ ━━━━━━━   1500     0        0.029    127     4.28 draws/s   0:09…   0:00…  
+                                                                                   
+Sampling 4 chains for 1_000 tune and 1_500 draw iterations (4_000 + 6_000 draws total) took 2264 seconds.
+  4 chains x 1500 draws (1000 tune) in 2300s
+  divergences 0 of 6000 (0.0%) | tree depth 7.00 7.00 7.00 7.00 | E-BFMI 0.69 0.71 0.75 0.81
+  slab binding (lam_tilde/lam < 0.99): 8.8% 8.0% 8.1% 8.5%
+  chain 0 (seed 0): tau 3.0292e-05, c 1.6374e-03, 0 div, depth 7.00, bind 8.8%, 130 MB -> results/size_op_25/regularised_horseshoe/regularised_horseshoe_p0_23_r2_0p05_chain0.npz
+  chain 1 (seed 1): tau 2.9337e-05, c 1.7150e-03, 0 div, depth 7.00, bind 8.0%, 130 MB -> results/size_op_25/regularised_horseshoe/regularised_horseshoe_p0_23_r2_0p05_chain1.npz
+  chain 2 (seed 2): tau 2.9575e-05, c 1.7156e-03, 0 div, depth 7.00, bind 8.1%, 130 MB -> results/size_op_25/regularised_horseshoe/regularised_horseshoe_p0_23_r2_0p05_chain2.npz
+  chain 3 (seed 3): tau 3.0084e-05, c 1.6649e-03, 0 div, depth 7.00, bind 8.5%, 130 MB -> results/size_op_25/regularised_horseshoe/regularised_horseshoe_p0_23_r2_0p05_chain3.npz
+
+total 2323s
+
+tau (all chains): 2.9822e-05  [1.9434e-05, 4.1685e-05]
+   against tau_0 3.9214e-04  ->  ratio 0.0760
+   tau_0 inside the interval: NO
+   the plain horseshoe gave 2.1019e-05 (ratio 0.0533) on this universe
+   [READ WITH CARE: matched-dimension calibration found tau's recovery
+    correlation at -0.036 for this model against +0.996 for the plain
+    horseshoe. Where the slab binds, tau*lam~ -> c, so the coefficient
+    scale is c REGARDLESS of tau. Check tau's ESS in diagnose before
+    reading any difference from the plain horseshoe as substantive.]
+
+c  (all chains): 1.6832e-03  [1.1117e-03, 2.6537e-03]
+   prior E[c] 1.9105e-03  ->  ratio 0.8810
+   c/tau = 56.4, so the slab bites at lam above that
+
+SLAB BINDING (chain 0) -- the diagnostic this model exists for
+   lam~/lam < 0.99 for 8.79% of local scales, 316 of 3600 per draw
+   halved or more: 0.69%   median lam~/lam 0.9998   min 0.0000
+   prior prediction at this tau: 1.01%   at tau_0: 12.89%
+
+shrinkage factors kappa (chain 0): mean 0.9861, range [0.0422, 1.0000]
+   effectively-free coefficients per asset: 2.00
+   [the plain horseshoe gave mean 0.9885, range [0.0001, 1.0000],
+    1.66 free per asset. kappa is the ONLY axis on which all four
+    models are commensurable.]
+
+posterior mean b_bar, 5 largest by |value| (chain 0):
+   * RMW_x_roll_mean12        +0.00128  [+0.00046, +0.00212]
+   * EP_x_roll_skew12         +0.00109  [+0.00028, +0.00194]
+     intercept                +0.00109  [-0.00022, +0.00240]
+   * RMW_x_mom_12_1           -0.00102  [-0.00190, -0.00017]
+     CPI                      -0.00092  [-0.00221, +0.00035]
+   (* = interval excludes zero. Counting stars compares priors, not
+    evidence, and is non-monotonic in prior strength.)
+
+divergences 0 of 6000 (0.0%)  |  E-BFMI 0.69 0.71 0.75 0.81
+   [the plain horseshoe gave 0.9% on this universe. P&V report the
+    regularised version as substantially more robust, so a lower rate
+    here replicates their Sec. 4.2 claim on this data.]

@@ -1,0 +1,186 @@
+Horseshoe | size_op_25 | N=25 T=719 K=144
+  setting=p0_23_r2_0p05
+  Delta_b_bar=5.6602e-07  (shared with all four models)
+  sigma=0.0553 (pooled, df-corrected)  sd_target=1.3031e-04
+  tau_0=3.9214e-04  (p0=23 per asset, n=T)   tau_0/sd_target=3.009
+  prior implied active per asset = 29.91 of 144   (748 of 3600 in total)
+  nu_Sigma=27  V_Sigma=S_hat
+  target_accept=0.99  init=adapt_diag  max_treedepth=10
+  4 chains x 1500 retained draws (1000 tune) on 1 cores
+
+Initializing NUTS using adapt_diag...
+Sequential sampling (4 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+                                                                                                                                                                            
+  Progress                          Draw              Divergences       Step size        Grad evals       Speed                            Elapsed          Remaining       
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━━━━━━━━ ━━━━━━━━━━━━━━━━━━   1500              25                0.008            511              1.02 s/draw                      0:42:30          0:00:00         
+  ━━━━━━━━━━━━ ━━━━━━━━━━━━━━━━━━   1500              11                0.008            511              1.05 s/draw                      0:43:49          0:00:00         
+  ━━━━━━━━━━━━ ━━━━━━━━━━━━━━━━━━   1500              20                0.005            1023             1.69 s/draw                      1:10:29          0:00:00         
+  ━━━━━━━━━━━━ ━━━━━━━━━━━━━━━━━━   1500              11                0.009            511              1.05 s/draw                      0:43:44          0:00:00         
+                                                                                                                                                                            
+Sampling 4 chains for 1_000 tune and 1_500 draw iterations (4_000 + 6_000 draws total) took 12067 seconds.
+  4 chains x 1500 draws (1000 tune) in 12108s
+  divergences 67 of 6000 (1.1%) | tree depth 8.98 8.99 9.98 8.99 | E-BFMI 0.75 0.80 0.76 0.75
+  chain 0 (seed 0): tau 1.9199e-05, 25 div, depth 8.98, E-BFMI 0.75, 89 MB -> results/size_op_25/horseshoe/horseshoe_p0_23_r2_0p05_chain0.npz
+  chain 1 (seed 1): tau 1.9430e-05, 11 div, depth 8.99, E-BFMI 0.80, 89 MB -> results/size_op_25/horseshoe/horseshoe_p0_23_r2_0p05_chain1.npz
+  chain 2 (seed 2): tau 1.9558e-05, 20 div, depth 9.98, E-BFMI 0.76, 89 MB -> results/size_op_25/horseshoe/horseshoe_p0_23_r2_0p05_chain2.npz
+  chain 3 (seed 3): tau 1.9390e-05, 11 div, depth 8.99, E-BFMI 0.75, 89 MB -> results/size_op_25/horseshoe/horseshoe_p0_23_r2_0p05_chain3.npz
+
+total 12126s
+
+tau (all chains): 1.9394e-05  [1.2822e-05, 2.6754e-05]
+   against tau_0 3.9214e-04  ->  ratio 0.0495
+   tau_0 inside the interval: NO
+   implied active per asset at the posterior mean tau: 1.86   (prior centred on 29.91)
+
+shrinkage factors kappa (chain 0): mean 0.9894, range [0.0000, 1.0000]
+   implied effectively-free coefficients per asset: 1.52
+   [kappa near 1 = shrunk to the common b_bar; near 0 = left free.
+    THIS is the axis on which the four models are comparable --
+    tau and the LASSO's lambda are not commensurable.]
+
+posterior mean b_bar, 5 largest by |value| (chain 0):
+   * RMW_x_roll_mean12        +0.00129  [+0.00049, +0.00212]
+   * EP_x_roll_skew12         +0.00113  [+0.00030, +0.00189]
+     intercept                +0.00110  [-0.00036, +0.00256]
+   * RMW_x_mom_12_1           -0.00101  [-0.00190, -0.00011]
+     CPI                      -0.00095  [-0.00217, +0.00032]
+   (* = 95% credible interval excludes zero. Interval counts compare
+    priors, not evidence, and are non-monotonic in prior strength.)
+
+divergences 67 of 6000 (1.1%)  |  E-BFMI 0.75 0.80 0.76 0.75
+  *** tree depth saturating on up to 99% of draws: trajectories are being truncated, and the cost estimate for the backtest no longer holds. ***
+  [P&V report 1-30% divergences for the plain horseshoe on their own
+   datasets. Report the rate; it is documented behaviour, not a fault.]
+==============================================================================
+HORSESHOE | size_op_25 | p0_23_r2_0p05
+==============================================================================
+   4 chains x 1500 retained draws (1000 tune)
+   tau_0=3.9214e-04  (p0=23 per asset, n=T)   sigma=0.0553
+   target_accept=0.99  init=adapt_diag  max_treedepth=10
+
+==============================================================================
+1. CONVERGENCE   (R-hat < 1.01, Vehtari et al. 2021 rank-normalised
+   folded split-R-hat; ESS target 400 for posterior means)
+==============================================================================
+   b_bar          n=  144  max R-hat 1.0024  (0 > 1.01)  ESS bulk min    4855 median    6822 of 6000  tail min    3425
+   tau            n=    1  max R-hat 1.0036  (0 > 1.01)  ESS bulk min     861 median     861 of 6000  tail min    1604
+   Sigma          n=  625  max R-hat 1.0094  (0 > 1.01)  ESS bulk min     534 median     593 of 6000  tail min     730
+   lam_local      n= 3600  max R-hat 1.0110  (1 > 1.01)  ESS bulk min    1533 median    4369 of 6000  tail min     245
+
+   NOTE: lam_local covers all 3600 local scales, not a subsample.
+   The LASSO's tau^2 diagnostics cover 200 tracked traces, because
+   Gibbs needed far more draws for the same ESS and the full array
+   could not be stored. The horseshoe is therefore held to a
+   STRICTER diagnostic -- a difference in checking, not in design.
+
+==============================================================================
+2. NUTS DIAGNOSTICS, per chain
+==============================================================================
+   chain   seed    div   div %   depth   sat %      step   E-BFMI
+   0          0     25    1.7%    8.98      0%    0.0083     0.75
+   1          1     11    0.7%    8.99      0%    0.0081     0.80
+   2          2     20    1.3%    9.98     99%    0.0053     0.76
+   3          3     11    0.7%    8.99      0%    0.0088     0.75
+   total            67    1.1%
+
+   *** a chain saturates tree depth on 99% of draws.
+   Trajectories are being truncated, which is a bias risk, not just
+   a cost. Check that chain's b_bar and tau against the others
+   before reporting -- if they agree, report the saturation with
+   the evidence that it did not matter. ***
+
+   [P&V report 1-30% divergences for the ORIGINAL horseshoe across
+    four real datasets, calling it a lot and warning that biased
+    inference is a concern. This rate is citable behaviour, not a
+    fault -- and their recommended remedy is the regularised
+    horseshoe, which is model 4.]
+
+==============================================================================
+3. THE GLOBAL SCALE   tau against its calibrated tau_0
+==============================================================================
+   tau     1.9394e-05  [1.2822e-05, 2.6754e-05]
+   tau_0   3.9214e-04   ->  ratio 0.0495
+   tau_0 inside the 95% interval: NO
+   distance of tau_0 from the posterior mean: 105.7 posterior sd
+
+   implied active coefficients per asset (P&V Eq. 3.8):
+      at tau_0 (the prior's centre)      29.91 of 144
+      at the posterior mean tau          1.86
+      across the 95% interval            1.23 to 2.55
+
+   [The LASSO's lambda moved ~30% from its calibrated value. tau moves
+    by a factor of ~20, in the opposite direction -- and that is NOT a
+    contradiction: the LASSO's single scale sets one Laplace width for
+    every coefficient, while the horseshoe buys sparsity by shrinking
+    the bulk and letting the Cauchy tails carry the exceptions.]
+
+==============================================================================
+4. SHRINKAGE FACTORS kappa   -- the axis on which all models compare
+==============================================================================
+   horseshoe : mean 0.9893   [0.0000, 1.0000]   -> 1.54 effectively-free per asset
+       1th percentile of kappa across coefficients: 0.8982
+       5th percentile of kappa across coefficients: 0.9749
+      25th percentile of kappa across coefficients: 0.9915
+      50th percentile of kappa across coefficients: 0.9940
+   baseline  : mean 0.9920   [0.9625, 0.9972]   -> 1.16 effectively-free per asset
+               (varies only with the predictor scale s_j: the
+                baseline has NO local layer, so every asset gets
+                the same shrinkage on the same predictor)
+   LASSO     : mean 0.9848   [0.8872, 0.9950]   -> 2.19 effectively-free per asset
+
+   [kappa near 1 = shrunk to the common b_bar; near 0 = left free.
+    The baseline's spread comes ENTIRELY from the predictor scales;
+    the two shrinkage models add a local layer beneath a global one.
+    This is the sharper claim the design isolates: the baseline has
+    no local adaptivity at all.]
+
+==============================================================================
+5. CROSS-MODEL AGREEMENT ON b_bar   (top-20)
+==============================================================================
+   within-horseshoe ceiling (Monte Carlo alone): spearman +0.998, overlap 0.95
+   horseshoe vs baseline  correlation +0.9680   top-20 overlap 0.90
+   horseshoe vs LASSO     correlation +0.9736   top-20 overlap 0.90
+
+   pairwise Spearman on |b_bar|:
+      horseshoe  vs baseline   spearman +0.880   overlap 0.90
+      horseshoe  vs LASSO      spearman +0.902   overlap 0.90
+      baseline   vs LASSO      spearman +0.985   overlap 1.00
+
+   [Compare the between-model overlap against the within-horseshoe
+    ceiling above. An overlap close to it means the models agree as
+    well as one model agrees with itself -- three prior families
+    across two sampling paradigms is far stronger evidence about
+    the data than any one of them alone.]
+
+==============================================================================
+6. TOP 20 PREDICTORS BY |posterior mean b_bar|
+==============================================================================
+   (8 of 144 intervals exclude zero)
+   * RMW_x_roll_mean12        +0.00129  [+0.00044, +0.00216]   kappa 0.9910
+   * EP_x_roll_skew12         +0.00111  [+0.00028, +0.00193]   kappa 0.9911
+     intercept                +0.00109  [-0.00029, +0.00243]   kappa 0.9921
+   * RMW_x_mom_12_1           -0.00101  [-0.00189, -0.00010]   kappa 0.9926
+     CPI                      -0.00094  [-0.00215, +0.00031]   kappa 0.9914
+   * HML_x_lag3               -0.00089  [-0.00160, -0.00017]   kappa 0.9903
+   * DY_x_roll_vol12          +0.00088  [+0.00006, +0.00172]   kappa 0.9892
+   * UMD_x_lag3               -0.00082  [-0.00139, -0.00025]   kappa 0.9925
+     EP_x_roll_mean12         +0.00080  [-0.00024, +0.00184]   kappa 0.9837
+     DY_x_lag1                -0.00080  [-0.00165, +0.00005]   kappa 0.9876
+     NTIS                     -0.00079  [-0.00201, +0.00043]   kappa 0.9939
+     HML_x_mom_12_1           -0.00079  [-0.00179, +0.00022]   kappa 0.9935
+     DY_x_roll_mean12         -0.00077  [-0.00181, +0.00023]   kappa 0.9856
+   * CMA_x_roll_vol12         -0.00077  [-0.00149, -0.00006]   kappa 0.9488
+   * SMB_x_lag3               +0.00075  [+0.00003, +0.00145]   kappa 0.9944
+     TBL                      -0.00073  [-0.00195, +0.00051]   kappa 0.9941
+     lag6                     -0.00073  [-0.00157, +0.00013]   kappa 0.9938
+     DY_x_lag6                -0.00072  [-0.00157, +0.00014]   kappa 0.9885
+     CMA_x_lag3               +0.00065  [-0.00013, +0.00142]   kappa 0.9906
+     TMS_x_roll_mean12        +0.00062  [-0.00038, +0.00159]   kappa 0.9939
+
+   NOTE: intervals are not significance tests. A tighter prior gives
+   narrower intervals AND smaller point estimates, so counting stars
+   across models compares priors, not evidence -- the baseline gave
+   0, 11, 8 and 17 across four settings, non-monotonic in prior
+   strength. Predictor selection comes from out-of-sample performance.

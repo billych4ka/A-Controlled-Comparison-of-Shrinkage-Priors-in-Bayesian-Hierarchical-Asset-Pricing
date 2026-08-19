@@ -1,0 +1,55 @@
+Horseshoe | size_inv_25 | N=25 T=719 K=144
+  setting=p0_23_r2_0p05
+  Delta_b_bar=5.5889e-07  (shared with all four models)
+  sigma=0.0544 (pooled, df-corrected)  sd_target=1.2949e-04
+  tau_0=3.8596e-04  (p0=23 per asset, n=T)   tau_0/sd_target=2.981
+  prior implied active per asset = 29.77 of 144   (744 of 3600 in total)
+  nu_Sigma=27  V_Sigma=S_hat
+  target_accept=0.99  init=adapt_diag  max_treedepth=10
+  4 chains x 1500 retained draws (1000 tune) on 1 cores
+
+Initializing NUTS using adapt_diag...
+Sequential sampling (4 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+                                                                                   
+                                    Step     Grad                                  
+  Progress        Draw     Diver…   size     evals   Speed          Elap…   Rema…  
+ ───────────────────────────────────────────────────────────────────────────────── 
+  ━━━━━ ━━━━━━━   1500     21       0.009    511     1.02 draws/s   0:40…   0:00…  
+  ━━━━━ ━━━━━━━   1500     6        0.010    511     1.08 draws/s   0:38…   0:00…  
+  ━━━━━ ━━━━━━━   1500     13       0.012    511     1.05 draws/s   0:39…   0:00…  
+  ━━━━━ ━━━━━━━   1500     7        0.009    511     1.01 draws/s   0:41…   0:00…  
+                                                                                   
+Sampling 4 chains for 1_000 tune and 1_500 draw iterations (4_000 + 6_000 draws total) took 9652 seconds.
+  4 chains x 1500 draws (1000 tune) in 9694s
+  divergences 47 of 6000 (0.8%) | tree depth 8.99 9.00 9.00 8.99 | E-BFMI 0.71 0.71 0.80 0.75
+  chain 0 (seed 0): tau 1.3910e-05, 21 div, depth 8.99, E-BFMI 0.71, 89 MB -> results/size_inv_25/horseshoe/horseshoe_p0_23_r2_0p05_chain0.npz
+  chain 1 (seed 1): tau 1.3520e-05, 6 div, depth 9.00, E-BFMI 0.71, 89 MB -> results/size_inv_25/horseshoe/horseshoe_p0_23_r2_0p05_chain1.npz
+  chain 2 (seed 2): tau 1.3962e-05, 13 div, depth 9.00, E-BFMI 0.80, 89 MB -> results/size_inv_25/horseshoe/horseshoe_p0_23_r2_0p05_chain2.npz
+  chain 3 (seed 3): tau 1.4131e-05, 7 div, depth 8.99, E-BFMI 0.75, 89 MB -> results/size_inv_25/horseshoe/horseshoe_p0_23_r2_0p05_chain3.npz
+
+total 9706s
+
+tau (all chains): 1.3881e-05  [7.9561e-06, 2.0818e-05]
+   against tau_0 3.8596e-04  ->  ratio 0.0360
+   tau_0 inside the interval: NO
+   implied active per asset at the posterior mean tau: 1.35   (prior centred on 29.77)
+
+shrinkage factors kappa (chain 0): mean 0.9926, range [0.0003, 1.0000]
+   implied effectively-free coefficients per asset: 1.07
+   [kappa near 1 = shrunk to the common b_bar; near 0 = left free.
+    THIS is the axis on which the four models are comparable --
+    tau and the LASSO's lambda are not commensurable.]
+
+posterior mean b_bar, 5 largest by |value| (chain 0):
+     intercept                +0.00125  [-0.00005, +0.00260]
+   * UMD_x_roll_mean12        -0.00120  [-0.00212, -0.00033]
+   * RMW_x_roll_mean12        +0.00119  [+0.00040, +0.00207]
+   * DY_x_mom_12_1            -0.00114  [-0.00219, -0.00012]
+   * RMW_x_mom_12_1           -0.00109  [-0.00200, -0.00025]
+   (* = 95% credible interval excludes zero. Interval counts compare
+    priors, not evidence, and are non-monotonic in prior strength.)
+
+divergences 47 of 6000 (0.8%)  |  E-BFMI 0.71 0.71 0.80 0.75
+  [P&V report 1-30% divergences for the plain horseshoe on their own
+   datasets. Report the rate; it is documented behaviour, not a fault.]

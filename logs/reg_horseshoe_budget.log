@@ -1,0 +1,99 @@
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 300 tune and 300 draw iterations (300 + 300 draws total) took 158 seconds.
+==================================================================================
+REG. HORSESHOE BACKTEST BUDGET | size_bm_25 | p0_23_r2_0p05
+reference: 4 chains x 1500 draws, B median bulk ESS 5591
+reference tau 3.6064e-05 (0.0914 x tau_0), c 1.3233e-03 (0.6896 x E[c]), binding 12.6%
+==================================================================================
+
+RULE, fixed before the numbers: adopt the SMALLEST budget with median
+z below ~1, all within 4 SE, correlation above 0.999, tau AND c within
+20% of reference, and binding within 3pp of the reference.
+
+==================================================================================
+early t=240   (240 months, 96 residual df)
+==================================================================================
+   NOTE: compared against the FULL-SAMPLE reference B, which is
+   not this window's posterior mean. Read tau/ref, c/ref, the
+   binding fraction and the timing here; the z statistics are
+   only interpretable on the full window.
+
+    draws  tune   med z   max z   <3SE     corr  tau/ref   c/ref   bind%  div    min
+  1 chains x 300 draws (300 tune) in 182s
+  divergences 0 of 300 (0.0%) | tree depth 7.00 | E-BFMI 0.61
+  slab binding (lam_tilde/lam < 0.99): 11.3%
+      300   300    7.36   54.20  20.5%   0.4163    0.646   0.767   11.3%    0    3.1
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 222 seconds.
+  1 chains x 500 draws (500 tune) in 245s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.83
+  slab binding (lam_tilde/lam < 0.99): 12.6%
+      500   500    9.66   76.57  15.8%   0.4270    0.697   0.728   12.6%    0    4.1
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 750 draw iterations (500 + 750 draws total) took 269 seconds.
+  1 chains x 750 draws (500 tune) in 289s
+  divergences 0 of 750 (0.0%) | tree depth 7.00 | E-BFMI 0.78
+  slab binding (lam_tilde/lam < 0.99): 12.3%
+      750   500   11.64   92.24  11.9%   0.4243    0.682   0.730   12.3%    0    4.8
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 1_000 tune and 1_000 draw iterations (1_000 + 1_000 draws total) took 406 seconds.
+  1 chains x 1000 draws (1000 tune) in 426s
+  divergences 0 of 1000 (0.0%) | tree depth 7.00 | E-BFMI 0.77
+  slab binding (lam_tilde/lam < 0.99): 12.9%
+     1000  1000   13.10   95.59  10.6%   0.4236    0.720   0.733   12.9%    0    7.1
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 300 tune and 300 draw iterations (300 + 300 draws total) took 189 seconds.
+
+==================================================================================
+full t=719   (719 months, 575 residual df)
+==================================================================================
+
+    draws  tune   med z   max z   <3SE     corr  tau/ref   c/ref   bind%  div    min
+  1 chains x 300 draws (300 tune) in 209s
+  divergences 0 of 300 (0.0%) | tree depth 7.00 | E-BFMI 0.65
+  slab binding (lam_tilde/lam < 0.99): 12.9%
+      300   300    0.53    3.10 100.0%   0.9983    1.006   0.972   12.9%    0    3.5
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 270 seconds.
+  1 chains x 500 draws (500 tune) in 292s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.78
+  slab binding (lam_tilde/lam < 0.99): 12.0%
+      500   500    0.48    2.58 100.0%   0.9990    0.968   1.020   12.0%    0    4.9
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 750 draw iterations (500 + 750 draws total) took 312 seconds.
+  1 chains x 750 draws (500 tune) in 332s
+  divergences 0 of 750 (0.0%) | tree depth 7.00 | E-BFMI 0.82
+  slab binding (lam_tilde/lam < 0.99): 12.1%
+      750   500    0.53    2.89 100.0%   0.9991    0.971   1.021   12.1%    0    5.5
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 1_000 tune and 1_000 draw iterations (1_000 + 1_000 draws total) took 490 seconds.
+  1 chains x 1000 draws (1000 tune) in 510s
+  divergences 0 of 1000 (0.0%) | tree depth 7.00 | E-BFMI 0.81
+  slab binding (lam_tilde/lam < 0.99): 12.0%
+     1000  1000    0.55    3.16 100.0%   0.9994    0.978   1.024   12.0%    0    8.5
+
+   Read the MEDIAN z, not the max: with 3,600 parameters two perfectly
+   agreeing estimates give a max |z| whose own median is 3.73. The plain
+   horseshoe's accepted 750/500 gave median 0.60, 99.8% within 3 SE,
+   correlation 0.9990, at 21.1 min per full-window fit.
+
+   Multiply the chosen budget's time by 40 for one universe, and note
+   fits get SLOWER as the window expands -- the plain horseshoe's cost
+   grew FASTER than linearly in T, because a longer window sharpens the
+   posterior, lowers the step size and raises tree depth.

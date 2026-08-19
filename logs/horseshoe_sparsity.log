@@ -1,0 +1,170 @@
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 294 seconds.
+============================================================================
+SPARSITY RECOVERY  N=10 K=30 T=300 | 10 sparse + 10 dense
+requested sparsity 70% (APPROXIMATE -- exact zeros are counted per dataset)
+active coefficients at 5 SE; dense control rescaled to matched total signal
+model is given p_0 = 5 of 30 (production ratio 23/144), tau_0 = 1.1547e-02
+true active per asset ~= 9, so p_0 UNDERSTATES it
+============================================================================
+
+  2 chains x 400 draws (800 tune) in 298s
+  divergences 2 of 800 (0.2%) | tree depth 10.00 9.00 | E-BFMI 0.87 0.94
+  sparse          0: rmse 0.0290  mean|active| 0.2611  ratio 0.1110   (196 exact zeros, 196 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 205 seconds.
+  2 chains x 400 draws (800 tune) in 207s
+  divergences 4 of 800 (0.5%) | tree depth 9.02 9.00 | E-BFMI 0.78 0.72
+  sparse          1: rmse 0.0278  mean|active| 0.2020  ratio 0.1377   (204 exact zeros, 204 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 213 seconds.
+  2 chains x 400 draws (800 tune) in 216s
+  divergences 4 of 800 (0.5%) | tree depth 8.99 8.99 | E-BFMI 0.82 0.74
+  sparse          2: rmse 0.0289  mean|active| 0.2295  ratio 0.1259   (221 exact zeros, 221 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 249 seconds.
+  2 chains x 400 draws (800 tune) in 256s
+  divergences 4 of 800 (0.5%) | tree depth 9.06 9.00 | E-BFMI 0.87 0.83
+  sparse          3: rmse 0.0296  mean|active| 0.2793  ratio 0.1062   (198 exact zeros, 198 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 240 seconds.
+  2 chains x 400 draws (800 tune) in 245s
+  divergences 10 of 800 (1.2%) | tree depth 8.99 8.99 | E-BFMI 0.73 0.71
+  sparse          4: rmse 0.0276  mean|active| 0.2408  ratio 0.1144   (213 exact zeros, 213 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 339 seconds.
+  2 chains x 400 draws (800 tune) in 344s
+  divergences 4 of 800 (0.5%) | tree depth 9.00 9.87 | E-BFMI 0.77 0.75
+  sparse          5: rmse 0.0273  mean|active| 0.2276  ratio 0.1199   (210 exact zeros, 210 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 293 seconds.
+  2 chains x 400 draws (800 tune) in 296s
+  divergences 5 of 800 (0.6%) | tree depth 9.18 9.00 | E-BFMI 0.68 0.81
+  sparse          6: rmse 0.0296  mean|active| 0.2200  ratio 0.1344   (208 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 313 seconds.
+  2 chains x 400 draws (800 tune) in 317s
+  divergences 9 of 800 (1.1%) | tree depth 8.99 8.99 | E-BFMI 0.86 0.68
+  sparse          7: rmse 0.0225  mean|active| 0.2249  ratio 0.1002   (219 exact zeros, 219 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 427 seconds.
+  2 chains x 400 draws (800 tune) in 431s
+  divergences 9 of 800 (1.1%) | tree depth 8.98 9.97 | E-BFMI 0.71 0.76
+  sparse          8: rmse 0.0288  mean|active| 0.2267  ratio 0.1271   (205 exact zeros, 205 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 318 seconds.
+  2 chains x 400 draws (800 tune) in 323s
+  divergences 6 of 800 (0.8%) | tree depth 9.00 8.99 | E-BFMI 0.84 0.74
+  sparse          9: rmse 0.0281  mean|active| 0.1935  ratio 0.1453   (211 exact zeros, 211 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 519 seconds.
+  sparse: 48.9 min
+
+  dense control scored at 208 null positions, matching the sparse mean
+
+  2 chains x 400 draws (800 tune) in 522s
+  divergences 8 of 800 (1.0%) | tree depth 10.00 9.99 | E-BFMI 0.72 0.81
+  dense control   0: rmse 0.0687  mean|active| 0.2524  ratio 0.2722   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 496 seconds.
+  2 chains x 400 draws (800 tune) in 500s
+  divergences 6 of 800 (0.8%) | tree depth 9.03 10.00 | E-BFMI 0.79 0.78
+  dense control   1: rmse 0.0810  mean|active| 0.2597  ratio 0.3120   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 419 seconds.
+  2 chains x 400 draws (800 tune) in 424s
+  divergences 10 of 800 (1.2%) | tree depth 8.98 10.00 | E-BFMI 0.81 0.72
+  dense control   2: rmse 0.0801  mean|active| 0.2515  ratio 0.3186   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 261 seconds.
+  2 chains x 400 draws (800 tune) in 266s
+  divergences 9 of 800 (1.1%) | tree depth 8.93 9.03 | E-BFMI 0.79 0.66
+  dense control   3: rmse 0.0809  mean|active| 0.2490  ratio 0.3247   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 350 seconds.
+  2 chains x 400 draws (800 tune) in 356s
+  divergences 10 of 800 (1.2%) | tree depth 9.86 9.01 | E-BFMI 0.71 0.75
+  dense control   4: rmse 0.0733  mean|active| 0.2356  ratio 0.3111   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 375 seconds.
+  2 chains x 400 draws (800 tune) in 381s
+  divergences 6 of 800 (0.8%) | tree depth 10.00 9.00 | E-BFMI 0.75 0.68
+  dense control   5: rmse 0.0679  mean|active| 0.2389  ratio 0.2844   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 395 seconds.
+  2 chains x 400 draws (800 tune) in 402s
+  divergences 8 of 800 (1.0%) | tree depth 9.11 9.98 | E-BFMI 0.77 0.69
+  dense control   6: rmse 0.0714  mean|active| 0.2467  ratio 0.2893   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 311 seconds.
+  2 chains x 400 draws (800 tune) in 316s
+  divergences 9 of 800 (1.1%) | tree depth 9.10 8.99 | E-BFMI 0.79 0.64
+  dense control   7: rmse 0.0834  mean|active| 0.2308  ratio 0.3611   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 429 seconds.
+  2 chains x 400 draws (800 tune) in 435s
+  divergences 13 of 800 (1.6%) | tree depth 9.96 9.35 | E-BFMI 0.87 0.75
+  dense control   8: rmse 0.0682  mean|active| 0.2427  ratio 0.2809   (0 exact zeros, 208 scored as null)
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 522 seconds.
+  2 chains x 400 draws (800 tune) in 529s
+  divergences 5 of 800 (0.6%) | tree depth 9.73 9.98 | E-BFMI 0.84 0.76
+  dense control   9: rmse 0.0798  mean|active| 0.2559  ratio 0.3116   (0 exact zeros, 208 scored as null)
+  dense control: 69.0 min
+
+============================================================================
+                                          sparse truth   dense control
+  rmse where truth is zero/small            0.0279          0.0755
+  mean |non-zero|                           0.2306          0.2463
+  as fraction of mean |non-zero|            0.1222          0.3066
+  (SE over datasets)                        0.0046          0.0083
+
+  separation: dense - sparse = +0.1844, +19.5 SE
+  LASSO benchmark: 0.084 sparse, 0.214 dense -- dimensions NOT recorded in the
+  coding notes, so NOT necessarily comparable. Re-run the LASSO's test at
+  N=10 K=30 T=300 before placing the two side by side.
+
+  No AUC, no precision ratio: those scored 0.984 sparse and 0.936 dense for the
+  LASSO, and the precision ratio flipped ordering across seeds. They test only
+  whether local scales are ORDERED like |theta|, which every shrinkage prior
+  satisfies.

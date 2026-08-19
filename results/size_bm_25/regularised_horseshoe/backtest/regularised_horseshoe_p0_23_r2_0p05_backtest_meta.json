@@ -1,0 +1,20 @@
+{
+  "start": 240,
+  "refit_every": 12,
+  "n_refits": 40,
+  "n_oos_months": 479,
+  "seconds": 20759.213531017303,
+  "model": "regularised_horseshoe",
+  "p0": 23,
+  "target_r2": 0.05,
+  "nu": 4.0,
+  "n_choice": "T",
+  "slab_scale": null,
+  "n_draws": 500,
+  "n_tune": 500,
+  "seed": 0,
+  "target_accept": 0.99,
+  "init": "adapt_diag",
+  "label": "p0_23_r2_0p05",
+  "universe": "size_bm_25"
+}

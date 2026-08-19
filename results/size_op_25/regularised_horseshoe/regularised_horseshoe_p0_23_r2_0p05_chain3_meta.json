@@ -1,0 +1,81 @@
+{
+  "seed": 3,
+  "chain_index": 3,
+  "n_draws": 1500,
+  "n_tune": 1000,
+  "N": 25,
+  "T": 719,
+  "K": 144,
+  "tau_0": 0.0003921404021899247,
+  "p0": 23,
+  "n_choice": "T",
+  "slab_scale": 0.0013509469482566624,
+  "slab_df": 4.0,
+  "slab_sd_prior": 0.001910527496271116,
+  "sigma_pooled": 0.05531763054382208,
+  "sd_target": 0.0001303100703945575,
+  "Delta_b_bar": 5.660238148744843e-07,
+  "nu_Sigma": 27.0,
+  "target_accept": 0.99,
+  "init": "adapt_diag",
+  "max_treedepth": 10,
+  "divergences": 0,
+  "tree_depth_mean": 7.0,
+  "tree_depth_saturating": 0.0,
+  "step_size_final": 0.029303163458483616,
+  "ebfmi": 0.8095324304031486,
+  "frac_binding_0p99": 0.08546425925925925,
+  "sampling_seconds_all_chains": 2299.9884610176086,
+  "setting": "p0_23_r2_0p05",
+  "target_r2": 0.05,
+  "universe": "size_op_25",
+  "_class": "RegHorseshoeDraws",
+  "_absent_fields": [],
+  "_shapes": {
+    "B": [
+      1500,
+      25,
+      144
+    ],
+    "b_bar": [
+      1500,
+      144
+    ],
+    "lam_local": [
+      1500,
+      25,
+      144
+    ],
+    "lam_tilde": [
+      1500,
+      25,
+      144
+    ],
+    "tau": [
+      1500
+    ],
+    "c": [
+      1500
+    ],
+    "Sigma": [
+      1500,
+      25,
+      25
+    ],
+    "diverging": [
+      1500
+    ],
+    "tree_depth": [
+      1500
+    ],
+    "n_steps": [
+      1500
+    ],
+    "step_size": [
+      1500
+    ],
+    "energy": [
+      1500
+    ]
+  }
+}

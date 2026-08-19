@@ -1,0 +1,129 @@
+/Library/Frameworks/Python.framework/Versions/3.13/Resources/Python.app/Contents/MacOS/Python: can't open file '/Users/billychakravorty/Documents/MSc Dissertation/Dissertation Code/check_calibration.py': [Errno 2] No such file or directory
+Initializing NUTS using adapt_diag...
+Multiprocess sampling (2 chains in 2 jobs)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+
+========================================================================
+REDUCED SCALE (coverage rate): N=10 K=30 T=300, 20 datasets, 2 chains x 1000 draws (1000 tune)
+========================================================================
+Traceback (most recent call last):
+  File "/Users/billychakravorty/Documents/MSc Dissertation/Dissertation Code/check_calibration_horseshoe.py", line 212, in <module>
+    main()
+    ~~~~^^
+  File "/Users/billychakravorty/Documents/MSc Dissertation/Dissertation Code/check_calibration_horseshoe.py", line 198, in main
+    run_stage("REDUCED SCALE (coverage rate)", 10, 30, 300, args.datasets,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              args.draws, args.tune, args.chains, args.cores, seed0=0)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/billychakravorty/Documents/MSc Dissertation/Dissertation Code/check_calibration_horseshoe.py", line 147, in run_stage
+    hp, truth, pooled, div = one_dataset(N, K, T, seed0 + d, n_draws,
+                             ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                         n_tune, chains, cores)
+                                         ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/billychakravorty/Documents/MSc Dissertation/Dissertation Code/check_calibration_horseshoe.py", line 129, in one_dataset
+    chains_out = run_nuts(truth["R"], truth["F"], hp, n_draws=n_draws,
+                          n_tune=n_tune, chains=chains, cores=cores,
+                          seed0=10_000 + 10 * seed, progressbar=False)
+  File "/Users/billychakravorty/Documents/MSc Dissertation/Dissertation Code/src/nuts/horseshoe.py", line 655, in run_nuts
+    idata = pm.sample(draws=n_draws, tune=n_tune, chains=chains, cores=cores,
+                      target_accept=hp.target_accept, init=hp.init,
+                      max_treedepth=hp.max_treedepth, initvals=initvals,
+                      random_seed=seeds, progressbar=progressbar,
+                      compute_convergence_checks=False)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pymc/sampling/mcmc.py", line 1130, in sample
+    _mp_sample(**sample_args, **parallel_args)
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pymc/sampling/mcmc.py", line 1658, in _mp_sample
+    for draw in sampler:
+                ^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pymc/sampling/parallel.py", line 555, in __iter__
+    draw = ProcessAdapter.recv_draw(self._active)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pymc/sampling/parallel.py", line 430, in recv_draw
+    msg = ready[0].recv()
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/connection.py", line 250, in recv
+    buf = self._recv_bytes()
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/connection.py", line 430, in _recv_bytes
+    buf = self._recv(4)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/connection.py", line 399, in _recv
+    raise EOFError
+EOFError
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 313 seconds.
+
+==========================================================================
+REDUCED SCALE (coverage rate): N=10 K=30 T=300, 20 datasets, 2 chains x 400 draws (800 tune)
+simulation tau_0 = 5.774e-04 = 0.01 standard errors (1 SE = 0.0577)
+==========================================================================
+  2 chains x 400 draws (800 tune) in 316s
+  divergences 2 of 800 (0.2%) | tree depth 9.00 9.39 | E-BFMI 0.64 0.86
+  dataset  0: b_bar 29/30, tau in , R-hat 1.011, 2 div | tau    4.8x tau_0, max|theta|    24.9 SE | 5.3 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 1401 seconds.
+  2 chains x 400 draws (800 tune) in 1404s
+  divergences 2 of 800 (0.2%) | tree depth 12.00 11.99 | E-BFMI 0.79 0.81
+  dataset  1: EXCLUDED (R-hat 1.026, depth saturating 100%) | tau    1.9x tau_0, max|theta|   244.8 SE | 23.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 203 seconds.
+  2 chains x 400 draws (800 tune) in 207s
+  divergences 8 of 800 (1.0%) | tree depth 8.98 8.94 | E-BFMI 0.70 0.81
+  dataset  2: b_bar 29/30, tau in , R-hat 1.015, 8 div | tau    6.5x tau_0, max|theta|     3.6 SE | 3.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 87 seconds.
+  2 chains x 400 draws (800 tune) in 90s
+  divergences 7 of 800 (0.9%) | tree depth 6.99 7.00 | E-BFMI 0.71 0.82
+  dataset  3: b_bar 28/30, tau in , R-hat 1.014, 7 div | tau    3.0x tau_0, max|theta|     1.1 SE | 1.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 800 tune and 400 draw iterations (1_600 + 800 draws total) took 76 seconds.
+  2 chains x 400 draws (800 tune) in 79s
+  divergences 1 of 800 (0.1%) | tree depth 7.00 7.00 | E-BFMI 0.78 0.88
+  dataset  4: b_bar 29/30, tau in , R-hat 1.009, 1 div | tau    1.6x tau_0, max|theta|     1.3 SE | 1.3 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 21 seconds.
+
+============================================================================
+MATCHED DIMENSIONS -- for the harmonised Chapter 4 table
+N=6 K=5 T=200 | 100 datasets | 2 chains x 750 draws (1000 tune)
+simulation tau_0 = 7.071e-04 = 0.01 SE (1 SE = 0.0707) | truth drawn from the model's own prior
+============================================================================
+  2 chains x 750 draws (1000 tune) in 22s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 6.03 | E-BFMI 0.76 0.92
+    0: b_bar 1.000  b 0.967  tau in   R-hat 1.003  3 div | tau   6.3x, max|th|    0.6 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 20 seconds.
+  2 chains x 750 draws (1000 tune) in 21s
+  divergences 3 of 1500 (0.2%) | tree depth 6.00 6.00 | E-BFMI 0.87 0.94
+    1: b_bar 1.000  b 1.000  tau in   R-hat 1.006  3 div | tau   4.2x, max|th|    0.5 SE | 0.3 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 24 seconds.
+  2 chains x 750 draws (1000 tune) in 26s
+  divergences 7 of 1500 (0.5%) | tree depth 6.14 5.99 | E-BFMI 1.02 0.88
+    2: b_bar 0.800  b 0.967  tau in   R-hat 1.004  7 div | tau   1.2x, max|th|    0.4 SE | 0.4 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
+Sampling 2 chains for 1_000 tune and 750 draw iterations (2_000 + 1_500 draws total) took 26 seconds.
+  2 chains x 750 draws (1000 tune) in 28s
+  divergences 2 of 1500 (0.1%) | tree depth 6.00 6.18 | E-BFMI 0.94 0.89
+    3: b_bar 1.000  b 1.000  tau in   R-hat 1.003  2 div | tau   1.0x, max|th|    0.1 SE | 0.5 min
+Initializing NUTS using adapt_diag...
+Sequential sampling (2 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, Sigma_packed_z]
