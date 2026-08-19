@@ -66,7 +66,7 @@ def main() -> None:
     if args.candidates:
         grid = [tuple(int(x) for x in p.split(",")) for p in args.candidates.split(";")]
 
-    d = np.load(Path("data/processed") / f"{args.universe}_arrays.npz",
+    d = np.load(Path("../data/processed") / f"{args.universe}_arrays.npz",
                 allow_pickle=True)
     F, R = d["F"], d["R"]
     N, T, K = F.shape
