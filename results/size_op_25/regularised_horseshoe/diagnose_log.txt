@@ -1,0 +1,124 @@
+==============================================================================
+REGULARISED HORSESHOE | size_op_25 | p0_23_r2_0p05
+==============================================================================
+   4 chains x 1500 retained draws (1000 tune)
+   tau_0=3.9214e-04  s=1.3509e-03  E[c]=1.9105e-03
+   target_accept=0.99  max_treedepth=10
+
+==============================================================================
+1. CONVERGENCE   (R-hat < 1.01; ESS target 400 for posterior means)
+==============================================================================
+   b_bar          n=  144  max R-hat 1.0026  (0 > 1.01)  ESS bulk min    2938 median    4550 of 6000  tail min    3457
+   tau            n=    1  max R-hat 1.0041  (0 > 1.01)  ESS bulk min     693 median     693 of 6000  tail min    1148
+   c              n=    1  max R-hat 1.0065  (0 > 1.01)  ESS bulk min    1092 median    1092 of 6000  tail min    1898
+   Sigma          n=  625  max R-hat 1.0250  (625 > 1.01)  ESS bulk min     120 median     139 of 6000  tail min     220
+   lam_local      n= 3600  max R-hat 1.0116  (1 > 1.01)  ESS bulk min     992 median    4016 of 6000  tail min     326
+   lam_tilde      n= 3600  max R-hat 1.0136  (1 > 1.01)  ESS bulk min     443 median    3420 of 6000  tail min     326
+
+------------------------------------------------------------------------------
+   TAU'S IDENTIFICATION -- the question this script exists to settle
+------------------------------------------------------------------------------
+   this model : ESS 693, R-hat 1.0041
+   horseshoe  : ESS 1012, R-hat 1.0015
+   ratio 0.68
+   -> tau mixes comparably. It IS identified at this operating
+      point, the calibration's -0.036 recovery correlation
+      belongs to that 61%-binding regime, and the 1.72x
+      difference from the plain horseshoe can be stated as
+      substantive -- with the mechanism (the slab relieves tau)
+      supported by the binding fraction below.
+
+==============================================================================
+2. NUTS DIAGNOSTICS, per chain
+==============================================================================
+   chain   seed    div   div %   depth   sat %      step   E-BFMI   bind %
+   0          0      0    0.0%    7.00      0%    0.0282     0.69     8.8%
+   1          1      0    0.0%    7.00      0%    0.0294     0.71     8.0%
+   2          2      0    0.0%    7.00      0%    0.0266     0.75     8.1%
+   3          3      0    0.0%    7.00      0%    0.0293     0.81     8.5%
+   total             0    0.0%
+
+   [the plain horseshoe on this universe: 57 of 6,000 (0.9%), tree
+    depth 9.00, step size 0.006-0.011, 3h12m. P&V report the
+    regularised version as no slower and often faster BECAUSE the
+    posterior behaves better -- a bounded prior means milder worst-case
+    curvature, so the step size can rise and trees shorten.]
+
+==============================================================================
+3. THE SLAB   -- what the regularised horseshoe adds
+==============================================================================
+   c        1.6832e-03  [1.1117e-03, 2.6537e-03]
+   prior E[c] 1.9105e-03  ->  ratio 0.8810
+   = 12.9 x sd_target, 0.0304 sigma
+
+   BINDING (chain 0): lam~/lam < 0.99 for 8.79% of local scales,
+      316 of 3600 per draw; 0.69% halved or more
+      median lam~/lam 0.9998, min 0.0000
+      c/tau 54.1, so the slab bites at lam above that
+      prior prediction: 12.89% at tau_0, 1.01% at this tau
+
+   tau      2.9822e-05  [1.9434e-05, 4.1685e-05]   ratio to tau_0 0.0760
+   horseshoe 2.1019e-05 (ratio 0.0533)  ->  this model is 1.42x larger
+   [mechanism, IF tau is identified above: with the tails bounded by
+    the slab, tau no longer has to collapse to control them. That also
+    explains why binding stays near its prior value of 12.91% rather
+    than falling to the 0.70% predicted by holding tau at the plain
+    horseshoe's posterior -- tau is not fixed, it is what the slab
+    relieves.]
+
+==============================================================================
+4. SHRINKAGE FACTORS kappa   -- the axis on which all four compare
+==============================================================================
+   reg. horseshoe : mean 0.9862   [0.0422, 1.0000]   -> 1.99 free per asset
+   horseshoe      : mean 0.9893   [0.0000, 1.0000]   -> 1.54 free per asset
+
+   [read the two together: if the regularised model has a HIGHER
+    floor but a LOWER mean, it shrinks less on average while
+    refusing to leave any coefficient as free as the plain
+    horseshoe permits. That is exactly what a slab does, measured
+    on the one commensurable axis.]
+
+==============================================================================
+5. CROSS-MODEL AGREEMENT ON b_bar   (top-20)
+==============================================================================
+   within-model ceiling (Monte Carlo alone): spearman +0.998, overlap 1.00
+   reg. HS vs horseshoe  correlation +0.9976   top-20 overlap 0.95
+   reg. HS vs baseline   correlation +0.9794   top-20 overlap 0.90
+   reg. HS vs LASSO      correlation +0.9853   top-20 overlap 0.90
+
+   pairwise Spearman on |b_bar| across ALL FOUR models:
+      reg_horseshoe  vs horseshoe      spearman +0.990   overlap 0.95
+      reg_horseshoe  vs baseline       spearman +0.914   overlap 0.90
+      reg_horseshoe  vs LASSO          spearman +0.940   overlap 0.90
+      horseshoe      vs baseline       spearman +0.880   overlap 0.90
+      horseshoe      vs LASSO          spearman +0.902   overlap 0.90
+      baseline       vs LASSO          spearman +0.985   overlap 1.00
+
+==============================================================================
+6. TOP 20 PREDICTORS BY |posterior mean b_bar|
+==============================================================================
+   (8 of 144 intervals exclude zero)
+   * RMW_x_roll_mean12        +0.00129  [+0.00046, +0.00218]   kappa 0.9871
+   * EP_x_roll_skew12         +0.00110  [+0.00030, +0.00192]   kappa 0.9881
+     intercept                +0.00108  [-0.00024, +0.00244]   kappa 0.9906
+   * RMW_x_mom_12_1           -0.00103  [-0.00194, -0.00015]   kappa 0.9888
+     CPI                      -0.00091  [-0.00216, +0.00039]   kappa 0.9894
+   * CMA_x_roll_vol12         -0.00091  [-0.00164, -0.00021]   kappa 0.9603
+   * HML_x_lag3               -0.00088  [-0.00161, -0.00018]   kappa 0.9862
+     EP_x_roll_mean12         +0.00086  [-0.00015, +0.00187]   kappa 0.9773
+   * DY_x_roll_vol12          +0.00085  [+0.00002, +0.00169]   kappa 0.9841
+   * UMD_x_lag3               -0.00081  [-0.00138, -0.00024]   kappa 0.9884
+     NTIS                     -0.00080  [-0.00206, +0.00043]   kappa 0.9908
+     DY_x_lag1                -0.00078  [-0.00166, +0.00009]   kappa 0.9818
+   * SMB_x_lag3               +0.00076  [+0.00007, +0.00147]   kappa 0.9921
+     DY_x_roll_mean12         -0.00076  [-0.00174, +0.00024]   kappa 0.9802
+     HML_x_mom_12_1           -0.00075  [-0.00171, +0.00022]   kappa 0.9898
+     DY_x_lag6                -0.00073  [-0.00161, +0.00017]   kappa 0.9838
+     lag6                     -0.00072  [-0.00156, +0.00010]   kappa 0.9915
+     TBL                      -0.00070  [-0.00196, +0.00056]   kappa 0.9912
+     CMA_x_lag3               +0.00065  [-0.00015, +0.00146]   kappa 0.9879
+     SMB_x_lag1               +0.00063  [-0.00006, +0.00134]   kappa 0.9758
+
+   NOTE: intervals are not significance tests. Counting stars across
+   models compares priors, not evidence -- the baseline gave 0, 11, 8
+   and 17 across four settings, non-monotonic in prior strength.

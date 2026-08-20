@@ -1,0 +1,17 @@
+{
+  "r2": -0.027820496552185325,
+  "r2_median_asset": -0.029184683337168504,
+  "r2_assets_positive": 0,
+  "sharpe": 0.2635671498622566,
+  "ce": 0.008423866710761067,
+  "cw_stat": -0.7642128485345109,
+  "cw_p": 0.7776297944953228,
+  "pred_vol_ratio": 0.11833275378047942,
+  "seconds": 20461.589413881302,
+  "dm_vs_horseshoe": 0.7916254809445158,
+  "dm_p_vs_horseshoe": 0.42857908483327867,
+  "dm_vs_baseline_gaussian": 0.07690809266696867,
+  "dm_p_vs_baseline_gaussian": 0.938696659600609,
+  "dm_vs_bayesian_lasso": -0.5271651414907842,
+  "dm_p_vs_bayesian_lasso": 0.5980789133365902
+}
