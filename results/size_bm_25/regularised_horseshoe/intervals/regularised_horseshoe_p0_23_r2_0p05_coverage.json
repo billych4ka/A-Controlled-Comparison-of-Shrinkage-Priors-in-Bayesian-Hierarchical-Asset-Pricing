@@ -1,0 +1,34 @@
+{
+  "n_asset_months": 11975,
+  "coverage_coef_only": 0.13127348643006262,
+  "coverage_full": 0.9422129436325678,
+  "binomial_se": 0.001991631762461188,
+  "mean_width_coef_only": 0.01869663575568949,
+  "mean_width_full": 0.22344252739689677,
+  "width_ratio": 11.950948305173137,
+  "model": "regularised_horseshoe",
+  "universe": "size_bm_25",
+  "settings": {
+    "model": "regularised_horseshoe",
+    "p0": 23,
+    "target_r2": 0.05,
+    "nu": 4.0,
+    "n_draws": 500,
+    "n_tune": 500,
+    "seed": 0
+  },
+  "meta": {
+    "start": 240,
+    "refit_every": 12,
+    "n_refits": 40,
+    "n_oos_months": 479,
+    "levels": [
+      0.025,
+      0.975
+    ],
+    "seed": 0,
+    "seconds": 17817.146422863007
+  },
+  "max_diff_vs_backtest": 0.004273301757930278,
+  "rel_diff_vs_backtest": 0.905155819353549
+}

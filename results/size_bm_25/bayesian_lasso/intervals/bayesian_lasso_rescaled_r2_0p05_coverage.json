@@ -1,0 +1,32 @@
+{
+  "n_asset_months": 11975,
+  "coverage_coef_only": 0.13528183716075157,
+  "coverage_full": 0.9412108559498956,
+  "binomial_se": 0.001991631762461188,
+  "mean_width_coef_only": 0.018976262511767664,
+  "mean_width_full": 0.2226259065994908,
+  "width_ratio": 11.731810015878247,
+  "model": "bayesian_lasso",
+  "universe": "size_bm_25",
+  "settings": {
+    "model": "bayesian_lasso",
+    "target_r2": 0.05,
+    "n_draws": 1200,
+    "n_burn": 700,
+    "seed": 0
+  },
+  "meta": {
+    "start": 240,
+    "refit_every": 12,
+    "n_refits": 40,
+    "n_oos_months": 479,
+    "levels": [
+      0.025,
+      0.975
+    ],
+    "seed": 0,
+    "seconds": 14166.357651948929
+  },
+  "max_diff_vs_backtest": 0.0,
+  "rel_diff_vs_backtest": 0.0
+}

@@ -1,0 +1,35 @@
+==================================================================================
+CROSS-SORT POOLED PORTFOLIO
+75 predictions pooled monthly from three universes; no refitting
+==================================================================================
+
+model                           BM        OP       Inv   stacked    POOLED
+  Sharpe
+  Gaussian baseline          0.124     0.177     0.172     0.190     0.151
+  Bayesian LASSO             0.157     0.197     0.224     0.228     0.179
+  Horseshoe                  0.262     0.227     0.316     0.319     0.241
+  Regularised horseshoe      0.242     0.271     0.264     0.309     0.238
+  Certainty equivalent
+  Gaussian baseline         0.0023    0.0050    0.0046    0.0051    0.0035
+  Bayesian LASSO            0.0041    0.0059    0.0067    0.0066    0.0046
+  Horseshoe                 0.0100    0.0080    0.0108    0.0109    0.0075
+  Regularised horseshoe     0.0088    0.0096    0.0084    0.0101    0.0070
+
+==================================================================================
+pooled Sharpe: horseshoes +0.241, +0.238   Gibbs models +0.151, +0.179
+-> the family ordering survives pooling. Report as a FOURTH
+   replication of the same direction, not as a detected effect:
+   the SE of an annualised Sharpe over 479 months is 0.158.
+
+pooled versus the best single sort, per model:
+   Gaussian baseline       -0.026
+   Bayesian LASSO          -0.045
+   Horseshoe               -0.075
+   Regularised horseshoe   -0.034
+   [the three sorts partition the SAME stock universe, so the 75
+    assets are far from 75 independent bets and a pooled long-short
+    can hold offsetting stock-level positions. A pooled Sharpe that
+    does not exceed the best single sort is therefore consistent
+    with the diversification argument rather than against it.]
+
+saved -> results/cross_sort/cross_sort_results.json

@@ -1,0 +1,345 @@
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 221 seconds.
+Predictive intervals | regularised_horseshoe | size_bm_25
+  settings: {'model': 'regularised_horseshoe', 'p0': 23, 'target_r2': 0.05, 'nu': 4.0, 'n_draws': 500, 'n_tune': 500, 'seed': 0}
+  40 refits, draws retained per window
+
+  1 chains x 500 draws (500 tune) in 244s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.74
+  slab binding (lam_tilde/lam < 0.99): 12.6%
+  refit 1/40 at t=240 (249s elapsed, 9704s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 229 seconds.
+  1 chains x 500 draws (500 tune) in 247s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.87
+  slab binding (lam_tilde/lam < 0.99): 12.9%
+  refit 2/40 at t=252 (496s elapsed, 9432s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 246 seconds.
+  1 chains x 500 draws (500 tune) in 265s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.83
+  slab binding (lam_tilde/lam < 0.99): 8.8%
+  refit 3/40 at t=264 (762s elapsed, 9396s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 243 seconds.
+  1 chains x 500 draws (500 tune) in 263s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.75
+  slab binding (lam_tilde/lam < 0.99): 7.4%
+  refit 4/40 at t=276 (1025s elapsed, 9224s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 275 seconds.
+  1 chains x 500 draws (500 tune) in 294s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.70
+  slab binding (lam_tilde/lam < 0.99): 9.9%
+  refit 5/40 at t=288 (1319s elapsed, 9231s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 287 seconds.
+  1 chains x 500 draws (500 tune) in 309s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.81
+  slab binding (lam_tilde/lam < 0.99): 8.0%
+  refit 6/40 at t=300 (1628s elapsed, 9227s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 301 seconds.
+  1 chains x 500 draws (500 tune) in 323s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.86
+  slab binding (lam_tilde/lam < 0.99): 7.7%
+  refit 7/40 at t=312 (1952s elapsed, 9201s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 288 seconds.
+  1 chains x 500 draws (500 tune) in 309s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.89
+  slab binding (lam_tilde/lam < 0.99): 7.4%
+  refit 8/40 at t=324 (2261s elapsed, 9045s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 299 seconds.
+  1 chains x 500 draws (500 tune) in 322s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.82
+  slab binding (lam_tilde/lam < 0.99): 7.2%
+  refit 9/40 at t=336 (2583s elapsed, 8897s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 310 seconds.
+  1 chains x 500 draws (500 tune) in 330s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.81
+  slab binding (lam_tilde/lam < 0.99): 6.7%
+  refit 10/40 at t=348 (2913s elapsed, 8740s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 338 seconds.
+  1 chains x 500 draws (500 tune) in 359s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.82
+  slab binding (lam_tilde/lam < 0.99): 6.4%
+  refit 11/40 at t=360 (3272s elapsed, 8627s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 329 seconds.
+  1 chains x 500 draws (500 tune) in 351s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.86
+  slab binding (lam_tilde/lam < 0.99): 5.1%
+  refit 12/40 at t=372 (3624s elapsed, 8455s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 346 seconds.
+  1 chains x 500 draws (500 tune) in 367s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.79
+  slab binding (lam_tilde/lam < 0.99): 5.9%
+  refit 13/40 at t=384 (3991s elapsed, 8288s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 355 seconds.
+  1 chains x 500 draws (500 tune) in 375s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.80
+  slab binding (lam_tilde/lam < 0.99): 6.6%
+  refit 14/40 at t=396 (4366s elapsed, 8108s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 364 seconds.
+  1 chains x 500 draws (500 tune) in 384s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.79
+  slab binding (lam_tilde/lam < 0.99): 7.6%
+  refit 15/40 at t=408 (4751s elapsed, 7918s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 384 seconds.
+  1 chains x 500 draws (500 tune) in 405s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.81
+  slab binding (lam_tilde/lam < 0.99): 14.1%
+  refit 16/40 at t=420 (5156s elapsed, 7734s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 390 seconds.
+  1 chains x 500 draws (500 tune) in 412s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.80
+  slab binding (lam_tilde/lam < 0.99): 12.8%
+  refit 17/40 at t=432 (5569s elapsed, 7534s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 400 seconds.
+  1 chains x 500 draws (500 tune) in 422s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.75
+  slab binding (lam_tilde/lam < 0.99): 13.3%
+  refit 18/40 at t=444 (5991s elapsed, 7322s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 412 seconds.
+  1 chains x 500 draws (500 tune) in 434s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.76
+  slab binding (lam_tilde/lam < 0.99): 10.6%
+  refit 19/40 at t=456 (6425s elapsed, 7101s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 422 seconds.
+  1 chains x 500 draws (500 tune) in 443s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.83
+  slab binding (lam_tilde/lam < 0.99): 10.4%
+  refit 20/40 at t=468 (6868s elapsed, 6868s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 429 seconds.
+  1 chains x 500 draws (500 tune) in 450s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.84
+  slab binding (lam_tilde/lam < 0.99): 11.0%
+  refit 21/40 at t=480 (7319s elapsed, 6622s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 443 seconds.
+  1 chains x 500 draws (500 tune) in 464s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.81
+  slab binding (lam_tilde/lam < 0.99): 10.7%
+  refit 22/40 at t=492 (7783s elapsed, 6368s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 454 seconds.
+  1 chains x 500 draws (500 tune) in 475s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.76
+  slab binding (lam_tilde/lam < 0.99): 13.1%
+  refit 23/40 at t=504 (8259s elapsed, 6104s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 465 seconds.
+  1 chains x 500 draws (500 tune) in 487s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.82
+  slab binding (lam_tilde/lam < 0.99): 14.5%
+  refit 24/40 at t=516 (8746s elapsed, 5831s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 471 seconds.
+  1 chains x 500 draws (500 tune) in 494s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.77
+  slab binding (lam_tilde/lam < 0.99): 14.7%
+  refit 25/40 at t=528 (9241s elapsed, 5544s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 479 seconds.
+  1 chains x 500 draws (500 tune) in 500s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.81
+  slab binding (lam_tilde/lam < 0.99): 14.0%
+  refit 26/40 at t=540 (9741s elapsed, 5245s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 490 seconds.
+  1 chains x 500 draws (500 tune) in 512s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.81
+  slab binding (lam_tilde/lam < 0.99): 13.7%
+  refit 27/40 at t=552 (10254s elapsed, 4937s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 501 seconds.
+  1 chains x 500 draws (500 tune) in 525s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.68
+  slab binding (lam_tilde/lam < 0.99): 13.3%
+  refit 28/40 at t=564 (10780s elapsed, 4620s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 511 seconds.
+  1 chains x 500 draws (500 tune) in 534s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.84
+  slab binding (lam_tilde/lam < 0.99): 14.4%
+  refit 29/40 at t=576 (11314s elapsed, 4292s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 532 seconds.
+  1 chains x 500 draws (500 tune) in 558s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.75
+  slab binding (lam_tilde/lam < 0.99): 14.4%
+  refit 30/40 at t=588 (11872s elapsed, 3957s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 530 seconds.
+  1 chains x 500 draws (500 tune) in 555s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.76
+  slab binding (lam_tilde/lam < 0.99): 14.6%
+  refit 31/40 at t=600 (12428s elapsed, 3608s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 544 seconds.
+  1 chains x 500 draws (500 tune) in 567s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.74
+  slab binding (lam_tilde/lam < 0.99): 14.1%
+  refit 32/40 at t=612 (12995s elapsed, 3249s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 546 seconds.
+  1 chains x 500 draws (500 tune) in 568s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.68
+  slab binding (lam_tilde/lam < 0.99): 14.3%
+  refit 33/40 at t=624 (13563s elapsed, 2877s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 555 seconds.
+  1 chains x 500 draws (500 tune) in 576s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.68
+  slab binding (lam_tilde/lam < 0.99): 13.8%
+  refit 34/40 at t=636 (14140s elapsed, 2495s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 563 seconds.
+  1 chains x 500 draws (500 tune) in 586s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.74
+  slab binding (lam_tilde/lam < 0.99): 13.1%
+  refit 35/40 at t=648 (14726s elapsed, 2104s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 582 seconds.
+  1 chains x 500 draws (500 tune) in 605s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.88
+  slab binding (lam_tilde/lam < 0.99): 12.9%
+  refit 36/40 at t=660 (15332s elapsed, 1704s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 587 seconds.
+  1 chains x 500 draws (500 tune) in 609s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.70
+  slab binding (lam_tilde/lam < 0.99): 13.4%
+  refit 37/40 at t=672 (15941s elapsed, 1293s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 594 seconds.
+  1 chains x 500 draws (500 tune) in 617s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.87
+  slab binding (lam_tilde/lam < 0.99): 12.5%
+  refit 38/40 at t=684 (16558s elapsed, 871s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 604 seconds.
+  1 chains x 500 draws (500 tune) in 625s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.85
+  slab binding (lam_tilde/lam < 0.99): 12.0%
+  refit 39/40 at t=696 (17184s elapsed, 441s remaining)
+Initializing NUTS using adapt_diag...
+Sequential sampling (1 chains in 1 job)
+NUTS: [b_bar_z, z, lam, tau_z, caux, Sigma_packed_z]
+Sampling 1 chain for 500 tune and 500 draw iterations (500 + 500 draws total) took 611 seconds.
+  1 chains x 500 draws (500 tune) in 633s
+  divergences 0 of 500 (0.0%) | tree depth 7.00 | E-BFMI 0.80
+  slab binding (lam_tilde/lam < 0.99): 12.9%
+  refit 40/40 at t=708 (17817s elapsed, 0s remaining)
+
+agreement with the Chapter 5 backtest: max |diff| 4.273e-03 (90.52% of the mean absolute forecast)
+   [Gibbs models share a fixed seed and should agree essentially
+    exactly; NUTS models re-run a single chain and will differ by
+    sampling noise, which is the same magnitude as the seed-to-seed
+    variation already documented in Section 4.4.]
+
+==========================================================================
+PREDICTIVE INTERVAL COVERAGE | regularised_horseshoe
+==========================================================================
+   11,975 asset-months, nominal 95%
+   coefficient uncertainty only :  13.13%   mean width 0.0187
+   full predictive              :  94.22%   mean width 0.2234
+   width ratio (full / coef)    : 12.0x
+
+   binomial SE at nominal coverage: 0.20%
+   [a LOWER BOUND on the true standard error: asset-months are not
+    independent, being serially dependent within a refit year and
+    cross-sectionally dependent through Sigma. Quote it as such.]
+
+saved -> results/size_bm_25/regularised_horseshoe/intervals

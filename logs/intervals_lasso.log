@@ -1,0 +1,65 @@
+Predictive intervals | bayesian_lasso | size_bm_25
+  settings: {'model': 'bayesian_lasso', 'target_r2': 0.05, 'n_draws': 1200, 'n_burn': 700, 'seed': 0}
+  40 refits, draws retained per window
+
+  refit 1/40 at t=240 (363s elapsed, 14143s remaining)
+  refit 2/40 at t=252 (706s elapsed, 13414s remaining)
+  refit 3/40 at t=264 (1053s elapsed, 12983s remaining)
+  refit 4/40 at t=276 (1400s elapsed, 12596s remaining)
+  refit 5/40 at t=288 (1777s elapsed, 12438s remaining)
+  refit 6/40 at t=300 (2262s elapsed, 12820s remaining)
+  refit 7/40 at t=312 (2637s elapsed, 12430s remaining)
+  refit 8/40 at t=324 (2996s elapsed, 11986s remaining)
+  refit 9/40 at t=336 (3354s elapsed, 11551s remaining)
+  refit 10/40 at t=348 (3713s elapsed, 11138s remaining)
+  refit 11/40 at t=360 (4075s elapsed, 10743s remaining)
+  refit 12/40 at t=372 (4444s elapsed, 10370s remaining)
+  refit 13/40 at t=384 (4806s elapsed, 9981s remaining)
+  refit 14/40 at t=396 (5168s elapsed, 9597s remaining)
+  refit 15/40 at t=408 (5531s elapsed, 9218s remaining)
+  refit 16/40 at t=420 (5890s elapsed, 8836s remaining)
+  refit 17/40 at t=432 (6247s elapsed, 8452s remaining)
+  refit 18/40 at t=444 (6627s elapsed, 8099s remaining)
+  refit 19/40 at t=456 (6959s elapsed, 7691s remaining)
+  refit 20/40 at t=468 (7297s elapsed, 7297s remaining)
+  refit 21/40 at t=480 (7633s elapsed, 6906s remaining)
+  refit 22/40 at t=492 (8013s elapsed, 6556s remaining)
+  refit 23/40 at t=504 (8343s elapsed, 6167s remaining)
+  refit 24/40 at t=516 (8674s elapsed, 5783s remaining)
+  refit 25/40 at t=528 (9018s elapsed, 5411s remaining)
+  refit 26/40 at t=540 (9374s elapsed, 5047s remaining)
+  refit 27/40 at t=552 (9726s elapsed, 4683s remaining)
+  refit 28/40 at t=564 (10082s elapsed, 4321s remaining)
+  refit 29/40 at t=576 (10431s elapsed, 3957s remaining)
+  refit 30/40 at t=588 (10766s elapsed, 3589s remaining)
+  refit 31/40 at t=600 (11100s elapsed, 3223s remaining)
+  refit 32/40 at t=612 (11437s elapsed, 2859s remaining)
+  refit 33/40 at t=624 (11773s elapsed, 2497s remaining)
+  refit 34/40 at t=636 (12116s elapsed, 2138s remaining)
+  refit 35/40 at t=648 (12459s elapsed, 1780s remaining)
+  refit 36/40 at t=660 (12800s elapsed, 1422s remaining)
+  refit 37/40 at t=672 (13141s elapsed, 1065s remaining)
+  refit 38/40 at t=684 (13508s elapsed, 711s remaining)
+  refit 39/40 at t=696 (13836s elapsed, 355s remaining)
+  refit 40/40 at t=708 (14166s elapsed, 0s remaining)
+
+agreement with the Chapter 5 backtest: max |diff| 0.000e+00 (0.00% of the mean absolute forecast)
+   [Gibbs models share a fixed seed and should agree essentially
+    exactly; NUTS models re-run a single chain and will differ by
+    sampling noise, which is the same magnitude as the seed-to-seed
+    variation already documented in Section 4.4.]
+
+==========================================================================
+PREDICTIVE INTERVAL COVERAGE | bayesian_lasso
+==========================================================================
+   11,975 asset-months, nominal 95%
+   coefficient uncertainty only :  13.53%   mean width 0.0190
+   full predictive              :  94.12%   mean width 0.2226
+   width ratio (full / coef)    : 11.7x
+
+   binomial SE at nominal coverage: 0.20%
+   [a LOWER BOUND on the true standard error: asset-months are not
+    independent, being serially dependent within a refit year and
+    cross-sectionally dependent through Sigma. Quote it as such.]
+
+saved -> results/size_bm_25/bayesian_lasso/intervals

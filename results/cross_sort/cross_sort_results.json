@@ -1,0 +1,38 @@
+{
+  "Gaussian baseline": {
+    "pooled_sharpe": 0.1507307011074981,
+    "pooled_ce": 0.0035229492782336506,
+    "stacked_sharpe": 0.18954031881432204,
+    "stacked_ce": 0.005137770342766541,
+    "pooled_r2": -0.03693109116730864,
+    "n_assets": 75,
+    "n_months": 479
+  },
+  "Bayesian LASSO": {
+    "pooled_sharpe": 0.1787232760641193,
+    "pooled_ce": 0.004573562818259798,
+    "stacked_sharpe": 0.22818146247096693,
+    "stacked_ce": 0.006638061726700142,
+    "pooled_r2": -0.03746624401982701,
+    "n_assets": 75,
+    "n_months": 479
+  },
+  "Horseshoe": {
+    "pooled_sharpe": 0.24077674651807918,
+    "pooled_ce": 0.007481400638098986,
+    "stacked_sharpe": 0.3193638824667413,
+    "stacked_ce": 0.010879813958047189,
+    "pooled_r2": -0.03534918172771495,
+    "n_assets": 75,
+    "n_months": 479
+  },
+  "Regularised horseshoe": {
+    "pooled_sharpe": 0.23784010684011594,
+    "pooled_ce": 0.006962939728124981,
+    "stacked_sharpe": 0.30885254570581877,
+    "stacked_ce": 0.010086650937554939,
+    "pooled_r2": -0.035806743787065276,
+    "n_assets": 75,
+    "n_months": 479
+  }
+}

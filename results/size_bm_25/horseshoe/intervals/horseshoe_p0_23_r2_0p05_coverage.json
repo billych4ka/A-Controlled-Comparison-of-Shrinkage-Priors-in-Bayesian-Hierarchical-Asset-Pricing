@@ -1,0 +1,33 @@
+{
+  "n_asset_months": 11975,
+  "coverage_coef_only": 0.13127348643006262,
+  "coverage_full": 0.9416283924843424,
+  "binomial_se": 0.001991631762461188,
+  "mean_width_coef_only": 0.018430427976856442,
+  "mean_width_full": 0.22397595332002823,
+  "width_ratio": 12.1525096216583,
+  "model": "horseshoe",
+  "universe": "size_bm_25",
+  "settings": {
+    "model": "horseshoe",
+    "p0": 23,
+    "target_r2": 0.05,
+    "n_draws": 750,
+    "n_tune": 500,
+    "seed": 0
+  },
+  "meta": {
+    "start": 240,
+    "refit_every": 12,
+    "n_refits": 40,
+    "n_oos_months": 479,
+    "levels": [
+      0.025,
+      0.975
+    ],
+    "seed": 0,
+    "seconds": 60159.79341197014
+  },
+  "max_diff_vs_backtest": 0.007897340935719767,
+  "rel_diff_vs_backtest": 1.6554458498796898
+}

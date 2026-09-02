@@ -1,0 +1,65 @@
+Predictive intervals | baseline_gaussian | size_bm_25
+  settings: {'model': 'baseline_gaussian', 'prior': 'rescaled', 'target_r2': 0.05, 'n_draws': 500, 'n_burn': 100, 'seed': 0}
+  40 refits, draws retained per window
+
+  refit 1/40 at t=240 (190s elapsed, 7392s remaining)
+  refit 2/40 at t=252 (346s elapsed, 6571s remaining)
+  refit 3/40 at t=264 (495s elapsed, 6111s remaining)
+  refit 4/40 at t=276 (643s elapsed, 5783s remaining)
+  refit 5/40 at t=288 (787s elapsed, 5510s remaining)
+  refit 6/40 at t=300 (932s elapsed, 5281s remaining)
+  refit 7/40 at t=312 (1076s elapsed, 5070s remaining)
+  refit 8/40 at t=324 (1222s elapsed, 4888s remaining)
+  refit 9/40 at t=336 (1366s elapsed, 4705s remaining)
+  refit 10/40 at t=348 (1534s elapsed, 4602s remaining)
+  refit 11/40 at t=360 (1761s elapsed, 4641s remaining)
+  refit 12/40 at t=372 (1911s elapsed, 4458s remaining)
+  refit 13/40 at t=384 (2060s elapsed, 4278s remaining)
+  refit 14/40 at t=396 (2216s elapsed, 4116s remaining)
+  refit 15/40 at t=408 (2385s elapsed, 3975s remaining)
+  refit 16/40 at t=420 (2542s elapsed, 3813s remaining)
+  refit 17/40 at t=432 (2713s elapsed, 3671s remaining)
+  refit 18/40 at t=444 (2875s elapsed, 3514s remaining)
+  refit 19/40 at t=456 (3052s elapsed, 3373s remaining)
+  refit 20/40 at t=468 (3231s elapsed, 3231s remaining)
+  refit 21/40 at t=480 (3415s elapsed, 3089s remaining)
+  refit 22/40 at t=492 (3594s elapsed, 2941s remaining)
+  refit 23/40 at t=504 (3777s elapsed, 2791s remaining)
+  refit 24/40 at t=516 (3957s elapsed, 2638s remaining)
+  refit 25/40 at t=528 (4140s elapsed, 2484s remaining)
+  refit 26/40 at t=540 (4326s elapsed, 2329s remaining)
+  refit 27/40 at t=552 (4527s elapsed, 2180s remaining)
+  refit 28/40 at t=564 (4725s elapsed, 2025s remaining)
+  refit 29/40 at t=576 (4880s elapsed, 1851s remaining)
+  refit 30/40 at t=588 (5038s elapsed, 1679s remaining)
+  refit 31/40 at t=600 (5222s elapsed, 1516s remaining)
+  refit 32/40 at t=612 (5388s elapsed, 1347s remaining)
+  refit 33/40 at t=624 (5534s elapsed, 1174s remaining)
+  refit 34/40 at t=636 (5675s elapsed, 1001s remaining)
+  refit 35/40 at t=648 (5830s elapsed, 833s remaining)
+  refit 36/40 at t=660 (5982s elapsed, 665s remaining)
+  refit 37/40 at t=672 (6142s elapsed, 498s remaining)
+  refit 38/40 at t=684 (6294s elapsed, 331s remaining)
+  refit 39/40 at t=696 (6451s elapsed, 165s remaining)
+  refit 40/40 at t=708 (6598s elapsed, 0s remaining)
+
+agreement with the Chapter 5 backtest: max |diff| 0.000e+00 (0.00% of the mean absolute forecast)
+   [Gibbs models share a fixed seed and should agree essentially
+    exactly; NUTS models re-run a single chain and will differ by
+    sampling noise, which is the same magnitude as the seed-to-seed
+    variation already documented in Section 4.4.]
+
+==========================================================================
+PREDICTIVE INTERVAL COVERAGE | baseline_gaussian
+==========================================================================
+   11,975 asset-months, nominal 95%
+   coefficient uncertainty only :  12.99%   mean width 0.0180
+   full predictive              :  94.13%   mean width 0.2231
+   width ratio (full / coef)    : 12.4x
+
+   binomial SE at nominal coverage: 0.20%
+   [a LOWER BOUND on the true standard error: asset-months are not
+    independent, being serially dependent within a refit year and
+    cross-sectionally dependent through Sigma. Quote it as such.]
+
+saved -> results/size_bm_25/baseline_gaussian/intervals
