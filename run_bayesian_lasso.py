@@ -121,7 +121,7 @@ def main() -> None:
     print(f"  Delta_b_bar={hp.Delta_b_bar[0,0]:.4e}  (shared with all four models)")
     print(f"  s={hp.s:.4f} (pooled, df-corrected)  sd_target={hp.sd_target:.4e}")
     print(f"  lambda hyperprior: r={hp.lambda_r:g}, delta={hp.lambda_delta:.4e}"
-          f"  -> prior mean lambda {hp.lambda_prior_mean:.1f}")
+          f"  -> prior rms lambda {hp.lambda_prior_rms:.1f}")
     print(f"  nu_Sigma={hp.nu_Sigma:.0f}  V_Sigma=S_hat  |  "
           f"prior implied R^2 = {lasso_prior_implied_r2(hp, R, F):.4g}")
     print(f"  {args.chains} chains x {args.draws} sweeps ({args.burn} burn-in)\n")
@@ -149,7 +149,7 @@ def main() -> None:
     names = load_predictor_names(args.universe, K)
 
     print(f"\nlambda (chain 0): {d0.lam.mean():.1f} +- {d0.lam.std():.1f}"
-          f"   [prior centre {hp.lambda_prior_mean:.1f}]")
+          f"   [prior rms {hp.lambda_prior_rms:.1f}]")
     print(f"  implied theta prior sd {np.sqrt(2)*hp.s/d0.lam.mean():.4e}"
           f"   vs the baseline's sd_target {hp.sd_target:.4e}")
     print("  [baseline-equivalent scales: lambda 425 ~ target_r2 0.10,")

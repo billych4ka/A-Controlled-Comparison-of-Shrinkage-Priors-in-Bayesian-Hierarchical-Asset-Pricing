@@ -716,10 +716,18 @@ def rescaled_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
     precision to the median data precision; and targeting a plausible R^2.
 
     On the intercept: this shrinks b_bar_0 toward zero with a prior standard
-    deviation of about 0.9% annualised at target_r2 = 0.05. That is a
-    belief-in-the-pricing-model prior on alpha, and it sits inside the range
-    Pastor (2000) uses (1-3% annualised) -- consistent with the same source
-    already cited for Sigma's hyperparameters.
+    deviation of 0.91% annualised at target_r2 = 0.05 (0.076% monthly, x12).
+    That is a belief-in-the-pricing-model prior on alpha, marginally TIGHTER
+    than the range Pastor (2000) uses (1-3% annualised) rather than inside
+    it -- close enough to the same order to be read as consistent with the
+    source already cited for Sigma's hyperparameters, but the claim is
+    "marginally tighter than", not "within". The figure is not tuned to
+    Pastor: it falls out of target_r2 = 0.05 and the Feng-He ratio, and it
+    is one of three independent scale arguments agreeing to within 8%, so
+    landing just below the range is a consequence, not a calibration.
+    The same intercept scale propagates to all four models, since
+    bayesian_lasso, horseshoe and regularised_horseshoe each build on this
+    function's output.
 
     target_r2 : prior expected R^2. Default 0.05 is deliberately generous:
                 in-sample OLS gives 0.269 at K=144, but K/T = 0.20 means most

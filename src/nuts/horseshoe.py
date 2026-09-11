@@ -260,10 +260,12 @@ def implied_m_eff(hp: HorseshoeHyperparams, F: np.ndarray,
         E[m_eff | tau, sigma] = sum_j a_j / (1 + a_j),
         a_j = tau * sigma^-1 * sqrt(n) * s_j                (P&V Eqs. 3.8, 3.5)
 
-    with s_j the standard deviation of predictor j. This is the quantity
-    Piironen & Vehtari recommend inspecting directly when the model is more
-    complicated than the linear regression Eq. (3.12) was derived for, which
-    is the case here.
+    with s_j the ROOT MEAN SQUARE of predictor j -- P&V write it as that
+    predictor's standard deviation, which is the same thing only under their
+    zero-mean assumption; the body comment below says why this project
+    computes the mean square instead. This is the quantity Piironen & Vehtari
+    recommend inspecting directly when the model is more complicated than the
+    linear regression Eq. (3.12) was derived for, which is the case here.
 
     WHY n IS ALWAYS T, EVEN WHEN tau_0 WAS BUILT WITH n = NT
     --------------------------------------------------------
@@ -578,6 +580,10 @@ def shrinkage_factors(draws: HorseshoeDraws, F: np.ndarray,
     The per-coefficient shrinkage factors kappa_ij, P&V Eq. (2.4):
 
         kappa_ij = 1 / (1 + n sigma^-2 tau^2 lambda_ij^2 s_j^2)
+
+    with s_j the ROOT MEAN SQUARE of predictor j, not its standard deviation:
+    the intercept column has mean 1 and sd exactly 0 and would otherwise be
+    assigned no information at all. See implied_m_eff.
 
     kappa near 1 is complete shrinkage toward the common b_bar; near 0 is a
     coefficient left free. This is THE quantity in which the four models are

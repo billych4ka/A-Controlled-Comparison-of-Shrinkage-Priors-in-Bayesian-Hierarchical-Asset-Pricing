@@ -121,8 +121,19 @@ class LassoHyperparams:
         return self.V_Sigma.shape[0]
 
     @property
-    def lambda_prior_mean(self) -> float:
-        """Prior mean of lambda^2 is r/delta; this returns lambda itself."""
+    def lambda_prior_rms(self) -> float:
+        """
+        sqrt(E[lambda^2]) under the Gamma(r, delta) hyperprior on lambda^2,
+        i.e. the ROOT MEAN SQUARE of lambda, not its mean.
+
+        E[lambda^2] = r/delta, so this is sqrt(r/delta) -- the value delta is
+        solved for in lasso_hyperparameters, and the same central value
+        lasso_prior_implied_r2 evaluates at. E[lambda] is a different number:
+        at r = 1 the hyperprior on lambda^2 is Exponential(delta) and
+        E[lambda] = (sqrt(pi)/2) sqrt(1/delta), about 11.4% below this by
+        Jensen. The rms is what the calibration targets, so it is what is
+        reported; the name says so rather than implying a mean it is not.
+        """
         return float(np.sqrt(self.lambda_r / self.lambda_delta))
 
 
@@ -697,7 +708,7 @@ def initialise_state(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
     if np.linalg.eigvalsh(Sigma0).min() <= 0:
         Sigma0 = hp.V_Sigma / (hp.nu_Sigma - N - 1)
 
-    lam0 = hp.lambda_prior_mean
+    lam0 = hp.lambda_prior_rms
     return {
         "B": B0,
         "b_bar": B0.mean(axis=0),
