@@ -39,7 +39,8 @@ rescaled settings preserve their common/deviation variance ratio (33.33:1)
 exactly and change only the overall magnitude.
 
 `target_r2 = 0.05` was fixed a priori and must NOT be revised after seeing
-results. See GAUSSIAN_BASELINE_SUMMARY.md.
+results. The derivation is in `rescaled_hyperparameters`
+(`src/gibbs/baseline_gaussian.py`).
 
 ### Why two samplers
 
@@ -53,9 +54,39 @@ and leaves the target unchanged.
 `feng_he_sequential` is still valid -- at Delta_b = 0.003 the coupling is weak
 and it mixed fine -- and is retained as the cross-sampler check.
 
-## bayesian_lasso / horseshoe / regularised_horseshoe
+## bayesian_lasso
 
-Empty. See GAUSSIAN_BASELINE_SUMMARY.md section 7 before running any of them:
-Delta_b_bar = 5.710e-07 must propagate to all four models, and the regularised
-horseshoe's slab width needs recalibrating from s=2 to s=1.357e-03 or it is
-numerically identical to the plain horseshoe.
+| setting | chains (seeds) | budget | notes |
+|---|---|---|---|
+| `rescaled_r2_0p05` | 8 (0-7) | 9,500 sweeps, 1,000 burn-in | **PRIMARY.** Eight chains and the long budget are sized for lambda's ESS, which mixes far more slowly than B. |
+
+## horseshoe
+
+| setting | chains (seeds) | budget | notes |
+|---|---|---|---|
+| `p0_23_r2_0p05` | 4 (0-3) | 1,500 draws, 1,000 tune | **PRIMARY.** `target_accept = 0.99`. |
+
+## regularised_horseshoe
+
+| setting | chains (seeds) | budget | slab scale s | notes |
+|---|---|---|---|---|
+| `p0_23_r2_0p05` | 4 (0-3) | 1,500 draws, 1,000 tune | 1.357e-03 | **PRIMARY.** s derived from the same p_0 = 23 that sets tau_0. |
+| `p0_23_r2_0p05_s2` | 4 (0-3) | 300 draws, 500 tune | 2.0 | Piironen & Vehtari's illustrative slab, applied verbatim. Short budget: it exists to DEMONSTRATE the failure, not to be interpreted. |
+
+### Why the s2 run exists
+
+At P&V's illustrative s = 2.0 the slab standard deviation is 2.83 -- 51
+residual standard deviations, and 1,470x the calibrated coefficient scale --
+so it binds for 0.017 of 3,600 coefficients and the regularised horseshoe
+collapses to the plain horseshoe numerically. The `_s2` chains are kept as the
+evidence for that claim. This is the fourth instance of the project's
+scale-transportability finding, and the only one where the untransportable
+hyperparameter would have silently collapsed one model into another rather
+than raising a visible error.
+
+## Shared across all four models
+
+Delta_b_bar = 5.710e-07 propagates to all four -- `lasso_hyperparameters`,
+`horseshoe_hyperparameters` and the regularised horseshoe's builder all call
+`rescaled_hyperparameters` rather than recomputing it, so the shared hierarchy
+holds by construction rather than by three copies of a formula agreeing.

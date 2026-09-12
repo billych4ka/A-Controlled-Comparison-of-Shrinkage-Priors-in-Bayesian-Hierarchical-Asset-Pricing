@@ -82,7 +82,7 @@ PRE-REGISTERED, before model 4 is fitted:
     reported; above it, OP and Inv are run. Fixed in advance.
 
     Building Notes:
-    Verified 16 Aug (check_reg_chunk1.py, 23 checks):
+    Verified 16 Aug (23 checks against an independent NumPy reference):
     τ₀, Δb̄, ν_Σ, V_Σ, σ and sd_target identical to horseshoe_hyperparameters at
     zero tolerance. s = 1.356930e-03, ν = 4, E[c] = 1.918988e-03 = 0.034σ = 14.7× sd_target.
      Binding fraction P(λ > c/τ): 12.91% at τ₀, 0.70% (25 of 3,600) at the measured posterior τ,
@@ -96,7 +96,7 @@ PRE-REGISTERED, before model 4 is fitted:
     the regularised horseshoe would be numerically the plain horseshoe. This is the fourth instance of the project's
     scale finding, and the only one where the untransportable hyperparameter would have silently collapsed one model
     into another rather than producing a visible error.
-    Verified 16 Aug (check_reg_chunk2.py, 8 checks): total log-density at the starting point 32,874.997957,
+    Verified 16 Aug (8 checks): total log-density at the starting point 32,874.997957,
     matching an independent NumPy reference and equal to the plain horseshoe's 32,875.6117 minus the
      caux term of −0.613743. Nesting confirmed: at c → ∞ a z perturbation gives −1.286883, identical to model 3's.
      With the calibrated c the same perturbation gives −1.239592, since λ̃/λ = 0.960233 at λ = 1 — the slab is active
@@ -190,7 +190,7 @@ class RegHorseshoeHyperparams:
         it comes back near zero the regularised horseshoe has collapsed into
         the plain horseshoe and any reported difference between them is noise.
         Prior-side only -- the posterior fraction is computed from the draws in
-        diagnose_reg_horseshoe.py, and the two should be compared.
+        diagnose_regularised_horseshoe.py, and the two should be compared.
         """
         return float(2.0 / np.pi * np.arctan(1.0 / self.binding_threshold(tau)))
 
@@ -268,8 +268,8 @@ def lambda_tilde(lam: np.ndarray, tau: float | np.ndarray,
     diagnostics; kept here as a plain NumPy function so it can be tested
     against the PyTensor version and evaluated on saved draws.
 
-    The two limits are worth checking numerically and are asserted in
-    check_reg_chunk1.py: as c -> infinity, lambda~ -> lambda (the plain
+    The two limits are worth checking numerically and were asserted against
+    an independent NumPy reference during development: as c -> infinity, lambda~ -> lambda (the plain
     horseshoe); as tau*lambda >> c, lambda~ -> c/tau, so tau*lambda~ -> c and
     the prior becomes N(0, c^2) regardless of how large lambda is. That second
     limit is the whole point -- it is what caps the tails.
@@ -324,7 +324,8 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: RegHorseshoeHyperparams):
     to expect it to differ here, and re-testing it would cost 20 minutes to
     reconfirm a settled question.
 
-    THE NESTING, which check_reg_chunk2.py verifies rather than asserts:
+    THE NESTING, which was verified numerically during development rather
+    than asserted:
     as c -> infinity, lambda~ -> lambda and this model becomes the plain
     horseshoe EXACTLY. That is what makes models 3 and 4 a controlled pair --
     one hyperparameter apart, with one limit collapsing the other.
@@ -402,7 +403,7 @@ def transformed_point(model, initvals: dict) -> dict:
     a variable is renamed rather than silently evaluating at the default point.
 
     pm.sample() takes the UNTRANSFORMED initvals; this is only for evaluating
-    logp and gradients directly, as check_reg_chunk2.py does.
+    logp and gradients directly, as the development log-density checks do.
     """
     point = model.initial_point()
     expected = {"b_bar_z", "z", "lam_log__", "tau_z_log__", "caux_log__",

@@ -1,5 +1,5 @@
 """
-check_divergences2.py  --  does target_accept fix the horseshoe's divergences,
+check_divergences_horseshoe.py  --  does target_accept fix the horseshoe's divergences,
 and where are they actually coming from?
 
 WHAT THE FIRST ROUND ESTABLISHED (check_divergences_horseshoe.py, 13 Aug)
@@ -32,10 +32,10 @@ WHAT THIS SCRIPT DOES
 USAGE -- the ta=0.9 run must be REPEATED here, since the earlier file predates
 the scan fields:
 
-    caffeinate -i python3 check_divergences2.py --target-accept 0.9
-    caffeinate -i python3 check_divergences2.py --target-accept 0.95
-    caffeinate -i python3 check_divergences2.py --target-accept 0.99
-    python3 check_divergences2.py --compare 0.9 0.99
+    caffeinate -i python3 check_divergences_horseshoe.py --target-accept 0.9
+    caffeinate -i python3 check_divergences_horseshoe.py --target-accept 0.95
+    caffeinate -i python3 check_divergences_horseshoe.py --target-accept 0.99
+    python3 check_divergences_horseshoe.py --compare 0.9 0.99
 
 Expect roughly 8, 12 and 20+ minutes: the step size falls as target_accept
 rises, so tree depth goes 8 -> 9 and the cost per draw doubles at each step.

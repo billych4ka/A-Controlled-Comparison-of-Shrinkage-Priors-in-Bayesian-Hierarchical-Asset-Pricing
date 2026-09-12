@@ -2,7 +2,7 @@
 src/likelihood/sur.py
 
 Shared SUR (seemingly unrelated regressions) likelihood for the Bayesian
-hierarchical asset-pricing model (Feng & He, 2020/2021). Imported identically
+hierarchical asset-pricing model (Feng & He, 2022). Imported identically
 by all four model chats so the "same likelihood throughout" design decision
 is enforced in code, not just in the write-up.
 
@@ -56,7 +56,7 @@ def sur_residuals(R: np.ndarray, F: np.ndarray, b: np.ndarray) -> np.ndarray:
 def sur_log_likelihood_numpy(R: np.ndarray, F: np.ndarray, b: np.ndarray,
                               Sigma: np.ndarray) -> float:
     """
-    Log-likelihood of the SUR model, exploiting the Omega = Sigma (x) I_N
+    Log-likelihood of the SUR model, exploiting the Omega = Sigma (x) I_T
     block structure: log p(R | F, b, Sigma) = sum_t log N(e_t; 0, Sigma),
     where e_t = R[:,t] - F[:,t,:] @ b is the length-N residual vector at
     time t.

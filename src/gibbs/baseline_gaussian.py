@@ -2,7 +2,7 @@
 src/gibbs/baseline_gaussian.py
 
 Gaussian-baseline Gibbs sampler for the Bayesian hierarchical SUR
-asset-pricing model (Feng & He, 2020/2021), implementing their four-step
+asset-pricing model (Feng & He, 2022), implementing their four-step
 MCMC scheme (their eq. 14-18) by hand.
 
 This is the reference model against which the three shrinkage priors
@@ -711,9 +711,13 @@ def rescaled_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
     The factor is set so that the prior's implied R^2 equals target_r2:
         s^2 = target_r2 * Var(r) / trace(C),   c = s^2 / (0.1 + 0.003)
 
-    Three independent arguments agree on the resulting scale to within 8%:
-    matching Feng & He's own effective predictor scale; equating prior
-    precision to the median data precision; and targeting a plausible R^2.
+    Two independent arguments agree on the resulting scale to within
+    0.3-4.3%: equating prior precision to the median data precision, and
+    targeting a plausible R^2. An earlier version of this note claimed three
+    agreeing routes, the third being a match to Feng & He's own effective
+    predictor scale. That comparison was not like-for-like -- it put a
+    DEVIATION scale against two TOTAL scales -- and the route is withdrawn
+    rather than reconciled.
 
     On the intercept: this shrinks b_bar_0 toward zero with a prior standard
     deviation of 0.91% annualised at target_r2 = 0.05 (0.076% monthly, x12).
@@ -723,8 +727,8 @@ def rescaled_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
     source already cited for Sigma's hyperparameters, but the claim is
     "marginally tighter than", not "within". The figure is not tuned to
     Pastor: it falls out of target_r2 = 0.05 and the Feng-He ratio, and it
-    is one of three independent scale arguments agreeing to within 8%, so
-    landing just below the range is a consequence, not a calibration.
+    is one of two independent scale arguments agreeing to within 0.3-4.3%,
+    so landing just below the range is a consequence, not a calibration.
     The same intercept scale propagates to all four models, since
     bayesian_lasso, horseshoe and regularised_horseshoe each build on this
     function's output.

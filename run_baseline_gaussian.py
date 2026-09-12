@@ -105,15 +105,17 @@ def main() -> None:
                           seed=seed, progress_every=max(args.draws // 10, 1))
         draws.meta["prior"] = tag
         draws.meta["target_r2"] = args.target_r2 if args.prior == "rescaled" else None
-        out = save_draws(draws, outdir / f"baseline_gaussian_{tag}_chain{k}")
-        print(f"  chain {k} (seed {seed}): {time()-t0:.0f}s, "
+        # seed0 + k in the FILENAME, not k, so --seed0 4 cannot overwrite
+        # chains 0-3. With the default seed0 = 0 the names are unchanged.
+        out = save_draws(draws, outdir / f"baseline_gaussian_{tag}_chain{seed}")
+        print(f"  chain {seed} (seed {seed}): {time()-t0:.0f}s, "
               f"{out.stat().st_size/1e6:.0f} MB -> {out}")
 
     print(f"\ntotal {time()-t_all:.0f}s")
-    print("posterior mean b_bar, 5 largest by |value| (chain 0):")
+    print(f"posterior mean b_bar, 5 largest by |value| (chain {args.seed0}):")
     from src.gibbs.io import load_draws
     from src.gibbs.baseline_gaussian import GibbsDraws
-    d0 = load_draws(outdir / f"baseline_gaussian_{tag}_chain0", GibbsDraws)
+    d0 = load_draws(outdir / f"baseline_gaussian_{tag}_chain{args.seed0}", GibbsDraws)
     names = load_predictor_names(args.universe, K)
     m = d0.b_bar.mean(axis=0)
     for j in np.argsort(-np.abs(m))[:5]:

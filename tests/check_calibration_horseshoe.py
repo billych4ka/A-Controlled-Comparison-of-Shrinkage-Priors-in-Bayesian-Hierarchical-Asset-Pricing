@@ -4,8 +4,8 @@ check_calibration_horseshoe.py -- validation step 5.
 Simulate a parameter set from the horseshoe's OWN prior, generate returns from
 it, fit, and ask whether the truth falls inside the 95% credible intervals.
 About 95% should. This is the only end-to-end test in the sequence:
-check_chunk2 proved the log-density correct at one point, this proves the whole
-machine correct on average.
+an independent NumPy reference proved the log-density correct at one point
+during development; this proves the whole machine correct on average.
 
 EVERY quantity is drawn from the prior the sampler conditions on -- b_bar from
 N(0, Delta_b_bar), tau from C+(0, tau_0), lambda from C+(0,1), z from N(0,1),

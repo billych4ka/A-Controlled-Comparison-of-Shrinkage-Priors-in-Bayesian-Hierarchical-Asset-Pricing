@@ -2,7 +2,7 @@
 src/simulate/generate.py
 
 Simulated-data generator for the Bayesian hierarchical SUR asset-pricing model
-(Feng & He, 2020/2021). Used to validate the Gibbs samplers and NUTS models
+(Feng & He, 2022). Used to validate the Gibbs samplers and NUTS models
 against known ground truth before touching real data.
 """
 
@@ -85,14 +85,14 @@ def generate_predictors(rng: np.random.Generator, N: int, T: int, K: int) -> np.
 def generate_residuals(rng: np.random.Generator, N: int, T: int,
                         Sigma: np.ndarray) -> np.ndarray:
     """
-    Draw residuals E ~ N(0, Sigma (x) I_N): for each time period t, draw an
+    Draw residuals E ~ N(0, Sigma (x) I_T): for each time period t, draw an
     N-length vector jointly from N(0, Sigma), giving residuals correlated
     across assets within a period and independent across time.
 
     Returns E with shape (N, T), i.e. E[:, t] ~ N(0, Sigma).
     """
     # rng.multivariate_normal(size=T) draws T iid vectors of length N,
-    # each ~ N(0, Sigma) -- exactly the Omega = Sigma (x) I_N structure.
+    # each ~ N(0, Sigma) -- exactly the Omega = Sigma (x) I_T structure.
     E_T_by_N = rng.multivariate_normal(mean=np.zeros(N), cov=Sigma, size=T)  # (T, N)
     return E_T_by_N.T  # (N, T)
 

@@ -158,8 +158,9 @@ def main() -> None:
         draws.meta["setting"] = tag
         draws.meta["target_r2"] = args.target_r2
         draws.meta["universe"] = args.universe
-        # seed0 + k in the FILENAME, not k: run_bayesian_lasso.py uses the loop
-        # index, so --seed0 4 silently overwrote chains 0-3
+        # seed0 + k in the FILENAME, not k, so --seed0 4 cannot overwrite
+        # chains 0-3. The Gibbs runners used the loop index and were
+        # corrected to match; with the default seed0 = 0 no name changes.
         out = save_draws(draws, outdir / f"{MODEL}_{tag}_chain{args.seed0 + k}")
         print(f"  chain {args.seed0 + k} (seed {draws.meta['seed']}): "
               f"tau {draws.tau.mean():.4e}, c {draws.c.mean():.4e}, "

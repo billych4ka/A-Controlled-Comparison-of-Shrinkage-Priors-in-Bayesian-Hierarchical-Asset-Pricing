@@ -209,9 +209,11 @@ def lasso_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
         delta = r / (lambda_prior_multiplier * lambda_cal)^2
 
     which centres the hyperprior on the calibrated value with r = 1, the most
-    diffuse proper choice. lambda_prior_multiplier exists for the sensitivity
-    check: at 0.1 and 10 the posterior mean of lambda moves by about 1%,
-    which is the point.
+    diffuse proper choice. lambda_prior_multiplier rescales delta away from
+    that calibrated centre, so the hyperprior's influence on the posterior
+    lambda can be probed directly. It is the knob for that sensitivity check;
+    it does not change the default derivation, which is recovered at
+    multiplier 1.0.
 
     R, F      : (N,T) and (N,T,K); everything is computed from these, so the
                 backtest's per-window recomputation is automatic
@@ -335,7 +337,8 @@ def sample_tau2(theta: np.ndarray, s: float, lam: float,
     are 1/(1+r) and x1/r^2, again with no division by theta in the accepted
     branch.
 
-    Validation (see check_chunk2.py): sample mean matches mu' and sample
+    Validation (against an independent NumPy reference during development):
+    sample mean matches mu' and sample
     variance matches mu'^3/lam' wherever Monte Carlo error permits the
     comparison; Kolmogorov-Smirnov against scipy agrees wherever scipy is
     trustworthy (10 seeds per setting, 0-1 of 10 p-values below 0.05);
@@ -466,8 +469,8 @@ def sample_lambda(tau2: np.ndarray, hp: LassoHyperparams,
     Draw lambda from its full conditional given tau^2.
 
     NOT USED IN THE SAMPLER -- retained because it is the textbook Park &
-    Casella step, and because check_chunk3.py validates it as an independent
-    confirmation that the collapsed version above targets the same
+    Casella step, and because it was validated during development as an
+    independent confirmation that the collapsed version above targets the same
     distribution. See sample_lambda_collapsed for why it is not the default.
 
     The conditional
@@ -549,7 +552,7 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
     was confirmed empirically in the baseline. What does NOT transfer is that
     THIS precision matrix is assembled correctly, so it is validated directly
     against a brute-force NT x NK stacked system and against the model's own
-    log joint density (see check_chunk4.py). A misassembled P would still be
+    log joint density, both during development. A misassembled P would still be
     symmetric positive definite, still factorise, and still produce plausible
     coefficients.
 

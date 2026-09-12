@@ -137,18 +137,20 @@ def main() -> None:
         draws.meta["target_r2"] = args.target_r2
         draws.meta["lambda_multiplier"] = args.lambda_multiplier
         draws.meta["universe"] = args.universe
-        out = save_draws(draws, outdir / f"{MODEL}_{tag}_chain{k}")
-        print(f"  chain {k} (seed {seed}): {time()-t0:.0f}s, "
+        # seed0 + k in the FILENAME, not k, so --seed0 4 cannot overwrite
+        # chains 0-3. With the default seed0 = 0 the names are unchanged.
+        out = save_draws(draws, outdir / f"{MODEL}_{tag}_chain{seed}")
+        print(f"  chain {seed} (seed {seed}): {time()-t0:.0f}s, "
               f"lambda mean {draws.lam.mean():.1f}, "
               f"{out.stat().st_size/1e6:.0f} MB -> {out}")
 
     print(f"\ntotal {time()-t_all:.0f}s")
 
     # ---- a first look, so an hour-long run is not opaque until diagnose runs --
-    d0 = load_draws(outdir / f"{MODEL}_{tag}_chain0", LassoDraws)
+    d0 = load_draws(outdir / f"{MODEL}_{tag}_chain{args.seed0}", LassoDraws)
     names = load_predictor_names(args.universe, K)
 
-    print(f"\nlambda (chain 0): {d0.lam.mean():.1f} +- {d0.lam.std():.1f}"
+    print(f"\nlambda (chain {args.seed0}): {d0.lam.mean():.1f} +- {d0.lam.std():.1f}"
           f"   [prior rms {hp.lambda_prior_rms:.1f}]")
     print(f"  implied theta prior sd {np.sqrt(2)*hp.s/d0.lam.mean():.4e}"
           f"   vs the baseline's sd_target {hp.sd_target:.4e}")
@@ -156,7 +158,7 @@ def main() -> None:
     print("   601 ~ 0.05, 1345 ~ 0.01. Higher lambda = more shrinkage.]")
 
     m = d0.b_bar.mean(axis=0)
-    print("\nposterior mean b_bar, 5 largest by |value| (chain 0):")
+    print(f"\nposterior mean b_bar, 5 largest by |value| (chain {args.seed0}):")
     for j in np.argsort(-np.abs(m))[:5]:
         lo, hi = np.percentile(d0.b_bar[:, j], [2.5, 97.5])
         star = "*" if lo * hi > 0 else " "

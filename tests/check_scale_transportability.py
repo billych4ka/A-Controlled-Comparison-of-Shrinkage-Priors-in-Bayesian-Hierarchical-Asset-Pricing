@@ -124,11 +124,11 @@ def main() -> None:
                     help="skip the NK x NK eigendecomposition")
     args = ap.parse_args()
 
-    path = Path("data/processed") / f"{args.universe}_arrays.npz"
+    path = Path("../data/processed") / f"{args.universe}_arrays.npz"
     if not path.exists():
         raise FileNotFoundError(
             f"{path} not found. Available: "
-            f"{sorted(p.name for p in Path('data/processed').glob('*_arrays.npz'))}"
+            f"{sorted(p.name for p in Path('../data/processed').glob('*_arrays.npz'))}"
         )
     d = np.load(path, allow_pickle=True)
     F, R = d["F"], d["R"]

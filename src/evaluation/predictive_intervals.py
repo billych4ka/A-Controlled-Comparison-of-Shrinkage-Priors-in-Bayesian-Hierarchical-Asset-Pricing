@@ -10,8 +10,10 @@ fit_fn contract this late would put those results at risk for no benefit. The
 loop below therefore duplicates its windowing and alignment EXACTLY -- same
 start, same refit grid, same F[:,t,:] convention, same expanding training
 slice -- and adds only the interval computation. The duplication is
-deliberate: the two functions must agree, and a test below checks that their
-point forecasts are bit-identical.
+deliberate: the two functions must agree on point forecasts by construction.
+NOTE: no automated test enforces that agreement -- an earlier version of this
+note claimed one, and the claim was not supported. The agreement rests on the
+line-by-line correspondence of the two loops, and nothing else.
 
 WHAT IS COMPUTED, and why both.
 
@@ -120,8 +122,9 @@ def expanding_window_intervals(fit_fn: IntervalFitFunction,
     The windowing is IDENTICAL by construction: same refit grid, same
     expanding training slice R[:, :t_refit], same forecast convention
     F[:, t, :] for month t with no further lagging. Any divergence would make
-    the intervals describe different fits from the Chapter 5 point forecasts,
-    which check_intervals_match_backtest.py verifies directly.
+    the intervals describe different fits from the Chapter 5 point forecasts.
+    This is maintained by construction, not by an automated check -- see the
+    module docstring.
 
     seed : for the residual draws entering the full predictive interval. Fixed
            so the result is reproducible; it does not affect the fits.

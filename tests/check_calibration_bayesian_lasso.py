@@ -1,5 +1,5 @@
 """
-tests/test_calibration_lasso.py
+tests/check_calibration_bayesian_lasso.py
 
 Calibration of the Bayesian LASSO sampler.
 
@@ -42,7 +42,7 @@ binomial column is not reported here for that reason.
 
 100 datasets at N=6, K=5, T=120 takes about 3 minutes.
 
-Run from the project root:  python3 tests/test_calibration_lasso.py
+Run from the project root:  python3 tests/check_calibration_bayesian_lasso.py
 """
 import time
 

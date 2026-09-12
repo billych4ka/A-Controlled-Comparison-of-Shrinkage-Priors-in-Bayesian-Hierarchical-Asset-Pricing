@@ -95,7 +95,8 @@ posterior mean of b at 0.90 and 0.99 correlates at 0.9944 -- the same
 agreement the LASSO showed between random seeds -- so the uniform choice is
 conservative rather than necessary.
 
-VERIFIED (check_chunk1.py, 13 August, 20 checks, all passed)
+VERIFIED (13 August, 20 checks, all passed, against an independent
+NumPy reference written during development)
 ------------------------------------------------------------
 Shared hierarchy, compared against the source functions at ZERO tolerance
 rather than against recalled constants:
@@ -444,8 +445,9 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: HorseshoeHyperparams):
         # logp; it does not replace the declared variable's own prior. A
         # pm.Normal(0,1) here silently stacked an extra density on Sigma and
         # biased E[Sigma] by 8-11 Monte Carlo standard errors; pm.Flat brought
-        # it to under 1.3. check_chunk2.py tests this directly rather than
-        # trusting the comment.
+        # it to under 1.3. This was tested directly against an independent
+        # NumPy reference during development, rather than trusted to the
+        # comment.
         packed_z = pm.Flat("Sigma_packed_z", shape=packed0.size)
         Sigma, sigma_logp = inverse_wishart_cholesky_logp(
             packed0 + packed_scale * packed_z, hp.nu_Sigma, hp.V_Sigma)
@@ -476,7 +478,8 @@ def transformed_point(model, initvals: dict) -> dict:
     silently evaluating at the default point.
 
     pm.sample() takes the UNTRANSFORMED initvals; this is only for evaluating
-    logp and gradients directly, as check_chunk2.py and the timing tests do.
+    logp and gradients directly, as the development log-density checks and the
+    timing tests do.
     """
     point = model.initial_point()
     expected = {"b_bar_z", "z", "lam_log__", "tau_z_log__", "Sigma_packed_z"}

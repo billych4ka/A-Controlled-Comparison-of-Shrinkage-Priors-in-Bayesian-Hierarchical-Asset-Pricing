@@ -2,8 +2,8 @@
 check_prior_predictive_horseshoe.py -- what does tau ~ C+(0, tau_0) actually imply?
 
 Validation step 3. NOTE THE FRAMING: this is not a correctness check. That
-was done by check_chunk2.py, whose total-log-density test against an
-independent NumPy reference establishes that the prior block is what it
+was done during development, by a total-log-density test against an
+independent NumPy reference, which establishes that the prior block is what it
 claims to be. This script answers a CALIBRATION question -- what the prior
 implies about sparsity and about explained variance -- which is precisely
 what Piironen & Vehtari recommend doing when a model is more complicated
@@ -17,7 +17,8 @@ rather than through pm.sample_prior_predictive. Two reasons: Sigma's prior is
 a pm.Potential on a pm.Flat variable, which prior-predictive sampling cannot
 draw from; and Sigma is irrelevant to what is being asked, since the question
 concerns theta's marginal behaviour. The distributions drawn here are the
-ones build_model declares, and check_chunk2 is what ties the two together.
+ones build_model declares, and that development log-density check is what
+ties the two together.
 
 THREE QUESTIONS, and the third is the uncomfortable one.
 

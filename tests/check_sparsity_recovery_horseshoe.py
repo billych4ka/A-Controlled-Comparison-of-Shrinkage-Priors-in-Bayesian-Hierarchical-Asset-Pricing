@@ -1,5 +1,5 @@
 """
-check_sparsity_recovery.py -- validation step 6.
+check_sparsity_recovery_horseshoe.py -- validation step 6.
 
 Does the horseshoe shrink coefficients that are GENUINELY ZERO harder than
 coefficients that are merely small? This is the test the Gaussian baseline
@@ -76,8 +76,8 @@ about the design, not a null result.
 Run from the project root. About 5.3 minutes per fit measured, so ~1.8 hours
 for the default 10 sparse + 10 dense:
 
-    python3 check_sparsity_recovery.py --datasets 2        # time it first
-    caffeinate -i python3 check_sparsity_recovery.py
+    python3 check_sparsity_recovery_horseshoe.py --datasets 2        # time it first
+    caffeinate -i python3 check_sparsity_recovery_horseshoe.py
 """
 from __future__ import annotations
 

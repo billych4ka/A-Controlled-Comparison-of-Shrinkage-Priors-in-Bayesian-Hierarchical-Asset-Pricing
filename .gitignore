@@ -28,3 +28,11 @@ Thumbs.db
 
 # results: ignore large regenerable output, keep the record of what was run
 results/**/*.npz
+results/**/*.npy
+
+# ...but the record of what was run is always kept. These negations are inert
+# under the two rules above (which match only .npz/.npy); they are here so the
+# intent survives if a broader `results/` rule is ever added.
+!results/**/*.json
+!results/**/*.txt
+!results/**/*.md
