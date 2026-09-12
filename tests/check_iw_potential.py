@@ -33,11 +33,28 @@ the proper Gaussian coordinate prior that caused the bug, and once with
 pm.Flat, which supplies an improper flat base measure and leaves the
 Potential as the only density on the coordinate.
 
-EXPECTED RESULT. The Gaussian-prior version should show discrepancies of
-roughly 8-11 MCSE; the flat version should fall to approximately 1.2. The
-exact figures depend on the seed and draw count, but the ORDER of the
-discrepancy is the finding: a bug that no convergence diagnostic detects
-shifts posterior moments by many standard errors.
+EXPECTED RESULT. At the production dimension N=25 the contaminated version
+displaces posterior means by a median of roughly 3.5 standard errors, with
+more than half of the 325 distinct covariance entries beyond three; the flat
+version falls to a median near 1.0 with a small minority beyond three. The
+exact figures depend on the dimension, the seed and the draw count, but the
+finding is that a bug no convergence diagnostic detects shifts posterior
+moments by several standard errors across most of the matrix.
+
+WHY THE COMPARISON USES MEDIANS. With 325 entries the MAXIMUM |z| is a poor
+criterion: even under a correct implementation the largest of 325
+standardised discrepancies has an expected value near three, which is the
+same multiplicity point the verification section makes for the 3,600-entry
+comparisons. A success test built on the maximum would therefore fail on
+correct code. The median and the proportion beyond three are used instead.
+
+A CONSERVATIVE STANDARD ERROR. The MCSE below divides the theoretical
+variance by the raw draw count rather than the effective sample size, so the
+reported z-values are inflated by the chains' autocorrelation. For a correct
+implementation the median |z| would be approximately 0.67; an observed
+median near 1.0 implies an inflation factor of roughly 1.5. The comparison
+of interest is between the two implementations, which share this inflation,
+rather than between either and an exact nominal distribution.
 
 INTERPRETATION. Passing this check establishes that the implemented density
 and its Jacobian correspond to the intended prior. It does not establish
@@ -131,10 +148,12 @@ def report(label: str, draws: np.ndarray, mean: np.ndarray,
     z = np.abs(emp - mean) / mcse
     iu = np.triu_indices(mean.shape[0])
     zz = z[iu]
-    print(f"  {label:<28} max |z| {zz.max():6.2f}   median |z| "
-          f"{np.median(zz):5.2f}   entries above 3: "
-          f"{int((zz > 3).sum())} of {zz.size}")
-    return float(zz.max())
+    med = float(np.median(zz))
+    above = int((zz > 3).sum())
+    print(f"  {label:<28} median |z| {med:5.2f}   max |z| {zz.max():6.2f}"
+          f"   entries above 3: {above} of {zz.size} "
+          f"({100 * above / zz.size:.1f}%)")
+    return med, above / zz.size
 
 
 def main() -> None:
@@ -166,14 +185,22 @@ def main() -> None:
         zs[prior] = report(label, d, mean, var)
 
     print()
-    if zs["gaussian"] > 3.0 and zs["flat"] < 3.0:
-        print("  Detected. The proper coordinate prior shifts posterior means")
-        print("  by several Monte Carlo standard errors; the flat base measure")
-        print("  restores agreement. Neither run raised an exception.")
+    med_bug, frac_bug = zs["gaussian"]
+    med_fix, frac_fix = zs["flat"]
+    if med_bug > 2.0 and med_fix < 2.0 and frac_bug > 4 * max(frac_fix, 0.01):
+        print(f"  Detected. The proper coordinate prior displaces posterior")
+        print(f"  means by a median of {med_bug:.1f} standard errors, with")
+        print(f"  {100*frac_bug:.0f}% of entries beyond three; the flat base")
+        print(f"  measure reduces these to {med_fix:.1f} and "
+              f"{100*frac_fix:.0f}%. Neither run")
+        print("  raised an exception or produced unusual convergence")
+        print("  diagnostics, which is why a known-answer comparison was")
+        print("  required to detect it.")
     else:
         print("  *** The expected pattern did not appear. Either the")
-        print("  implementation has changed or the draw count is too small")
-        print("  for the discrepancy to exceed Monte Carlo error. ***")
+        print("  implementation has changed, or the draw count is too small")
+        print("  for the displacement to separate from Monte Carlo error at")
+        print("  this dimension. Try a larger --n-assets or --draws. ***")
 
 
 if __name__ == "__main__":
