@@ -7,6 +7,12 @@ About 95% should. This is the only end-to-end test in the sequence:
 an independent NumPy reference proved the log-density correct at one point
 during development; this proves the whole machine correct on average.
 
+Reproduces Table 4.6, the horseshoe column and the note on the three excluded
+datasets, and Appendix A.6.4, the reduced dimensions N=6, K=5, T=200 at
+TAU0_MULT=0.01. With --full-scale it reproduces Appendix A.6.7, the abandoned
+production-dimension runs. Supports Section 4.5 on prior-generative
+calibration.
+
 EVERY quantity is drawn from the prior the sampler conditions on -- b_bar from
 N(0, Delta_b_bar), tau from C+(0, tau_0), lambda from C+(0,1), z from N(0,1),
 Sigma from IW(nu_Sigma, V_Sigma). simulate_sur_data is deliberately NOT used:

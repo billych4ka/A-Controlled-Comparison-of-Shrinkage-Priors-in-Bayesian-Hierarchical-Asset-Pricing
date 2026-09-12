@@ -1,9 +1,12 @@
 """
-check_calibration_reg_horseshoe.py -- validation step 5 for model 4.
+check_calibration_regularised_horseshoe.py -- validation step 5 for model 4.
 
 Simulate a parameter set from the regularised horseshoe's OWN prior, generate
 returns, fit, and ask whether the truth falls inside the 95% credible
 intervals. About 95% should.
+
+Reproduces Table 4.6, the regularised horseshoe column. Supports Section 4.5
+on prior-generative calibration.
 
 MATCHED DIMENSIONS ONLY: N=6, K=5, T=200, 100 datasets -- identical to the
 design used for the Gaussian baseline, the Bayesian LASSO and the plain
@@ -73,8 +76,8 @@ DESIGN, carried over unchanged from the horseshoe's calibration:
 Run from the project root. At the pilot's 0.354 s/iteration this should take
 roughly 30-40 minutes, against 101 for the plain horseshoe:
 
-    python3 check_calibration_reg_horseshoe.py --datasets 2   # time it first
-    caffeinate -i python3 check_calibration_reg_horseshoe.py
+    python3 check_calibration_regularised_horseshoe.py --datasets 2   # time it first
+    caffeinate -i python3 check_calibration_regularised_horseshoe.py
 """
 from __future__ import annotations
 

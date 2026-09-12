@@ -6,9 +6,11 @@ the model's OWN log joint density, evaluated on a grid. A conditional is
 correct only if (log joint - claimed kernel) is CONSTANT in the parameter
 being varied; the spread of that difference is the reported agreement.
 
-Reproduces Appendix A.6.1, first paragraph. Was check_chunk2.py (local scale)
-and check_chunk3.py (both global-scale updates) during development; merged
-here because they test the same layer.
+Reproduces Appendix A.6.1, first paragraph, and Table 4.5, row "Analytic
+conditionals". Supports Section 4.4's statement that the Gibbs samplers were
+implemented from their analytic conditional distributions. Was check_chunk2.py
+(local scale) and check_chunk3.py (both global-scale updates) during
+development; merged here because they test the same layer.
 
 Recorded results:
     tau^2, GIG(p=1/2)                   1.7e-13 over 500 points

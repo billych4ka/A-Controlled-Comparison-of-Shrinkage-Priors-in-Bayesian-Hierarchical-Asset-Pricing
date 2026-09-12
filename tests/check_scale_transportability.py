@@ -4,6 +4,9 @@ check_scale_transportability.py
 Regenerates every number in the Section 4.3 scale table from the data, so that
 no figure in it rests on a hand calculation.
 
+Reproduces Section 4.3, Tables 4.3 and 4.4, and Appendix A.7 on
+scale-calibration reproducibility.
+
 This script exists because the earlier "three independent calibration routes
 agree to within 8%" claim did rest on hand calculations, and the routes turned
 out not to be computed on a common basis. Every route is therefore reported on

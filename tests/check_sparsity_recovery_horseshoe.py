@@ -6,6 +6,10 @@ coefficients that are merely small? This is the test the Gaussian baseline
 cannot be run through at all -- not that it would fail, but that it has no
 per-coefficient quantity to measure.
 
+Reproduces Section 5.6's sparse-recovery comparison and Table 5.10, the
+simulation design in Appendix A.9, and Appendix A.6.5's third example, the
+sparsity-separation statistic that scored 0.98 sparse and 0.94 dense.
+
 THE METRIC, and why the obvious alternatives are rejected.
 
     rmse of posterior-mean theta at the positions where the truth is exactly

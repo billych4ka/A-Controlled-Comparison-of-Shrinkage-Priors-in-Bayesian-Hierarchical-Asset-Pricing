@@ -4,6 +4,9 @@ check_blocked_sur_kronecker.py
 Verifies the Kronecker algebra behind the joint B-update (Feng & He eq. 14-15)
 against a brute-force reconstruction of the literal NT x NK stacked system.
 
+Reproduces Appendix A.6.1, second paragraph, and supports Section 4.4's
+blocked (B, b_bar) update.
+
 The B-update never forms Omega = Sigma (x) I_T. It exploits
 
     [F' Omega^-1 F]_{ij} = Sigma^-1[i,j] * (f_i' f_j)          (K x K)

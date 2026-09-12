@@ -5,6 +5,17 @@ Verifies src/diagnostics/convergence.py against cases whose answers are known
 analytically, and establishes the reference distribution used when many
 parameters are compared at once.
 
+THIS SCRIPT SUPPORTS TWO APPENDIX SUBSECTIONS, and its numbered sections map
+to them separately. Section 7 reproduces Appendix A.5: R-hat agreeing to four
+decimals against an independent implementation, bulk ESS to 0.4%, and tail ESS
+differing by 15-40% because the two are defined differently. Section 6
+reproduces Appendix A.6.2's reference distribution: a median maximum |z| of
+3.73 with a 5th-95th range of 3.34-4.34, over 4,000 replications at 3,600
+parameters. Sections 1-5 support neither directly; they are the
+known-answer cases the module is checked against. Supports Section 4.5's
+paragraph justifying the reporting of the distribution of standardised
+discrepancies rather than the maximum.
+
 Every convergence number reported in the dissertation rests on this module,
 so it is checked against known answers rather than against plausibility. The
 three non-convergence cases are chosen so that each is caught by exactly one

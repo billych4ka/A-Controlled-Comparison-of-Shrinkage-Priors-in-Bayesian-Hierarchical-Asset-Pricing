@@ -1,6 +1,12 @@
 """
 Calibration of the Gaussian baseline sampler.
 
+Reproduces Table 4.6, the Gaussian baseline column, and Appendix A.6.4's
+first paragraph: the initial mismatched generic SUR generator placed
+Delta_theta 6.1 standard errors from nominal, falling to 1.8 once the truth
+was drawn from the fitted prior. Supports Section 4.5 on prior-generative
+calibration.
+
 The truth is drawn from the MODEL'S OWN PRIOR, not from simulate_sur_data.
 Bayesian coverage is nominal only when the data-generating truth comes from
 the prior being conditioned on; simulate_sur_data draws Delta_b and Sigma from

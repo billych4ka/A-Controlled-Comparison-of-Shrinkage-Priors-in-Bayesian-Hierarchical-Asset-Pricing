@@ -4,6 +4,11 @@ check_forecast_tests.py
 Verifies the two forecast-comparison tests in src/evaluation/metrics.py, and
 establishes why BOTH are needed rather than one.
 
+Reproduces Appendix A.6.6, the size and power of the forecast comparison
+tests, and supports Section 4.6's statement that both tests were checked for
+size and power before use. The tests themselves are in
+src/evaluation/metrics.py; this script validates them.
+
 Nested and non-nested forecast comparisons require different tests. The
 historical-mean benchmark is nested inside a predictive regression: set every
 slope to zero and the model becomes the benchmark. Under the null that the

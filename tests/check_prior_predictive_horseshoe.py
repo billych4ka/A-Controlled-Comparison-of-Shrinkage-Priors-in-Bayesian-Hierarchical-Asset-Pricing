@@ -12,6 +12,11 @@ than the linear regression their closed form was derived for:
     "we recommend a pragmatic approach of drawing from the prior for
     different values of tau and studying the effect on the sparsity"
 
+Reproduces Section 4.3's m_eff = 30.04 discrepancy against the nominal
+p_0 = 23, and Appendix A.6.7's second paragraph, the structural argument about
+extreme order statistics. Supports Section 4.2.4's justification for the
+regularised horseshoe's finite slab.
+
 Because the prior on theta involves no data, the draws are taken in NumPy
 rather than through pm.sample_prior_predictive. Two reasons: Sigma's prior is
 a pm.Potential on a pm.Flat variable, which prior-predictive sampling cannot

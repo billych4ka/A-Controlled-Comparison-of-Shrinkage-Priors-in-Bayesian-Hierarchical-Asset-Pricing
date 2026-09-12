@@ -3,6 +3,11 @@ tests/check_calibration_bayesian_lasso.py
 
 Calibration of the Bayesian LASSO sampler.
 
+Reproduces Table 4.6, the Bayesian LASSO column, and Appendix A.6.4, the Sigma
+mismatch that moved coverage by less than Monte Carlo error. Supports Section
+4.5 on prior-generative calibration, and Appendix A.6.5's second example, the
+rank-uniformity chi^2 that returned p = 0.004 on clustered ranks.
+
 The truth is drawn from the MODEL'S OWN PRIOR. Bayesian coverage is nominal
 only when the data-generating truth comes from the prior being conditioned on,
 so a deviation is then unambiguous evidence of a sampler bug. Draw the truth
