@@ -1,11 +1,11 @@
 """
-check_backtest_budget.py -- how many draws does a horseshoe window fit need?
+check_backtest_budget.py: how many draws does a horseshoe window fit need?
 
 The backtest runs 40 fits per universe and uses only the POSTERIOR MEAN of B.
 The production budget (4 chains x 1,500 draws, 1,000 tune) is sized for
 credible intervals on tau, which the backtest never reports. This script finds
 the smallest per-window budget that still recovers the production posterior
-mean of B, and measures what it costs -- BEFORE 12 hours of compute run on a
+mean of B, and measures what it costs, BEFORE 12 hours of compute run on a
 guess.
 
 Both Gibbs models had this done. The baseline settled on 500 sweeps / 100
@@ -16,7 +16,7 @@ centre before retained draws were sampling B under the right shrinkage level.
 
 The horseshoe has the same burn-in concern in a sharper form: tau starts at
 tau_0 and the data moves it to about 0.05 tau_0, a factor of twenty. Draws
-retained before tau has travelled sample B under the wrong shrinkage -- a
+retained before tau has travelled sample B under the wrong shrinkage: a
 systematic error repeated in all 40 windows, not a Monte Carlo one. So this
 script reports tau per candidate budget alongside the agreement statistics: a
 budget whose tau has not reached ~0.05 tau_0 is disqualified however good its
@@ -28,7 +28,7 @@ noisier, the likelihood is less informative, the prior has more say, and the
 geometry is harder. A budget validated only on the full sample would be
 validated where the problem is easiest.
 
-DO NOT pick the cheapest budget that passes after seeing the results -- that
+DO NOT pick the cheapest budget that passes after seeing the results; that
 is selection on outcomes, the same genre as revising target_r2. Decide the
 rule first: the smallest budget with median z below about 1, everything
 within 4 SE, correlation above 0.999, and tau within 20% of the production
@@ -82,9 +82,6 @@ def main() -> None:
     tau_ref = float(np.concatenate([c.tau for c in chains]).mean())
     hp_full = horseshoe_hyperparameters(R, F, K)
 
-    # B's MEDIAN bulk ESS from the production run, not its minimum: the
-    # minimum comes from four stragglers of 3,600 and would understate the
-    # reference's precision everywhere else.
     ESS_REF = 5591.0
 
     print("=" * 78)
@@ -108,9 +105,6 @@ def main() -> None:
     for wlabel, Rw, Fw in windows:
         Tw = Rw.shape[1]
         print(f"\n{'='*78}\n{wlabel}   ({Tw} months, {Tw - K} residual df)\n{'='*78}")
-        # the reference B is a FULL-SAMPLE posterior mean; on an early window
-        # the target is different, so agreement is only meaningful there
-        # against a same-window reference. Report it, but flag it.
         if Tw < T:
             print("   NOTE: compared against the FULL-SAMPLE reference B, which is")
             print("   not this window's posterior mean. Read the tau column and the")

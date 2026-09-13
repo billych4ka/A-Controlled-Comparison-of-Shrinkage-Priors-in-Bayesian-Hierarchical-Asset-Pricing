@@ -16,8 +16,8 @@ TWO PANELS.
   (a) The density of log10(1 - kappa), displayed on the corresponding
       1 - kappa scale. This shows that the priors differ in the SHAPE of their
       shrinkage distribution and not only in its average level. The
-      horseshoe's mode sits further left than the Bayesian LASSO's -- it pools
-      the bulk of coefficients more strongly -- while its right tail extends
+      horseshoe's mode sits further left than the Bayesian LASSO's (it pools
+      the bulk of coefficients more strongly) while its right tail extends
       much further. The short vertical marks on the horizontal axis give each
       model's least-shrunk coefficient. Without them panel (a) reads as "the
       horseshoe shrinks hardest", because out where the four floors lie the
@@ -78,12 +78,6 @@ from src.gibbs.bayesian_lasso import LassoDraws
 from src.nuts.horseshoe import HorseshoeDraws, horseshoe_hyperparameters
 from src.nuts.regularised_horseshoe import RegHorseshoeDraws
 
-
-# ---------------------------------------------------------------------------
-# Model definitions
-# ---------------------------------------------------------------------------
-
-# (label, directory, setting tag, dataclass, colour, linestyle, linewidth)
 MODELS = (
     (
         "Gaussian baseline",
@@ -124,14 +118,7 @@ MODELS = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Publication-style plotting defaults
-# ---------------------------------------------------------------------------
-
 STYLE = {
-    # Typography. Sans-serif figure text with STIX sans mathematics, so the
-    # kappa notation integrates with the labels rather than reading as a
-    # separately typeset insertion.
     "font.family": "sans-serif",
     "font.sans-serif": [
         "Arial",
@@ -141,8 +128,6 @@ STYLE = {
     ],
     "mathtext.fontset": "stixsans",
     "font.size": 8.0,
-
-    # Axes
     "axes.labelsize": 8.2,
     "axes.labelweight": "normal",
     "axes.linewidth": 0.65,
@@ -151,8 +136,6 @@ STYLE = {
     "axes.spines.right": False,
     "axes.xmargin": 0.0,
     "axes.facecolor": "white",
-
-    # Ticks
     "xtick.labelsize": 7.4,
     "ytick.labelsize": 7.4,
     "xtick.direction": "out",
@@ -167,25 +150,15 @@ STYLE = {
     "ytick.minor.width": 0.40,
     "xtick.major.pad": 2.5,
     "ytick.major.pad": 2.5,
-
-    # Lines
     "lines.linewidth": 1.30,
     "lines.solid_capstyle": "round",
     "lines.dash_capstyle": "round",
     "lines.solid_joinstyle": "round",
-
-    # Legend
     "legend.frameon": False,
     "legend.fontsize": 7.0,
-
-    # Figure
     "figure.facecolor": "white",
-
-    # Vector export
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
-
-    # Figure export
     "savefig.facecolor": "white",
     "savefig.transparent": False,
 }
@@ -202,12 +175,9 @@ def kappa_from_variance(
     """
     N, T, K = F.shape
 
-    q = np.sqrt((F ** 2).mean(axis=1))
+    q = np.sqrt((F**2).mean(axis=1))
 
-    return 1.0 / (
-        1.0
-        + (T / sigma ** 2) * v * q ** 2
-    )
+    return 1.0 / (1.0 + (T / sigma**2) * v * q**2)
 
 
 def deviation_prior_variance(
@@ -224,13 +194,8 @@ def deviation_prior_variance(
 
     if label == "Gaussian baseline":
 
-        # Common to all assets, so kappa varies only through the predictor
-        # scale q_j: the baseline has no coefficient-specific mechanism.
         d = np.mean(
-            [
-                c.Delta_b_diag.mean(axis=0)
-                for c in chains
-            ],
+            [c.Delta_b_diag.mean(axis=0) for c in chains],
             axis=0,
         )
 
@@ -240,28 +205,17 @@ def deviation_prior_variance(
 
         s = float(chains[0].meta["s"])
 
-        return s ** 2 * np.mean(
-            [
-                c.tau2_mean
-                for c in chains
-            ],
+        return s**2 * np.mean(
+            [c.tau2_mean for c in chains],
             axis=0,
         )
 
     if label == "Horseshoe":
 
-        tau = np.mean(
-            [
-                c.tau.mean()
-                for c in chains
-            ]
-        )
+        tau = np.mean([c.tau.mean() for c in chains])
 
         lam = np.mean(
-            [
-                c.lam_local.mean(axis=0)
-                for c in chains
-            ],
+            [c.lam_local.mean(axis=0) for c in chains],
             axis=0,
         )
 
@@ -269,18 +223,10 @@ def deviation_prior_variance(
 
     if label == "Regularised horseshoe":
 
-        tau = np.mean(
-            [
-                c.tau.mean()
-                for c in chains
-            ]
-        )
+        tau = np.mean([c.tau.mean() for c in chains])
 
         lam = np.mean(
-            [
-                c.lam_tilde.mean(axis=0)
-                for c in chains
-            ],
+            [c.lam_tilde.mean(axis=0) for c in chains],
             axis=0,
         )
 
@@ -290,10 +236,6 @@ def deviation_prior_variance(
 
 
 def main() -> None:
-
-    # -----------------------------------------------------------------------
-    # Arguments
-    # -----------------------------------------------------------------------
 
     ap = argparse.ArgumentParser()
 
@@ -322,13 +264,8 @@ def main() -> None:
 
     args = ap.parse_args()
 
-    # -----------------------------------------------------------------------
-    # Load data
-    # -----------------------------------------------------------------------
-
     d = np.load(
-        Path("data/processed")
-        / f"{args.universe}_arrays.npz",
+        Path("data/processed") / f"{args.universe}_arrays.npz",
         allow_pickle=True,
     )
 
@@ -342,10 +279,6 @@ def main() -> None:
         F,
         K,
     ).sigma_pooled
-
-    # -----------------------------------------------------------------------
-    # Construct shrinkage factors
-    # -----------------------------------------------------------------------
 
     kappas = {}
     styles = {}
@@ -371,9 +304,7 @@ def main() -> None:
 
         except FileNotFoundError:
 
-            print(
-                f"  ({model} not found, omitted)"
-            )
+            print(f"  ({model} not found, omitted)")
 
             continue
 
@@ -408,10 +339,6 @@ def main() -> None:
     if not kappas:
         raise SystemExit("no chains found")
 
-    # -----------------------------------------------------------------------
-    # Figure setup
-    # -----------------------------------------------------------------------
-
     plt.rcParams.update(STYLE)
 
     fig, (a1, a2) = plt.subplots(
@@ -422,27 +349,10 @@ def main() -> None:
 
     fig.patch.set_facecolor("white")
 
-    # Axis limits from the data, rounded outwards to whole decades.
-    #
-    # UNCHANGED from the original numerical construction.
-    lo = float(
-        np.floor(
-            np.log10(
-                min(
-                    1 - k.max()
-                    for k in kappas.values()
-                )
-            )
-        )
-    )
+    lo = float(np.floor(np.log10(min(1 - k.max() for k in kappas.values()))))
 
     hi = -0.05
 
-    # -----------------------------------------------------------------------
-    # Panel (a): density of log10(1 - kappa)
-    # -----------------------------------------------------------------------
-
-    # UNCHANGED numerical grid.
     grid = np.linspace(
         lo,
         hi,
@@ -453,7 +363,6 @@ def main() -> None:
 
         c, ls, lw = styles[lab]
 
-        # UNCHANGED KDE calculation.
         density = gaussian_kde(
             np.log10(1 - k),
             bw_method=args.bw,
@@ -486,16 +395,9 @@ def main() -> None:
         )
     )
 
-    a1.set_xticks(
-        decades
-    )
+    a1.set_xticks(decades)
 
-    a1.set_xticklabels(
-        [
-            rf"$10^{{{e}}}$"
-            for e in decades
-        ]
-    )
+    a1.set_xticklabels([rf"$10^{{{e}}}$" for e in decades])
 
     a1.set_xlabel(
         r"$1-\kappa_{ij}$",
@@ -507,16 +409,6 @@ def main() -> None:
         labelpad=4,
     )
 
-    # Each model's least-shrunk coefficient, marked on the baseline.
-    #
-    # WHY. Out here the four densities are visually indistinguishable from
-    # zero, so panel (a) on its own reads as "the horseshoe shrinks hardest"
-    # and the tail story is invisible. These ticks put the four floors --
-    # which span more than a decade -- into the panel that otherwise only
-    # shows the bulk.
-    # They STRADDLE the axis line rather than standing on it: sitting wholly
-    # above the baseline they read as four truncated bars, whereas crossing it
-    # reads unambiguously as a mark on the axis.
     rug = 0.075 * a1.get_ylim()[1]
 
     for lab, k in kappas.items():
@@ -524,9 +416,7 @@ def main() -> None:
         c, _, _ = styles[lab]
 
         a1.vlines(
-            np.log10(
-                1 - k.min()
-            ),
+            np.log10(1 - k.min()),
             -0.35 * rug,
             0.75 * rug,
             color=c,
@@ -535,8 +425,6 @@ def main() -> None:
             zorder=4,
         )
 
-    # The top-left corner is empty in both panels, so the labels sit inside
-    # the axes rather than floating above them.
     a1.text(
         0.025,
         0.965,
@@ -548,11 +436,6 @@ def main() -> None:
         va="top",
     )
 
-    # -----------------------------------------------------------------------
-    # Panel (b): upper tail of 1 - kappa
-    # -----------------------------------------------------------------------
-
-    # UNCHANGED numerical grid.
     t = np.logspace(
         lo,
         0,
@@ -563,11 +446,7 @@ def main() -> None:
 
         c, ls, lw = styles[lab]
 
-        # UNCHANGED empirical tail calculation.
-        tail = [
-            ((1 - k) >= x).mean() * 100
-            for x in t
-        ]
+        tail = [((1 - k) >= x).mean() * 100 for x in t]
 
         a2.plot(
             t,
@@ -579,30 +458,17 @@ def main() -> None:
             zorder=3,
         )
 
-    a2.set_xscale(
-        "log"
-    )
+    a2.set_xscale("log")
 
-    a2.set_yscale(
-        "log"
-    )
+    a2.set_yscale("log")
 
     a2.set_xlim(
-        10 ** lo,
+        10**lo,
         1,
     )
 
-    n_coef = len(
-        next(
-            iter(
-                kappas.values()
-            )
-        )
-    )
+    n_coef = len(next(iter(kappas.values())))
 
-    # Lower limit UNCHANGED. The upper limit is raised above the previous 150
-    # only to separate the 100 per cent plateau from the top of the panel, so
-    # the panel label has clear space to sit in.
     a2.set_ylim(
         100 / n_coef * 0.6,
         320,
@@ -613,27 +479,17 @@ def main() -> None:
         labelpad=3,
     )
 
-    # Set over two lines: at this panel height the label is longer than the
-    # axis it annotates and would otherwise overrun the figure.
     a2.set_ylabel(
         "Coefficients exceeding\nthreshold (%)",
         labelpad=4,
         linespacing=1.5,
     )
 
-    a2.set_yticks(
-        [0.01, 0.1, 1, 10, 100]
-    )
+    a2.set_yticks([0.01, 0.1, 1, 10, 100])
 
-    a2.yaxis.set_major_formatter(
-        FuncFormatter(
-            lambda v, _: f"{v:g}"
-        )
-    )
+    a2.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
 
-    a2.yaxis.set_minor_formatter(
-        NullFormatter()
-    )
+    a2.yaxis.set_minor_formatter(NullFormatter())
 
     a2.text(
         0.025,
@@ -646,12 +502,6 @@ def main() -> None:
         va="top",
     )
 
-    # -----------------------------------------------------------------------
-    # Shared axis cosmetics
-    # -----------------------------------------------------------------------
-
-    # Both panels use the same graphical grammar: a very subtle set of
-    # horizontal reference levels, behind the curves.
     for ax in (a1, a2):
 
         ax.grid(
@@ -670,13 +520,7 @@ def main() -> None:
             pad=2,
         )
 
-    # -----------------------------------------------------------------------
-    # Shared legend
-    # -----------------------------------------------------------------------
-
-    handles, labels = (
-        a1.get_legend_handles_labels()
-    )
+    handles, labels = a1.get_legend_handles_labels()
 
     fig.legend(
         handles,
@@ -695,8 +539,6 @@ def main() -> None:
         borderaxespad=0.0,
     )
 
-    # Explicit layout rather than constrained_layout. This gives more precise
-    # control over the balance between the two panels and the shared legend.
     fig.subplots_adjust(
         left=0.085,
         right=0.985,
@@ -705,24 +547,14 @@ def main() -> None:
         wspace=0.30,
     )
 
-    # -----------------------------------------------------------------------
-    # Save
-    # -----------------------------------------------------------------------
-
-    outdir = Path(
-        args.outdir
-    )
+    outdir = Path(args.outdir)
 
     outdir.mkdir(
         parents=True,
         exist_ok=True,
     )
 
-    out = outdir / (
-        f"kappa_densities_"
-        f"{args.universe}."
-        f"{args.format}"
-    )
+    out = outdir / (f"kappa_densities_" f"{args.universe}." f"{args.format}")
 
     fig.savefig(
         out,
@@ -733,9 +565,7 @@ def main() -> None:
 
     plt.close(fig)
 
-    print(
-        f"\nsaved -> {out}"
-    )
+    print(f"\nsaved -> {out}")
 
 
 if __name__ == "__main__":

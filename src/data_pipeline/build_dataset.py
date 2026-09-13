@@ -74,19 +74,11 @@ def load_dataset(universe: str) -> dict:
         return pickle.load(f)
 
 if __name__ == "__main__":
-    # size_bm_25 already built and current (see previous run).
-    # size_bm_100 was not pursued. The dissertation uses the three 25-portfolio
-    # universes plus the pooled cross-sort, and no size_bm_100 dataset was ever
-    # built. The drop_columns question that had blocked it (Option A/B/C in
-    # clean.py) applied only to that universe's scattered gaps and is moot:
-    # all three 25-portfolio universes build with drop_columns=None and retain
-    # all 719 months.
     universes = ["size_op_25", "size_inv_25"]
 
     for universe in universes:
         panels = build_dataset(universe)
 
-        # round-trip check: load it back and confirm it matches
         reloaded = load_dataset(universe)
         sample_asset = list(panels.keys())[0]
         f_i_original, r_i_original = panels[sample_asset]

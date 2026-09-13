@@ -192,3 +192,16 @@ RESULTS  (23331s total)
    zero-cost long-short portfolio with unit gross exposure.
 
    saved to results/size_bm_25/baseline_gaussian/backtest
+
+==============================================================================
+STANDALONE LOOK-AHEAD VERIFICATION, Gaussian baseline | size_bm_25 | 2026-09-13T18:27:19+00:00
+  the check run_backtest_gaussian.py now performs before its backtest:
+  gaussian_fit_fn(prior='rescaled', target_r2=0.05, n_draws=200, n_burn=100,
+  seed=0), start=240, refit_every=60
+==============================================================================
+--- look-ahead verification (reduced settings) ---
+    forecasts before corruption: max diff 0.000e+00   (must be exactly 0)
+    coefficients before:         max diff 0.000e+00   (must be exactly 0)
+    forecasts after corruption:  max change 1.406e-01   (must be > 0, or the test proves nothing)
+    PASSES: True   (931s)
+

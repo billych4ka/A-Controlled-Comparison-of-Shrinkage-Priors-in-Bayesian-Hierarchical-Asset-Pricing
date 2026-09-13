@@ -30,16 +30,16 @@ its own by then.
 
 Sampler settings come from HorseshoeHyperparams, not from arguments here, so a
 backtest fit cannot silently differ from the production run: target_accept =
-0.99, init = "adapt_diag", max_treedepth = 10. NEVER "jitter+adapt_diag" --
-its U(-1,1) jitter is ~1,300 prior standard deviations on b_bar and drove the
-step size to 9.1e-22 in an early run, a sampler that never moved while
-reporting a fast fit.
+0.99, init = "adapt_diag", max_treedepth = 10. NEVER "jitter+adapt_diag":
+its U(-1,1) jitter is ~1,300 prior standard deviations on b_bar and drives
+the step size to 9.1e-22, a sampler that never moves while appearing to fit
+quickly.
 
 Usage:
-    python3 run_horseshoe.py                                # defaults
+    python3 run_horseshoe.py                                (defaults)
     python3 run_horseshoe.py --chains 4 --draws 1500 --tune 1000
-    python3 run_horseshoe.py --p0 12                        # sensitivity
-    python3 run_horseshoe.py --n-choice NT                  # sensitivity
+    python3 run_horseshoe.py --p0 12                        (sensitivity)
+    python3 run_horseshoe.py --n-choice NT                  (sensitivity)
     python3 run_horseshoe.py --universe size_op_25
 """
 
@@ -116,9 +116,6 @@ def main() -> None:
                                    target_r2=args.target_r2,
                                    n_choice=args.n_choice)
 
-    # the setting tag must never contain a dot: Path.with_suffix("") once
-    # parsed "..._r2_0.05_chain0" as stem "..._r2_0" plus suffix
-    # ".05_chain0", which would have silently overwritten three of four chains
     tag = f"p0_{args.p0}_r2_{args.target_r2:g}".replace(".", "p")
     if args.n_choice != "T":
         tag += f"_n{args.n_choice}"
@@ -149,9 +146,6 @@ def main() -> None:
         draws.meta["setting"] = tag
         draws.meta["target_r2"] = args.target_r2
         draws.meta["universe"] = args.universe
-        # seed0 + k in the FILENAME, not k, so --seed0 4 cannot overwrite
-        # chains 0-3. The Gibbs runners used the loop index and were
-        # corrected to match; with the default seed0 = 0 no name changes.
         out = save_draws(draws, outdir / f"{MODEL}_{tag}_chain{args.seed0 + k}")
         print(f"  chain {args.seed0 + k} (seed {draws.meta['seed']}): "
               f"tau {draws.tau.mean():.4e}, {draws.meta['divergences']} div, "
@@ -161,7 +155,6 @@ def main() -> None:
 
     print(f"\ntotal {time()-t_all:.0f}s")
 
-    # ---- a first look, so an hour-long run is not opaque until diagnose runs --
     d0 = load_draws(outdir / f"{MODEL}_{tag}_chain{args.seed0}", HorseshoeDraws)
     names = load_predictor_names(args.universe, K)
     tau_all = np.concatenate([c.tau for c in chains])
@@ -180,7 +173,7 @@ def main() -> None:
     print(f"   implied effectively-free coefficients per asset: "
           f"{(1 - kappa.mean()) * K:.2f}")
     print("   [kappa near 1 = shrunk to the common b_bar; near 0 = left free.")
-    print("    THIS is the axis on which the four models are comparable --")
+    print("    THIS is the axis on which the four models are comparable;")
     print("    tau and the LASSO's lambda are not commensurable.]")
 
     m = d0.b_bar.mean(axis=0)

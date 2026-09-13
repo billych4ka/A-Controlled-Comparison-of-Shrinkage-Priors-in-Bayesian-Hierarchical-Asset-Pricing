@@ -19,18 +19,18 @@ DeviationSampler = Callable[[np.random.Generator, int, int, np.ndarray], np.ndar
 class SimulatedSURData:
     """Container for a simulated dataset and the ground truth used to build it."""
 
-    N: int                 # number of assets (portfolios)
-    K: int                 # number of predictors (incl. intercept)
-    T: int                 # number of time periods
-    b_bar: np.ndarray      # (K,)     -- true pooled/average coefficient vector, shared across assets
-    Delta_b: np.ndarray    # (K, K)   -- true covariance of asset deviations from b_bar
-    Sigma: np.ndarray      # (N, N)   -- true residual covariance across assets (cross-sectional)
-    theta: np.ndarray      # (N, K)   -- true deviation of each asset's coefficients from b_bar
-    b: np.ndarray          # (N, K)   -- true asset-specific coefficients, b = b_bar + theta
-    F: np.ndarray          # (N, T, K) -- simulated predictor data, F[i, t, :] = f_{i,t}
-    E: np.ndarray          # (N, T)   -- simulated residuals (noise), E[i, t] = eps_{i,t+1}
-    R: np.ndarray          # (N, T)   -- simulated observed returns, R[i, t] = r_{i,t+1}
-    meta: dict = field(default_factory=dict)  # bookkeeping, e.g. which sampler/seed generated this run
+    N: int
+    K: int
+    T: int
+    b_bar: np.ndarray
+    Delta_b: np.ndarray
+    Sigma: np.ndarray
+    theta: np.ndarray
+    b: np.ndarray
+    F: np.ndarray
+    E: np.ndarray
+    R: np.ndarray
+    meta: dict = field(default_factory=dict)
 
 
 def _random_pd_matrix(rng: np.random.Generator, dim: int, df_extra: int = 5,
@@ -43,7 +43,7 @@ def _random_pd_matrix(rng: np.random.Generator, dim: int, df_extra: int = 5,
     """
     df = dim + df_extra
     A = rng.standard_normal((df, dim)) * np.sqrt(scale / df)
-    return A.T @ A + 1e-6 * np.eye(dim)  # small jitter for numerical safety
+    return A.T @ A + 1e-6 * np.eye(dim)
 
 def draw_deviations_gaussian(rng: np.random.Generator, N: int, K: int,
                               Delta_b: np.ndarray) -> np.ndarray:
@@ -73,7 +73,7 @@ def draw_deviations_sparse(rng: np.random.Generator, N: int, K: int,
 def generate_predictors(rng: np.random.Generator, N: int, T: int, K: int) -> np.ndarray:
     """
     Generate predictor data f_{i,t}. Random noise for now (mechanics-testing
-    stage) -- shape (N, T, K). Column 0 is left as a genuine intercept
+    stage), shape (N, T, K). Column 0 is left as a genuine intercept
     (all ones) since every model formulation includes one.
     """
     F = rng.standard_normal((N, T, K))
@@ -91,10 +91,8 @@ def generate_residuals(rng: np.random.Generator, N: int, T: int,
 
     Returns E with shape (N, T), i.e. E[:, t] ~ N(0, Sigma).
     """
-    # rng.multivariate_normal(size=T) draws T iid vectors of length N,
-    # each ~ N(0, Sigma) -- exactly the Omega = Sigma (x) I_T structure.
-    E_T_by_N = rng.multivariate_normal(mean=np.zeros(N), cov=Sigma, size=T)  # (T, N)
-    return E_T_by_N.T  # (N, T)
+    E_T_by_N = rng.multivariate_normal(mean=np.zeros(N), cov=Sigma, size=T)
+    return E_T_by_N.T
 
 def compute_returns(F: np.ndarray, b: np.ndarray, E: np.ndarray) -> np.ndarray:
     """
@@ -102,7 +100,6 @@ def compute_returns(F: np.ndarray, b: np.ndarray, E: np.ndarray) -> np.ndarray:
 
     F : (N, T, K), b : (N, K), E : (N, T) -> R : (N, T)
     """
-    # einsum contracts the K dimension per asset: R[i, t] = sum_k F[i,t,k]*b[i,k]
     signal = np.einsum("itk,ik->it", F, b)
     return signal + E
 
@@ -170,8 +167,8 @@ if __name__ == "__main__":
     data1 = simulate_sur_data(N=5, K=5, T=100, seed=42)
     data2 = simulate_sur_data(N=5, K=5, T=100, seed=42)
 
-    print(np.allclose(data1.R, data2.R))       # expect True -- same seed, same data
-    print(np.allclose(data1.Sigma, data2.Sigma))  # expect True
+    print(np.allclose(data1.R, data2.R))
+    print(np.allclose(data1.Sigma, data2.Sigma))
 
     data3 = simulate_sur_data(N=5, K=5, T=100, seed=1)
-    print(np.allclose(data1.R, data3.R))       # expect False -- different seed
+    print(np.allclose(data1.R, data3.R))

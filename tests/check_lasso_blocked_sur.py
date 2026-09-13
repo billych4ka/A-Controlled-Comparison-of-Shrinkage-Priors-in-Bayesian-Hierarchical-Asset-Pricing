@@ -11,8 +11,7 @@ dense Delta_b across assets, whereas the LASSO has a per-asset DIAGONAL
 1/(s^2 tau_ij^2), a different coupling block, and a (b_bar, b_bar) block that
 SUMS per-asset precisions rather than multiplying one by N.
 
-Reproduces Appendix A.6.1 (second paragraph) and A.6.2 (first paragraph).
-Was check_chunk4.py during development.
+Reproduces Appendix A.7.1 (second paragraph) and A.7.2 (first paragraph).
 
 Recorded results (N=5, K=4, T=60, seed 11):
     likelihood precision vs brute force     2.274e-13
@@ -35,8 +34,6 @@ N, K, T = 5, 4, 60
 F = rng.standard_normal((N, T, K))
 R = rng.standard_normal((N, T)) * 0.5
 A = rng.standard_normal((N + 4, N)); Sigma = A.T @ A / (N + 4)
-# tau^2 must be EXPONENTIAL, as the model produces it. A uniform draw makes the
-# per-asset precisions nearly equal and hides the error tested in section 4.
 tau2 = rng.exponential(scale=1.0, size=(N, K))
 s = 0.6
 b_bar_bar = rng.standard_normal(K) * 0.1
@@ -47,7 +44,6 @@ NK, M = N * K, N * K + K
 Sinv, Dbb_inv = _spd_inverse(Sigma), _spd_inverse(Delta_b_bar)
 D_inv = 1.0 / (s * s * tau2)
 
-# rebuild exactly what sample_B_and_b_bar builds, so it can be inspected
 P = np.zeros((M, M))
 blk = G * Sinv[:, None, :, None]
 ii, kk = np.arange(N)[:, None], np.arange(K)[None, :]
@@ -61,11 +57,10 @@ rhs = np.empty(M)
 rhs[:NK] = np.einsum("ij,ijk->ik", Sinv, Fr, optimize=True).reshape(NK)
 rhs[NK:] = Dbb_inv @ b_bar_bar
 
-# ---- 1. brute force: the literal NT x NK stacked system ------------------
 print("1. BRUTE-FORCE NT x NK STACKED SYSTEM")
-X = block_diag(*[F[i] for i in range(N)])               # (NT, NK), asset-major
+X = block_diag(*[F[i] for i in range(N)])
 y = R.ravel()
-Omega_inv = np.kron(Sinv, np.eye(T))                    # Sigma^-1 (x) I_T
+Omega_inv = np.kron(Sinv, np.eye(T))
 lik_prec = X.T @ Omega_inv @ X
 lik_loc = X.T @ Omega_inv @ y
 prior_prec = np.diag(D_inv.ravel())
@@ -76,17 +71,16 @@ print(f"   (X is {X.shape}, Omega^-1 is {Omega_inv.shape}, built with no")
 print("    Kronecker shortcuts, so this tests Sigma^-1[i,j] * f_i'f_j by a")
 print("    genuinely different route)")
 
-# ---- 2. the model's own log joint ---------------------------------------
 print("\n2. LOG JOINT vs THE GAUSSIAN IMPLIED BY (P, rhs)")
 
 
 def log_joint(B, b_bar):
     E = R - np.einsum("itk,ik->it", F, B)
-    lp = -0.5 * np.trace(Sinv @ (E @ E.T))                       # likelihood
+    lp = -0.5 * np.trace(Sinv @ (E @ E.T))
     th = B - b_bar[None, :]
-    lp += (-0.5 * th ** 2 / (s ** 2 * tau2)).sum()               # theta prior
+    lp += (-0.5 * th ** 2 / (s ** 2 * tau2)).sum()
     dd = b_bar - b_bar_bar
-    lp += -0.5 * dd @ Dbb_inv @ dd                               # b_bar prior
+    lp += -0.5 * dd @ Dbb_inv @ dd
     return lp
 
 
@@ -99,7 +93,6 @@ print(f"   spread over 80 points: {np.ptp(resid):.3e}")
 print(f"   P symmetric {np.allclose(P, P.T)}   min eigenvalue "
       f"{np.linalg.eigvalsh(P).min():.4e}")
 
-# ---- 3. the draw itself: mean and covariance over many samples ----------
 print("\n3. SAMPLING DISTRIBUTION vs P^-1 rhs AND P^-1")
 n_draw = 60_000
 r2 = np.random.default_rng(5)
@@ -117,7 +110,6 @@ print(f"   covariance: max discrepancy "
       f"{np.abs(emp_cov-Pinv).max()/np.sqrt(np.abs(Pinv).max()**2/n_draw):.2f} MCSE"
       f"   corr(vec) {np.corrcoef(emp_cov.ravel(), Pinv.ravel())[0,1]:.6f}")
 
-# ---- 4. the mistake the baseline's code would invite --------------------
 print("\n4. THE COPY-PASTE TRAP")
 silent, shifts = 0, []
 r3 = np.random.default_rng(21)
@@ -131,10 +123,10 @@ for _ in range(n_trial):
     Pt[:NK, :NK] = b2.reshape(NK, NK)
     Pt[rows, cols] = -Dt.ravel(); Pt[cols, rows] = -Dt.ravel()
     Pt_ok = Pt.copy()
-    Pt_ok[NK:, NK:] = np.diag(Dt.sum(axis=0)) + Dbb_inv     # correct: SUM
-    Pt[NK:, NK:] = N * np.diag(Dt[0]) + Dbb_inv             # baseline's form
+    Pt_ok[NK:, NK:] = np.diag(Dt.sum(axis=0)) + Dbb_inv
+    Pt[NK:, NK:] = N * np.diag(Dt[0]) + Dbb_inv
     if np.linalg.eigvalsh(Pt).min() <= 0:
-        continue                                            # Cholesky would raise
+        continue
     silent += 1
     sd_b = np.sqrt(np.diag(_spd_inverse(Pt_ok))[NK:])
     shifts.append(np.abs((_spd_inverse(Pt) @ rhs

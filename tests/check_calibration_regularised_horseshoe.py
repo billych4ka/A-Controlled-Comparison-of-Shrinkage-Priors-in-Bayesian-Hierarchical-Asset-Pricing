@@ -1,5 +1,5 @@
 """
-check_calibration_regularised_horseshoe.py -- validation step 5 for model 4.
+check_calibration_regularised_horseshoe.py: validation step 5 for model 4.
 
 Simulate a parameter set from the regularised horseshoe's OWN prior, generate
 returns, fit, and ask whether the truth falls inside the 95% credible
@@ -8,7 +8,7 @@ intervals. About 95% should.
 Reproduces Table 4.6, the regularised horseshoe column. Supports Section 4.5
 on prior-generative calibration.
 
-MATCHED DIMENSIONS ONLY: N=6, K=5, T=200, 100 datasets -- identical to the
+MATCHED DIMENSIONS ONLY: N=6, K=5, T=200, 100 datasets, identical to the
 design used for the Gaussian baseline, the Bayesian LASSO and the plain
 horseshoe, so all four rows of the Chapter 4 table are directly comparable and
 a given number of standard errors means the same thing in every row.
@@ -23,13 +23,13 @@ verified. Two reasons.
   More substantively: the pilot suggests the slab CHANGES TAU. With the slab
   controlling the tails, tau no longer has to be driven down to control them,
   so c and tau are coupled and model 4's posterior geometry is not simply
-  model 3's with a capped tail -- it is a different geometry. Calibration
+  model 3's with a capped tail; it is a different geometry. Calibration
   tests whether the sampler produces honest intervals in THAT geometry, which
   model 3's calibration cannot speak to.
 
 WHAT IS DELIBERATELY NOT REPEATED, and why. The N=10/K=30 run and the
 full-scale attempt tested behaviour driven by the plain horseshoe's UNBOUNDED
-tails -- the regime where draws from the prior produce coefficients thousands
+tails, the regime where draws from the prior produce coefficients thousands
 of standard errors from zero and no achievable budget converges. The slab
 bounds exactly that, so those runs would be testing a pathology this model
 does not have. Sparsity recovery is also skipped: it would report that the
@@ -38,7 +38,7 @@ at two hours, and nothing in the argument depends on it.
 
 DESIGN, carried over unchanged from the horseshoe's calibration:
 
-  Truth drawn from THIS model's own prior -- b_bar ~ N(0, Delta_b_bar),
+  Truth drawn from THIS model's own prior: b_bar ~ N(0, Delta_b_bar),
   tau ~ C+(0, tau_0), lambda ~ C+(0,1), caux ~ InvGamma(nu/2, nu/2),
   c = s sqrt(caux), lambda~ from P&V Eq. (2.8), z ~ N(0,1),
   Sigma ~ IW(nu_Sigma, V_Sigma). simulate_sur_data is NOT used: it generates
@@ -55,14 +55,14 @@ DESIGN, carried over unchanged from the horseshoe's calibration:
   at about one standard error.
 
   THE SLAB SCALE IS SCALED TO MATCH. s is set so that E[c] sits at the same
-  multiple of the coefficient scale as in production -- 14.7 x sd_target --
+  multiple of the coefficient scale as in production (14.7 x sd_target)
   rather than at its production value, which would be enormous relative to
   this regime's coefficients and would never bind. A calibration in which the
   slab never binds would be calibrating the plain horseshoe.
 
   Per-dataset coverage mean +/- SE across datasets is THE column. No binomial
   p-value: intervals within a dataset are not independent, and the pooled
-  statistic is unstable -- the LASSO's pooled p for theta swung from 0.002 to
+  statistic is unstable: the LASSO's pooled p for theta swung from 0.002 to
   0.048 between runs differing by less than their own Monte Carlo error.
 
   A convergence gate excludes datasets with R-hat > 1.05 or tree depth
@@ -76,7 +76,7 @@ DESIGN, carried over unchanged from the horseshoe's calibration:
 Run from the project root. At the pilot's 0.354 s/iteration this should take
 roughly 30-40 minutes, against 101 for the plain horseshoe:
 
-    python3 check_calibration_regularised_horseshoe.py --datasets 2   # time it first
+    python3 check_calibration_regularised_horseshoe.py --datasets 2   (time it first)
     caffeinate -i python3 check_calibration_regularised_horseshoe.py
 """
 from __future__ import annotations
@@ -90,13 +90,7 @@ from scipy.stats import invgamma, invwishart
 from src.nuts.regularised_horseshoe import (RegHorseshoeHyperparams,
                                             lambda_tilde, run_nuts)
 
-TAU0_MULT = 0.01        # simulation tau_0, in standard errors
-# E[c] / tau_0, matching production: 1.918988e-03 / 3.945463e-04.
-# THE BINDING FRACTION DEPENDS ON c/tau, NOT c/sd_target. An earlier version
-# scaled the slab to sd_target, but this regime's tau_0 is 0.01 SE against
-# production's 3.01 x sd_target, so that left c/tau_0 at 1,470 instead of 4.86
-# and the slab bound for 0.04% of coefficients -- calibrating the plain
-# horseshoe under another name. Caught by the binding guard.
+TAU0_MULT = 0.01
 
 SLAB_OVER_TAU0 = 4.8638
 RHAT_MAX = 1.05
@@ -119,7 +113,7 @@ def simulation_hyperparameters(N, K, T, sd_bbar=2.0) -> RegHorseshoeHyperparams:
     inconsistent with it.
     """
     se = 1.0 / np.sqrt(T)
-    slab_sd = SLAB_OVER_TAU0 * TAU0_MULT * se   # E[c], so c/tau_0 matches production
+    slab_sd = SLAB_OVER_TAU0 * TAU0_MULT * se
     return RegHorseshoeHyperparams(
         b_bar_bar=np.zeros(K),
         Delta_b_bar=sd_bbar ** 2 * np.eye(K),
@@ -182,7 +176,7 @@ def main() -> None:
     se = 1.0 / np.sqrt(T)
 
     print("=" * 78)
-    print(f"REGULARISED HORSESHOE CALIBRATION -- matched dimensions")
+    print(f"REGULARISED HORSESHOE CALIBRATION: matched dimensions")
     print(f"N={N} K={K} T={T} | {args.datasets} datasets | {args.chains} chains "
           f"x {args.draws} draws ({args.tune} tune)")
     print(f"tau_0 = {hp0.tau_0:.4e} = {TAU0_MULT} SE   "
@@ -244,7 +238,7 @@ def main() -> None:
     print(f"\n  {(time()-t_all)/60:.1f} min | {n_used} of {args.datasets} used, "
           f"{len(excluded)} excluded")
     if excluded:
-        print("  EXCLUDED -- these bias the rate toward easy datasets; report them:")
+        print("  EXCLUDED: these bias the rate toward easy datasets; report them:")
         for s, tr, r, ds in excluded:
             print(f"    seed {s}: tau {tr:.1f}x tau_0, R-hat {r:.3f}, "
                   f"depth saturating {ds:.0%}")

@@ -7,13 +7,12 @@ WHY A SEPARATE MODULE. expanding_window in src/evaluation/backtest.py is
 shared by all four models, has been verified end to end by
 assert_no_lookahead, and produced every number in Chapter 5. Modifying its
 fit_fn contract this late would put those results at risk for no benefit. The
-loop below therefore duplicates its windowing and alignment EXACTLY -- same
+loop below therefore duplicates its windowing and alignment EXACTLY (same
 start, same refit grid, same F[:,t,:] convention, same expanding training
-slice -- and adds only the interval computation. The duplication is
+slice) and adds only the interval computation. The duplication is
 deliberate: the two functions must agree on point forecasts by construction.
-NOTE: no automated test enforces that agreement -- an earlier version of this
-note claimed one, and the claim was not supported. The agreement rests on the
-line-by-line correspondence of the two loops, and nothing else.
+No automated test enforces that agreement; it rests on the line-by-line
+correspondence of the two loops.
 
 WHAT IS COMPUTED, and why both.
 
@@ -29,7 +28,7 @@ WHAT IS COMPUTED, and why both.
 The two differ by roughly an order of magnitude here. The median posterior
 standard deviation of a single coefficient is 4.28e-04, so coefficient
 uncertainty contributes on the order of 5e-03 to a forecast, against a
-residual standard deviation of 5.57e-02 -- about eleven times larger. A
+residual standard deviation of 5.57e-02, about eleven times larger. A
 coefficient-only 95% interval should therefore cover far less than 95% of
 realised returns. Reporting both quantifies how much of predictive
 uncertainty is estimation risk in this setting, which is the same finding as
@@ -60,11 +59,6 @@ from typing import Callable
 
 import numpy as np
 
-# interval_fit_fn(R_train, F_train) -> (B_draws, sigma2_draws)
-#   B_draws      : (n_draws, N, K)
-#   sigma2_draws : (n_draws, N) diagonal of Sigma, the per-asset residual
-#                  variance. The off-diagonal is not needed: the interval is
-#                  marginal per asset-month, not joint across assets.
 IntervalFitFunction = Callable[[np.ndarray, np.ndarray], tuple]
 
 LEVELS = (0.025, 0.975)
@@ -101,8 +95,6 @@ class IntervalResult:
             "n_asset_months": int(n),
             "coverage_coef_only": float(cov_c.mean()),
             "coverage_full": float(cov_f.mean()),
-            # binomial SE is a lower bound: asset-months are not independent,
-            # so quote it as such rather than as an exact standard error
             "binomial_se": float(np.sqrt(0.95 * 0.05 / n)),
             "mean_width_coef_only": float((self.hi_coef - self.lo_coef).mean()),
             "mean_width_full": float((self.hi_full - self.lo_full).mean()),
@@ -123,7 +115,7 @@ def expanding_window_intervals(fit_fn: IntervalFitFunction,
     expanding training slice R[:, :t_refit], same forecast convention
     F[:, t, :] for month t with no further lagging. Any divergence would make
     the intervals describe different fits from the Chapter 5 point forecasts.
-    This is maintained by construction, not by an automated check -- see the
+    This is maintained by construction, not by an automated check; see the
     module docstring.
 
     seed : for the residual draws entering the full predictive interval. Fixed
@@ -158,16 +150,13 @@ def expanding_window_intervals(fit_fn: IntervalFitFunction,
         t_end = min(t_refit + refit_every, T)
 
         for t in range(t_refit, t_end):
-            f_t = F[:, t, :]                                  # (N, K)
-            # conditional mean under every posterior draw: (n_draws, N)
+            f_t = F[:, t, :]
             mu = np.einsum("ik,sik->si", f_t, B_draws)
             col = t - start
             predicted[:, col] = f_t @ b_hat if b_hat.ndim == 1 else \
                 np.einsum("ik,ik->i", f_t, b_hat)
             lo_c[:, col], hi_c[:, col] = np.quantile(mu, LEVELS, axis=0)
 
-            # full predictive: add one residual draw per posterior draw, using
-            # that draw's own residual variance
             eps = rng.standard_normal(mu.shape) * np.sqrt(sig2_draws)
             lo_f[:, col], hi_f[:, col] = np.quantile(mu + eps, LEVELS, axis=0)
 

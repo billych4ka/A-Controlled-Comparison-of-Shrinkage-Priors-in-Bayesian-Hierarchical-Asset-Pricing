@@ -1,8 +1,8 @@
 """
-src/nuts/regularised_horseshoe.py  --  CHUNK 1: hyperparameters
+src/nuts/regularised_horseshoe.py
 
 Model 4 of 4: the REGULARISED Horseshoe on the coefficient deviations.
-Everything except theta's prior is identical to the other three models --
+Everything except theta's prior is identical to the other three models:
 the SUR likelihood, the b_i = b_bar + theta_i decomposition, b_bar's Normal
 prior at Delta_b_bar, and Sigma's Inverse-Wishart.
 
@@ -27,15 +27,15 @@ sqrt(2) s. Piironen & Vehtari's illustrative default s = 2.0 gives a slab sd
 of 2.83, which is 51 monthly return standard deviations and roughly 1,500
 times the calibrated coefficient scale. A cap that far above anything the data
 can produce NEVER BINDS, and the regularised horseshoe would run cleanly,
-converge, and be numerically indistinguishable from the plain horseshoe --
+converge, and be numerically indistinguishable from the plain horseshoe:
 four priors that are really three, with no error raised anywhere.
 
 s is therefore derived from the SAME p_0 logic that gives tau_0. If p_0 = 23
 coefficients carry the target R^2 between them, each has variance
 R^2 Var(r) / (p_0 * mean var(f)), a signal scale of 1.919e-03 on size_bm_25.
 Inverting E[c] = sqrt(nu/(nu-2)) s at nu = 4 gives s = 1.357e-03. Every input
-is justified elsewhere in the dissertation -- p_0, target_r2, nu, and
-quantities read off the data -- so no new free parameter is introduced.
+is justified elsewhere in the dissertation (p_0, target_r2, nu, and
+quantities read off the data), so no new free parameter is introduced.
 
 This is the FOURTH instance of the project's scale theme, and the cleanest:
 a dimensionless hyperparameter (nu = 4) transports safely, while a dimensional
@@ -43,8 +43,8 @@ one (s) does not. Running once at s = 2.0 should give a binding fraction of
 essentially zero, which converts the recalibration from housekeeping into
 evidence.
 
-WHERE THE SLAB ACTUALLY BINDS -- and a correction to the original prediction
----------------------------------------------------------------------------
+WHERE THE SLAB ACTUALLY BINDS: and a correction to the original prediction
+--------------------------------------------------------------------------
 The slab dominates when tau^2 lambda^2 > c^2, i.e. lambda > c/tau. The
 project's earlier note predicted a binding fraction of about 12%, computed at
 tau = tau_0. That was correct when written, but the plain horseshoe has since
@@ -58,13 +58,13 @@ A twentyfold smaller tau raises the threshold twentyfold:
     posterior tau, Inv      138.2          0.46%               17
     s = 2.0, posterior tau  134565          0.0005%             0.02
 
-So the honest prediction is ~0.7%, about 25 coefficients of 3,600 -- NOT 12%.
+So the honest prediction is ~0.7%, about 25 coefficients of 3,600, NOT 12%.
 For the other 99.3% the two models place an IDENTICAL prior on theta.
 
 That is not a reason to abandon the model. Those 25 are exactly the population
 causing the trouble: the plain horseshoe's prior predictive showed the single
 largest |theta| in a draw contributing a median implied R^2 of 1.28 on its
-own. But it does sharpen the expectation -- the two models will be very
+own. But it does sharpen the expectation: the two models will be very
 similar, and any difference lives in a handful of extreme coefficients rather
 than across the board.
 
@@ -126,7 +126,7 @@ class RegHorseshoeHyperparams:
     whatever fields a dataclass declares.
 
     b_bar_bar     : (K,)   zeros
-    Delta_b_bar   : (K,K)  SHARED with all four models -- must be identical or
+    Delta_b_bar   : (K,K)  SHARED with all four models; must be identical or
                            the comparison is confounded
     nu_Sigma      : N + 2
     V_Sigma       : (N,N)  S_hat
@@ -134,7 +134,7 @@ class RegHorseshoeHyperparams:
                     used for the regularised horseshoe too, with p_0 as the
                     prior guess for the number of coefficients FAR FROM ZERO,
                     remembering those will also be regularised by the slab
-    slab_scale    : s, derived from p_0 -- NOT P&V's illustrative 2.0
+    slab_scale    : s, derived from p_0, NOT P&V's illustrative 2.0
     slab_df       : nu = 4. DIMENSIONLESS, so it transports safely
     p0, n_choice, sigma_pooled, sd_target : as for the horseshoe
     target_accept, init, max_treedepth : sampler settings, carried here so
@@ -189,7 +189,7 @@ class RegHorseshoeHyperparams:
         THE diagnostic for this model, and the one whose failure is silent: if
         it comes back near zero the regularised horseshoe has collapsed into
         the plain horseshoe and any reported difference between them is noise.
-        Prior-side only -- the posterior fraction is computed from the draws in
+        Prior-side only: the posterior fraction is computed from the draws in
         diagnose_regularised_horseshoe.py, and the two should be compared.
         """
         return float(2.0 / np.pi * np.arctan(1.0 / self.binding_threshold(tau)))
@@ -207,12 +207,12 @@ def reg_horseshoe_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
     Delta_b_bar, nu_Sigma and V_Sigma come from rescaled_hyperparameters();
     sigma from pooled_residual_scale(); tau_0 from P&V Eq. (3.12) exactly as
     for the plain horseshoe. Only slab_scale is new, and it is DERIVED, not
-    supplied -- so the robustness universes recalibrate automatically and the
+    supplied, so the robustness universes recalibrate automatically and the
     derivation lives next to the number.
 
     slab_scale : None (the default) derives s from p_0 as described in the
                  module docstring. Pass 2.0 to reproduce P&V's illustrative
-                 default and demonstrate that it never binds -- that run is
+                 default and demonstrate that it never binds; that run is
                  evidence, not a mistake, and belongs in the sensitivity table.
     nu         : 4, P&V. Dimensionless, so it transports across applications
                  where s does not.
@@ -233,8 +233,6 @@ def reg_horseshoe_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
     tau_0 = (p0 / (K - p0)) * sigma_pooled / np.sqrt(n)
 
     if slab_scale is None:
-        # if p_0 coefficients carry target_r2 between them, each has variance
-        # target_r2 * Var(r) / (p_0 * mean var(f)); invert E[c] = sqrt(nu/(nu-2)) s
         mean_var_f = float(np.trace(np.cov(F.reshape(-1, K).T)) / K)
         signal_scale = np.sqrt(target_r2 * R.var() / (p0 * mean_var_f))
         slab_scale = float(signal_scale / np.sqrt(nu / (nu - 2.0)))
@@ -269,18 +267,14 @@ def lambda_tilde(lam: np.ndarray, tau: float | np.ndarray,
     against the PyTensor version and evaluated on saved draws.
 
     The two limits are worth checking numerically and were asserted against
-    an independent NumPy reference during development: as c -> infinity, lambda~ -> lambda (the plain
+    an independent NumPy reference: as c -> infinity, lambda~ -> lambda (the plain
     horseshoe); as tau*lambda >> c, lambda~ -> c/tau, so tau*lambda~ -> c and
     the prior becomes N(0, c^2) regardless of how large lambda is. That second
-    limit is the whole point -- it is what caps the tails.
+    limit is the whole point: it is what caps the tails.
     """
     lam2 = np.asarray(lam, dtype=float) ** 2
     c2 = np.asarray(c, dtype=float) ** 2
     return np.sqrt(c2 * lam2 / (c2 + np.asarray(tau, dtype=float) ** 2 * lam2))
-
-# =========================================================================
-# CHUNK 2 -- append to src/nuts/regularised_horseshoe.py, below chunk 1.
-# =========================================================================
 
 
 def _sigma_reference(R: np.ndarray, F: np.ndarray):
@@ -313,25 +307,24 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: RegHorseshoeHyperparams):
     caux an Inv-Gamma(nu/2, nu/2) prior and setting c = s sqrt(caux), and the
     latter keeps the sampled coordinate at unit scale, which is the whole
     reason this project's coordinates are non-dimensionalised. E[caux] =
-    (nu/2)/(nu/2 - 1) = 2 at nu = 4, so E[c] = sqrt(2) s -- and the slab a
+    (nu/2)/(nu/2 - 1) = 2 at nu = 4, so E[c] = sqrt(2) s, and the slab a
     reader should be quoted is E[c], not s.
 
-    P&V's C.1 is used rather than their C.2 decomposition. C.2 was built and
-    tested against C.1 for the plain horseshoe on 13 August and REJECTED:
-    13 divergences against 16, inside binomial noise, for 1.90x the wall
-    clock, and the location scan showed the divergences were not in the
-    low-tau neck C.2 addresses. That decision carries over; there is no reason
-    to expect it to differ here, and re-testing it would cost 20 minutes to
-    reconfirm a settled question.
+    P&V's Appendix C.2 parameterisation was tested for the plain horseshoe and
+    gave no reduction in divergences (13 against 16, within binomial noise) at
+    1.9x the wall clock, so C.1 is used for both models.
 
-    THE NESTING, which was verified numerically during development rather
-    than asserted:
+    THE NESTING, verified numerically rather than asserted:
     as c -> infinity, lambda~ -> lambda and this model becomes the plain
-    horseshoe EXACTLY. That is what makes models 3 and 4 a controlled pair --
+    horseshoe EXACTLY. That is what makes models 3 and 4 a controlled pair:
     one hyperparameter apart, with one limit collapsing the other.
 
     Every sampled coordinate is O(1) by construction: b_bar_z, z, log lambda,
     log tau_z, log caux and Sigma_packed_z.
+
+    Sigma_packed_z is pm.Flat, never a proper prior: pm.Potential ADDS to the
+    total logp rather than replacing a declared variable's own prior, and a
+    pm.Normal there biased E[Sigma] by 8-11 MCSE.
     """
     import pymc as pm
 
@@ -358,21 +351,16 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: RegHorseshoeHyperparams):
         tau_z = pm.HalfCauchy("tau_z", beta=1.0)
         tau = pm.Deterministic("tau", hp.tau_0 * tau_z)
 
-        # the slab. caux at unit scale; c = s sqrt(caux) is P&V Appendix C.1
         caux = pm.InverseGamma("caux", alpha=hp.slab_df / 2.0,
                                beta=hp.slab_df / 2.0)
         c = pm.Deterministic("c", hp.slab_scale * pm.math.sqrt(caux))
 
-        # lambda~^2 = c^2 lam^2 / (c^2 + tau^2 lam^2), P&V Eq. (2.8)
         lam2 = lam ** 2
         lam_tilde = pm.Deterministic(
             "lam_tilde", pm.math.sqrt(c ** 2 * lam2 / (c ** 2 + tau ** 2 * lam2)))
 
         b = pm.Deterministic("b", b_bar[None, :] + z * lam_tilde * tau)
 
-        # pm.Flat, NEVER a proper prior: pm.Potential ADDS to the total logp
-        # rather than replacing a declared variable's own prior, and a
-        # pm.Normal here once biased E[Sigma] by 8-11 MCSE.
         packed_z = pm.Flat("Sigma_packed_z", shape=packed0.size)
         Sigma, sigma_logp = inverse_wishart_cholesky_logp(
             packed0 + packed_scale * packed_z, hp.nu_Sigma, hp.V_Sigma)
@@ -383,10 +371,10 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: RegHorseshoeHyperparams):
 
     initvals = {
         "b_bar_z": B_ols.mean(axis=0) / sd_bbar,
-        "z": np.zeros((N, K)),          # theta exactly 0
-        "lam": np.ones((N, K)),         # the half-Cauchy median
-        "tau_z": 1.0,                   # tau at tau_0
-        "caux": 1.0,                    # c at slab_scale (NOT at E[c] = sqrt(2) s)
+        "z": np.zeros((N, K)),
+        "lam": np.ones((N, K)),
+        "tau_z": 1.0,
+        "caux": 1.0,
         "Sigma_packed_z": np.zeros(packed0.size),
     }
     return model, initvals
@@ -399,11 +387,11 @@ def transformed_point(model, initvals: dict) -> dict:
 
     lam, tau_z and caux are positive, so PyMC samples their logs. Doing the
     conversion explicitly, and asserting the key set, is more robust across
-    PyMC versions than calling the transform objects -- and it fails loudly if
+    PyMC versions than calling the transform objects, and it fails loudly if
     a variable is renamed rather than silently evaluating at the default point.
 
     pm.sample() takes the UNTRANSFORMED initvals; this is only for evaluating
-    logp and gradients directly, as the development log-density checks do.
+    logp and gradients directly, as the log-density checks do.
     """
     point = model.initial_point()
     expected = {"b_bar_z", "z", "lam_log__", "tau_z_log__", "caux_log__",
@@ -418,12 +406,6 @@ def transformed_point(model, initvals: dict) -> dict:
     point["caux_log__"] = np.log(np.asarray(initvals["caux"], dtype=float))
     point["Sigma_packed_z"] = np.asarray(initvals["Sigma_packed_z"], dtype=float)
     return point
-
-# =========================================================================
-# CHUNK 3 -- append to src/nuts/regularised_horseshoe.py.
-# Needs `from dataclasses import dataclass, field` and `from time import time`
-# at the top of the file (chunk 1 imports only `dataclass`).
-# =========================================================================
 
 
 @dataclass
@@ -448,7 +430,7 @@ class RegHorseshoeDraws:
     model's central claim unverifiable from the saved output.
 
     At 1,500 draws that is roughly 132 MB per chain, against the plain
-    horseshoe's 91 MB -- the extra 41 MB is lam_tilde. Acceptable, and it
+    horseshoe's 91 MB; the extra 41 MB is lam_tilde. Acceptable, and it
     buys the one diagnostic the model exists to produce.
 
     NUTS sample statistics, one per retained draw:
@@ -476,7 +458,7 @@ class RegHorseshoeDraws:
 
 def ebfmi(energy: np.ndarray) -> float:
     """E-BFMI, Betancourt (2017). Below ~0.3 indicates the sampler is
-    struggling to move between energy levels -- a failure distinct from
+    struggling to move between energy levels: a failure distinct from
     divergences. Computed here rather than through arviz, whose az.bfmi
     raises a TypeError on version 1.2.0."""
     e = np.asarray(energy, dtype=float).ravel()
@@ -488,7 +470,7 @@ def shrinkage_factors(draws: RegHorseshoeDraws, F: np.ndarray,
     """
     kappa_ij = 1 / (1 + n sigma^-2 tau^2 lambda~_ij^2 s_j^2).
 
-    Uses lam_tilde, NOT lam_local -- the regularised scale is the one that
+    Uses lam_tilde, NOT lam_local; the regularised scale is the one that
     enters theta's prior, so it is the one that determines shrinkage. Using
     the raw lambda here would overstate how free the tail coefficients are and
     would make model 4's kappa look identical to model 3's by construction.
@@ -519,7 +501,7 @@ def binding_summary(draws: RegHorseshoeDraws, hp: RegHorseshoeHyperparams,
     5% of tau_0 and the binding threshold c/tau moves inversely.
 
     "Binding" is defined as lam_tilde / lam_local < tol. At tol = 0.99 that
-    means the slab has shrunk a coefficient's local scale by more than 1% --
+    means the slab has shrunk a coefficient's local scale by more than 1%,
     a deliberately generous threshold, because P&V's design shrinks EVERY
     coefficient at least slightly (lambda~/lambda is 0.9998 at lambda = 0.1
     and 0.960 at lambda = 1 with the calibrated c), so a strict "any shrinkage
@@ -528,11 +510,11 @@ def binding_summary(draws: RegHorseshoeDraws, hp: RegHorseshoeHyperparams,
     IF frac_binding IS NEAR ZERO the regularised horseshoe has collapsed into
     the plain horseshoe and any reported difference between models 3 and 4 is
     noise. That is exactly what P&V's illustrative s = 2.0 would produce here
-    -- 0.017 of 3,600 coefficients -- which is why s is recalibrated.
+    (0.017 of 3,600 coefficients), which is why s is recalibrated.
     """
     ratio = draws.lam_tilde / draws.lam_local
     binding = ratio < tol
-    heavy = ratio < 0.5              # the slab has halved the local scale
+    heavy = ratio < 0.5
     return {
         "frac_binding": float(binding.mean()),
         "n_binding_per_draw": float(binding.sum(axis=(1, 2)).mean()),
@@ -556,7 +538,7 @@ def run_nuts(R: np.ndarray, F: np.ndarray, hp: RegHorseshoeHyperparams,
     CHAIN. Interface identical to the plain horseshoe's run_nuts.
 
     cores DEFAULTS TO 1, unlike the horseshoe's 4. PyMC's multiprocessing
-    killed a worker twice in this project -- an EOFError with no traceback at
+    killed a worker twice in this project: an EOFError with no traceback at
     reduced dimensions, and a production run that lost a process after 70
     minutes. Every single-core run has completed. Sequential chains cost about
     3 hours instead of 45 minutes for a production run, and that is the trade
@@ -568,17 +550,17 @@ def run_nuts(R: np.ndarray, F: np.ndarray, hp: RegHorseshoeHyperparams,
 
     Sampler settings come from hp, not from arguments here, so a backtest fit
     cannot silently differ from the production run: target_accept = 0.99,
-    init = "adapt_diag", max_treedepth = 10. NEVER "jitter+adapt_diag" -- its
-    U(-1,1) jitter is ~1,300 prior standard deviations on b_bar and drove the
-    step size to 9.1e-22 in an early horseshoe run, a sampler that never moved
-    while reporting a fast fit.
+    init = "adapt_diag", max_treedepth = 10. NEVER "jitter+adapt_diag": its
+    U(-1,1) jitter is ~1,300 prior standard deviations on b_bar and drives the
+    step size to 9.1e-22 in the plain horseshoe, a sampler that never moves
+    while appearing to fit quickly.
 
     n_draws is RETAINED draws per chain, EXCLUDING tuning.
 
     BUDGET: the plain horseshoe needed 4 x 1,500 because TAU had bulk ESS of
     only ~14 per 200 draws while B was superefficient. Whether the slab
-    changes that is unknown -- c is a new global parameter and may itself mix
-    slowly -- so the first production run's ESS on tau AND c should be read
+    changes that is unknown (c is a new global parameter and may itself mix
+    slowly), so the first production run's ESS on tau AND c should be read
     before this default is trusted for the robustness universes.
     """
     import pymc as pm

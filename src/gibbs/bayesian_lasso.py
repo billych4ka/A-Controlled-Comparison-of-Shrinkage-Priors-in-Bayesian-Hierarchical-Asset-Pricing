@@ -2,7 +2,7 @@
 src/gibbs/bayesian_lasso.py
 
 Bayesian LASSO Gibbs sampler for the Bayesian hierarchical SUR asset-pricing
-model -- model 2 of 4. The likelihood (sur.py) and the cross-asset hierarchy
+model, model 2 of 4. The likelihood (sur.py) and the cross-asset hierarchy
 (b_i = b_bar + theta_i, with b_bar ~ N(b_bar_bar, Delta_b_bar) and
 Sigma ~ IW(nu_Sigma, V_Sigma)) are held fixed against the Gaussian baseline.
 Only the prior on the deviations theta_i changes:
@@ -11,7 +11,7 @@ Only the prior on the deviations theta_i changes:
     tau_ij^2             ~  Exponential(lambda^2 / 2)
     lambda^2             ~  Gamma(r, delta)
 
-which marginally gives theta_ij ~ Laplace(0, s/lambda) -- Park & Casella's
+which marginally gives theta_ij ~ Laplace(0, s/lambda): Park & Casella's
 (2008) scale-mixture-of-normals construction, with a single global lambda
 shared across all i, j.
 
@@ -26,7 +26,7 @@ Disclosed deviations from Park & Casella
 1. The conditioning scale is a POOLED PLUG-IN constant s, not the sampled
    residual scale. Park & Casella condition the coefficient prior on sigma^2,
    the sampled error variance of the same equation. The elementwise
-   generalisation to SUR -- theta_ij | Sigma_ii ~ N(0, Sigma_ii tau_ij^2) --
+   generalisation to SUR, theta_ij | Sigma_ii ~ N(0, Sigma_ii tau_ij^2),
    destroys Sigma's Inverse-Wishart conjugacy: it enters the joint density as
    an inverse-gamma kernel in diag(Sigma), against an Inverse-Wishart kernel
    in Sigma^{-1}, and the two do not combine. (An independence
@@ -37,7 +37,7 @@ Disclosed deviations from Park & Casella
 
    The generalisation that DOES preserve conjugacy is the matrix-normal
    theta ~ MN(0, Sigma, D_tau), giving Sigma | . ~ IW(nu_Sigma + T + K,
-   V_Sigma + EE' + theta D_tau^{-1} theta') -- verified numerically to 1.8e-13.
+   V_Sigma + EE' + theta D_tau^{-1} theta'), verified numerically to 1.8e-13.
    Its Kronecker structure, however, forces one tau_j^2 per PREDICTOR shared
    across assets (a Bayesian group lasso) rather than one per coefficient,
    which would not be comparable with the Horseshoe models' per-coefficient
@@ -65,7 +65,7 @@ Disclosed deviations from Park & Casella
 
 3. s is degrees-of-freedom corrected, RSS/(T-K), not RSS/(T-1). At K=144 and
    an initial backtest window of T=240 the uncorrected estimator is 63% of
-   the correct one, rising to 90% by the final window -- a drifting bias that
+   the correct one, rising to 90% by the final window: a drifting bias that
    would tighten the prior at the start of the backtest and loosen it
    monotonically thereafter, appearing in results as a model that improves
    over time.
@@ -86,15 +86,15 @@ from src.likelihood.sur import sur_residuals
 @dataclass
 class LassoHyperparams:
     """
-    Fixed hyperparameters of the Bayesian LASSO -- chosen once, before
+    Fixed hyperparameters of the Bayesian LASSO, chosen once, before
     sampling, and never updated by the sampler.
 
-    b_bar_bar     : (K,)   prior mean of b_bar          -- zeros, Feng & He
-    Delta_b_bar   : (K,K)  prior covariance of b_bar    -- SHARED with all
+    b_bar_bar     : (K,)   prior mean of b_bar:            zeros, Feng & He
+    Delta_b_bar   : (K,K)  prior covariance of b_bar:      SHARED with all
                            four models; must be identical or the comparison
                            is confounded
-    nu_Sigma      : IW degrees of freedom for Sigma     -- N + 2
-    V_Sigma       : (N,N)  IW scale for Sigma           -- S_hat
+    nu_Sigma      : IW degrees of freedom for Sigma:       N + 2
+    V_Sigma       : (N,N)  IW scale for Sigma:             S_hat
     s             : pooled plug-in residual scale entering theta's prior
     lambda_r      : shape of the Gamma hyperprior on lambda^2
     lambda_delta  : rate of that Gamma hyperprior
@@ -126,7 +126,7 @@ class LassoHyperparams:
         sqrt(E[lambda^2]) under the Gamma(r, delta) hyperprior on lambda^2,
         i.e. the ROOT MEAN SQUARE of lambda, not its mean.
 
-        E[lambda^2] = r/delta, so this is sqrt(r/delta) -- the value delta is
+        E[lambda^2] = r/delta, so this is sqrt(r/delta), the value delta is
         solved for in lasso_hyperparameters, and the same central value
         lasso_prior_implied_r2 evaluates at. E[lambda] is a different number:
         at r = 1 the hyperprior on lambda^2 is Exponential(delta) and
@@ -221,7 +221,6 @@ def lasso_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
     """
     base = rescaled_hyperparameters(R, F, K, target_r2=target_r2)
 
-    # the deviation scale the baseline's prior implies -- lambda's calibration target
     sd_target = float(np.sqrt(base.V_b[0, 0] / (base.nu_b - K - 1)))
 
     s, _ = pooled_residual_scale(R, F)
@@ -244,7 +243,7 @@ def lasso_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
 def lasso_prior_implied_r2(hp: LassoHyperparams, R: np.ndarray,
                            F: np.ndarray) -> float:
     """
-    The R^2 the prior implicitly expects the predictors to explain -- the
+    The R^2 the prior implicitly expects the predictors to explain: the
     LASSO's counterpart to baseline_gaussian.prior_implied_r2, and the check
     that the calibration closes.
 
@@ -255,7 +254,7 @@ def lasso_prior_implied_r2(hp: LassoHyperparams, R: np.ndarray,
 
     evaluated at the hyperprior's central value lambda^2 = r/delta. (It is
     evaluated there rather than integrated over lambda because E[1/lambda^2]
-    under Gamma(r, delta) is delta/(r-1), which does not exist at r = 1 --
+    under Gamma(r, delta) is delta/(r-1), which does not exist at r = 1,
     the price of the most diffuse proper hyperprior, and harmless since this
     function is a diagnostic rather than part of the model.)
 
@@ -281,7 +280,7 @@ def sample_tau2(theta: np.ndarray, s: float, lam: float,
         (tau^2)^(-1/2) exp( -theta_ij^2 / (2 s^2 tau^2) )  *  exp( -lambda^2 tau^2 / 2 )
 
     a generalised inverse Gaussian with p = 1/2, which is exactly the case in
-    which the RECIPROCAL is inverse Gaussian -- Park & Casella's key
+    which the RECIPROCAL is inverse Gaussian, Park & Casella's key
     tractability result:
 
         1 / tau_ij^2  ~  InverseGaussian( mu' = lambda s / |theta_ij|,
@@ -301,8 +300,8 @@ def sample_tau2(theta: np.ndarray, s: float, lam: float,
 
     in which the last two terms both grow like mu'^2 y / (2 lam') and their
     difference is lost to floating-point cancellation once mu' is large. On
-    scipy 1.17.1 this returns NEGATIVE draws -- from a distribution supported
-    on (0, infinity) -- once mu' is large enough, rising to 67% of draws at
+    scipy 1.17.1 this returns NEGATIVE draws, from a distribution supported
+    on (0, infinity), once mu' is large enough, rising to 67% of draws at
     |theta| = 1e-13. np.isfinite() passes on every one of them.
 
     A negative tau_ij^2 gives a negative prior precision 1/(s^2 tau_ij^2). The
@@ -325,7 +324,7 @@ def sample_tau2(theta: np.ndarray, s: float, lam: float,
            = (4 lam' / y) / (1 + sqrt(1 + 4/u))^2
 
     which is algebraically identical but contains no subtraction of nearly
-    equal quantities -- every operation is on a positive number. Better
+    equal quantities: every operation is on a positive number. Better
     still, 4/u = 4 lambda |theta_ij| / (s y) involves no division by theta,
     so theta_ij = 0 exactly gives x1 = lambda^2 / y, which IS the correct
     limit (as theta -> 0 the conditional becomes Gamma(1/2, 2/lambda^2), with
@@ -337,7 +336,7 @@ def sample_tau2(theta: np.ndarray, s: float, lam: float,
     are 1/(1+r) and x1/r^2, again with no division by theta in the accepted
     branch.
 
-    Validation (against an independent NumPy reference during development):
+    Validation (against an independent NumPy reference):
     sample mean matches mu' and sample
     variance matches mu'^3/lam' wherever Monte Carlo error permits the
     comparison; Kolmogorov-Smirnov against scipy agrees wherever scipy is
@@ -354,14 +353,14 @@ def sample_tau2(theta: np.ndarray, s: float, lam: float,
     a = np.abs(theta)
     lam_prime = lam * lam
 
-    y = rng.standard_normal(a.shape) ** 2                 # chi-squared_1
-    q = 4.0 * lam * a / (s * y)                           # = 4/u, no 1/theta
+    y = rng.standard_normal(a.shape) ** 2
+    q = 4.0 * lam * a / (s * y)
     x1 = (4.0 * lam_prime / y) / (1.0 + np.sqrt(1.0 + q)) ** 2
 
-    r = x1 * a / (lam * s)                                # = x1 / mu'
-    keep = rng.random(a.shape) * (1.0 + r) <= 1.0         # accept w.p. 1/(1+r)
-    r_safe = np.where(r > 0.0, r, 1.0)                    # branch never taken at r=0
-    x = np.where(keep, x1, x1 / (r_safe * r_safe))        # mu'^2 / x1 = x1 / r^2
+    r = x1 * a / (lam * s)
+    keep = rng.random(a.shape) * (1.0 + r) <= 1.0
+    r_safe = np.where(r > 0.0, r, 1.0)
+    x = np.where(keep, x1, x1 / (r_safe * r_safe))
 
     return 1.0 / x
 
@@ -380,7 +379,7 @@ def sample_lambda_collapsed(theta: np.ndarray, s: float, hp: LassoHyperparams,
     same pathology as the centred (B, b_bar) scan, one level up, and it is
     severe: measured on real data over 1,500 sweeps, lag-1 autocorrelation of
     lambda was 0.973, ESS was 8 from 750 draws, and lambda had still not
-    converged -- means by fifth of the run were 492, 441, 430, 420, 403, with
+    converged: means by fifth of the run were 492, 441, 430, 420, 403, with
     no floor in sight. The implied budget for ESS 400 was 38,300 sweeps.
     B, b_bar and Sigma were unaffected (ESS 711-746), confirming the problem
     is the tau^2 <-> lambda pair specifically.
@@ -402,8 +401,8 @@ def sample_lambda_collapsed(theta: np.ndarray, s: float, hp: LassoHyperparams,
     freely, instead of with sum(tau^2), which does not.
 
     HONEST ACCOUNT OF HOW MUCH THIS FIXES. Collapsing improves lambda's lag-1
-    autocorrelation from 0.973 to 0.913 -- roughly 3x the effective sample size
-    -- and removes the drift entirely: lambda now reaches its stationary region
+    autocorrelation from 0.973 to 0.913 (roughly 3x the effective sample size)
+    and removes the drift entirely: lambda now reaches its stationary region
     within about 30 sweeps instead of still falling after 1,500. It does NOT
     make lambda mix as well as B, b_bar and Sigma, because lambda remains
     coupled to theta through sum|theta_ij|, and theta is drawn given tau^2,
@@ -426,8 +425,8 @@ def sample_lambda_collapsed(theta: np.ndarray, s: float, hp: LassoHyperparams,
     and the remaining discrepancy between target and proposal is precisely a
     centred Gaussian factor.
 
-    The naive version -- proposing from Gamma(a, rate) and accepting with
-    probability exp(-delta lambda^2) -- is also exact but useless in practice.
+    The naive version, proposing from Gamma(a, rate) and accepting with
+    probability exp(-delta lambda^2), is also exact but useless in practice.
     delta is calibrated so that delta * lambda_cal^2 = 1, NOT so that it is
     negligible, so the acceptance probability is exp(-1) = 0.37 at the centre
     and falls to 0.007 by lambda = 1345. That version raised RuntimeError after
@@ -449,8 +448,6 @@ def sample_lambda_collapsed(theta: np.ndarray, s: float, hp: LassoHyperparams,
         return float(rng.gamma(shape=shape, scale=1.0 / rate))
 
     delta = hp.lambda_delta
-    # mode of lambda^(a-1) exp(-rate lambda - delta lambda^2), from the positive
-    # root of (a-1)/lambda - rate - 2 delta lambda = 0
     mode = (-rate + np.sqrt(rate ** 2 + 8.0 * delta * (shape - 1.0))) / (4.0 * delta)
     rate_eff = rate + 2.0 * delta * mode
 
@@ -468,8 +465,8 @@ def sample_lambda(tau2: np.ndarray, hp: LassoHyperparams,
     """
     Draw lambda from its full conditional given tau^2.
 
-    NOT USED IN THE SAMPLER -- retained because it is the textbook Park &
-    Casella step, and because it was validated during development as an
+    NOT USED IN THE SAMPLER: retained because it is the textbook Park &
+    Casella step, and because it was validated as an
     independent confirmation that the collapsed version above targets the same
     distribution. See sample_lambda_collapsed for why it is not the default.
 
@@ -477,8 +474,8 @@ def sample_lambda(tau2: np.ndarray, hp: LassoHyperparams,
     ---------------
     Each tau_ij^2 has density (lambda^2/2) exp(-lambda^2 tau_ij^2 / 2), so the
     NK of them contribute (lambda^2)^(NK) exp(-lambda^2 sum(tau^2)/2). Against
-    a Gamma(r, delta) prior on lambda^2 -- density (lambda^2)^(r-1)
-    exp(-delta lambda^2) -- this is conjugate:
+    a Gamma(r, delta) prior on lambda^2, density (lambda^2)^(r-1)
+    exp(-delta lambda^2), this is conjugate:
 
         lambda^2 | tau^2  ~  Gamma( shape = r + NK,
                                     rate  = delta + sum_ij tau_ij^2 / 2 )
@@ -488,7 +485,7 @@ def sample_lambda(tau2: np.ndarray, hp: LassoHyperparams,
 
     Note the shape is r + NK = 3,601 here. The data contributes 3,600
     pseudo-observations against the hyperprior's r = 1, which is why delta
-    washes out (see lasso_hyperparameters) -- and also why the conditional is
+    washes out (see lasso_hyperparameters), and also why the conditional is
     tight, with a relative standard deviation of 1/(2 sqrt(3601)) = 0.83% on
     lambda itself. That tightness is a mixing risk rather than a precision
     claim: lambda and tau^2 are coupled through sum(tau^2), so lambda can only
@@ -497,9 +494,9 @@ def sample_lambda(tau2: np.ndarray, hp: LassoHyperparams,
 
     numpy's Generator.gamma takes SHAPE and SCALE, not shape and rate, so the
     rate is inverted below. Getting this backwards multiplies lambda by the
-    rate -- about 100x here, so it would be caught. But the size of the error
+    rate, about 100x here, so it would be caught. But the size of the error
     IS the rate, which is data-dependent and near 1 in other problems, so this
-    must be checked against the parameterisation rather than trusted to look
+    must be checked against the parameterisation, not assumed to look
     obviously wrong.
 
     tau2 : (N,K) current auxiliary scales
@@ -524,8 +521,8 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
 
         D_i^{-1} = diag( 1 / (s^2 tau_ij^2) ),   j = 1..K
 
-    since under the LASSO each theta_ij has its own variance. Delta_b_bar --
-    a different object, the prior covariance of b_bar itself -- is unchanged
+    since under the LASSO each theta_ij has its own variance. Delta_b_bar
+    (a different object, the prior covariance of b_bar itself) is unchanged
     and shared with all four models. Everything else (the Kronecker structure
     of the likelihood term, the sign of the off-diagonal coupling, the
     Cholesky solve) is as in the baseline.
@@ -541,18 +538,18 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
     That pathology is reproduced here at identical strength, not merely
     inherited by analogy: calibrating lambda to sd_target makes the LASSO's
     mean prior variance on theta E[s^2 tau^2] = s^2 * 2/lambda^2 = 1.7131e-08,
-    against the baseline's E[Delta_b]_jj of 1.7131e-08 -- a ratio of 1.0000,
+    against the baseline's E[Delta_b]_jj of 1.7131e-08, a ratio of 1.0000,
     forced by the calibration. The per-coefficient spread does not rescue it:
     under tau^2 ~ Exp(lambda^2/2) even the 99th percentile of prior variance
     is only 4.6x the baseline's, and the median is 0.69x.
 
     No sequential sampler is provided, since there is no literal Feng & He
-    LASSO to reproduce. Blocking's legitimacy is general -- it leaves the
-    target unchanged and cannot worsen mixing (Liu, Wong & Kong, 1994) -- and
+    LASSO to reproduce. Blocking's legitimacy is general: it leaves the
+    target unchanged and cannot worsen mixing (Liu, Wong & Kong, 1994), and
     was confirmed empirically in the baseline. What does NOT transfer is that
     THIS precision matrix is assembled correctly, so it is validated directly
     against a brute-force NT x NK stacked system and against the model's own
-    log joint density, both during development. A misassembled P would still be
+    log joint density. A misassembled P would still be
     symmetric positive definite, still factorise, and still produce plausible
     coefficients.
 
@@ -570,10 +567,10 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
 
     Note the bottom-right block SUMS the per-asset precisions. The baseline
     writes N * Delta_b_inv there, which is valid only because its assets share
-    one Delta_b. Copying that form here is wrong and, measured over 200 random
-    tau^2 draws, leaves the matrix positive definite in 111 of them -- so the
-    Cholesky succeeds, nothing raises, and b_bar's posterior mean moves by a
-    median of 1.6 and up to 472 posterior standard deviations.
+    one Delta_b. Using that form here leaves the matrix positive definite in
+    111 of 200 random tau^2 draws, so the Cholesky succeeds, nothing raises,
+    and b_bar's posterior mean moves by a median of 1.6 and up to 472
+    posterior standard deviations.
 
     rng         : numpy Generator
     G, Fr       : outputs of precompute_cross_products (baseline_gaussian)
@@ -591,18 +588,16 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
 
     Sigma_inv = _spd_inverse(Sigma)
     Delta_b_bar_inv = _spd_inverse(Delta_b_bar)
-    D_inv = 1.0 / (s * s * tau2)                 # (N,K) diagonal prior precisions
+    D_inv = 1.0 / (s * s * tau2)
 
     P = np.zeros((M, M))
 
-    # likelihood block, plus the per-asset diagonal prior precision on its diagonal
-    block = G * Sigma_inv[:, None, :, None]      # (N,K,N,K)
+    block = G * Sigma_inv[:, None, :, None]
     ii = np.arange(N)[:, None]
     kk = np.arange(K)[None, :]
-    block[ii, kk, ii, kk] += D_inv               # element (i,k,i,k) only
+    block[ii, kk, ii, kk] += D_inv
     P[:NK, :NK] = block.reshape(NK, NK)
 
-    # coupling blocks: -D_i^{-1}, diagonal, so only NK entries are non-zero
     rows = np.arange(NK)
     cols = NK + np.tile(np.arange(K), N)
     P[rows, cols] = -D_inv.ravel()
@@ -622,9 +617,6 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
 
     return draw[:NK].reshape(N, K), draw[NK:]
 
-# ---------------------------------------------------------------------------
-# Initialisation and the assembled Gibbs loop
-# ---------------------------------------------------------------------------
 
 @dataclass
 class LassoDraws:
@@ -640,20 +632,20 @@ class LassoDraws:
     tau2_inv_mean : (N, K) posterior mean of 1/tau_ij^2
     tau2_track    : (n_keep, n_track) full traces for a fixed random subset
     tau2_track_idx: (n_track, 2) the (asset, predictor) pairs tracked
-    tau2          : (n_keep, N, K) or None -- everything, only if asked
+    tau2          : (n_keep, N, K) or None: everything, only if asked
     meta          : bookkeeping (seed, timings, settings)
 
     Why tau^2 is summarised rather than stored in full
     ---------------------------------------------------
     tau2 is (25, 144) = 3,600 values per draw, 58 MB per chain at 2,000 kept
-    draws -- affordable, but tau^2 is a nuisance scale and the inference is
+    draws: affordable, but tau^2 is a nuisance scale and the inference is
     about theta. The running means are EXACT, not approximations: a mean
     accumulated over every post-burn-in draw equals one computed later from a
     stored array. What is given up is credible intervals and R-hat for the
     3,400 untracked coefficients, recoverable by one re-run.
 
     Both tau2_mean and tau2_inv_mean are kept because the prior precision is
-    1/(s^2 tau^2) and E[1/tau^2] != 1/E[tau^2] -- on real data the product of
+    1/(s^2 tau^2) and E[1/tau^2] != 1/E[tau^2]; on real data the product of
     the two means is about 11, not 1. The reciprocal mean is what describes
     how hard each coefficient was actually shrunk, and is the quantity to set
     beside the horseshoe's shrinkage factors.
@@ -696,7 +688,7 @@ def initialise_state(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
     that start would be far worse, not better.
 
     B0 may be passed in to avoid re-solving the N least-squares problems that
-    pooled_residual_scale has already solved inside lasso_hyperparameters --
+    pooled_residual_scale has already solved inside lasso_hyperparameters,
     worth doing across 40 backtest windows.
     """
     N, T = R.shape
@@ -730,15 +722,15 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
     Run the Bayesian LASSO's four-step Gibbs sampler.
 
     Each sweep updates:
-        (1) (B, b_bar) jointly   given tau^2, Sigma   -- blocked, see below
-        (2) lambda               given theta          -- COLLAPSED, tau^2
+        (1) (B, b_bar) jointly   given tau^2, Sigma:     blocked, see below
+        (2) lambda               given theta:            COLLAPSED, tau^2
                                                          integrated out
-        (3) tau^2                given theta, lambda  -- data augmentation
-        (4) Sigma                given B, R, F        -- identical to baseline
+        (3) tau^2                given theta, lambda:    data augmentation
+        (4) Sigma                given B, R, F:          identical to baseline
 
     Feng & He's Delta_b step has no counterpart: it is REPLACED by (2), not
     supplemented by it. Step (4) is imported from baseline_gaussian unchanged,
-    which is the "one shared hierarchy" claim enforced in code -- theta's prior
+    which is the "one shared hierarchy" claim enforced in code: theta's prior
     involves no Sigma under the plug-in scale, so Sigma's conditional is
     exactly the baseline's IW(nu_Sigma + T, V_Sigma + EE').
 
@@ -746,7 +738,7 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
     theta with tau^2 marginalised out, then tau^2 is drawn given that fresh
     lambda. Drawing lambda from tau^2 instead (the textbook Park & Casella
     step, kept as sample_lambda) leaves lambda with an ESS of 8 from 750 draws
-    and unconverged after 1,500 sweeps -- see sample_lambda_collapsed.
+    and unconverged after 1,500 sweeps; see sample_lambda_collapsed.
 
     Step (1) is always blocked. No sequential option is offered: there is no
     literal Feng & He LASSO to reproduce, and the centred parameterisation it
@@ -775,8 +767,6 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
     state = initialise_state(R, F, hp, B0=B0)
     n_keep = n_draws - n_burn
 
-    # which tau^2 entries to track: fixed independently of `seed`, so the same
-    # coefficients are monitored across every run and every chain
     tracker_rng = np.random.default_rng(0)
     pick = tracker_rng.choice(N * K, size=min(n_track_tau2, N * K), replace=False)
     track_idx = np.column_stack(np.unravel_index(pick, (N, K)))
@@ -798,10 +788,6 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: LassoHyperparams,
             rng, G, Fr, state["Sigma"], state["tau2"], hp.s,
             hp.b_bar_bar, hp.Delta_b_bar)
         theta = state["B"] - state["b_bar"][None, :]
-        # lambda BEFORE tau^2, and from theta directly: tau^2 is integrated out,
-        # so lambda moves with theta (which mixes freely) instead of with
-        # sum(tau^2) (which does not). tau^2 is then drawn given the fresh
-        # lambda. See sample_lambda_collapsed.
         state["lam"] = sample_lambda_collapsed(theta, hp.s, hp, rng)
         state["tau2"] = sample_tau2(theta, hp.s, state["lam"], rng)
         state["Sigma"] = sample_Sigma(rng, R, F, state["B"],

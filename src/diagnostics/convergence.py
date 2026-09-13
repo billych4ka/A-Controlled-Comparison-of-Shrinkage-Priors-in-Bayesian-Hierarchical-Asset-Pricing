@@ -46,7 +46,7 @@ def load_chains(universe: str, model: str, setting: str, cls,
     Files are expected at
         <results_root>/<universe>/<model>/<model>_<setting>_chain*.npz
     which is the layout run_baseline_gaussian.py writes. Chains are returned
-    in numerical order of the chain index, not filesystem order -- otherwise
+    in numerical order of the chain index, not filesystem order; otherwise
     chain10 would sort before chain2 and the pairing with seeds would be
     wrong in any run with 10+ chains.
 
@@ -81,11 +81,9 @@ def _rank_normalise(x: np.ndarray) -> np.ndarray:
     """
     shape = x.shape
     flat = x.ravel()
-    # average ranks, 1-based, ties averaged
     order = flat.argsort()
     ranks = np.empty(len(flat), dtype=float)
     ranks[order] = np.arange(1, len(flat) + 1)
-    # average tied ranks
     uniq, inv, counts = np.unique(flat, return_inverse=True, return_counts=True)
     if np.any(counts > 1):
         sums = np.zeros(len(uniq))
@@ -100,7 +98,7 @@ def _rank_normalise(x: np.ndarray) -> np.ndarray:
 def _classic_rhat(x: np.ndarray) -> float:
     """
     Gelman-Rubin R-hat for x of shape (n_chains, n_draws), with no splitting
-    or rank-normalisation -- the building block the public function applies
+    or rank-normalisation: the building block the public function applies
     to already-split, already-transformed input.
 
         W        = mean within-chain variance
@@ -156,7 +154,7 @@ def rank_normalised_rhat(x: np.ndarray) -> float:
         raise ValueError(f"expected (n_chains, n_draws), got shape {x.shape}")
     if not np.isfinite(x).all():
         return np.nan
-    if np.ptp(x) == 0:                       # constant parameter
+    if np.ptp(x) == 0:
         return np.nan
 
     bulk = _classic_rhat(_split(_rank_normalise(x)))
@@ -175,7 +173,7 @@ def _autocovariance(x: np.ndarray) -> np.ndarray:
     """
     n = len(x)
     x = x - x.mean()
-    n_fft = 1 << (2 * n - 1).bit_length()      # next power of two >= 2n
+    n_fft = 1 << (2 * n - 1).bit_length()
     f = np.fft.rfft(x, n_fft)
     acov = np.fft.irfft(f * np.conjugate(f), n_fft)[:n]
     return acov / n
@@ -191,7 +189,7 @@ def effective_sample_size(x: np.ndarray) -> float:
     What ESS means: MCMC draws are correlated, so N of them carry less
     information than N independent draws. ESS is the number of independent
     draws that would give the same Monte Carlo error, and the standard error
-    of a posterior mean is sd/sqrt(ESS) -- NOT sd/sqrt(N).
+    of a posterior mean is sd/sqrt(ESS), NOT sd/sqrt(N).
 
     The estimator combines within-chain autocovariance with the multi-chain
     variance estimate var_plus:
@@ -216,7 +214,7 @@ def effective_sample_size(x: np.ndarray) -> float:
     if n < 4:
         return np.nan
 
-    acov = np.array([_autocovariance(chain) for chain in x])     # (m, n)
+    acov = np.array([_autocovariance(chain) for chain in x])
     chain_var = acov[:, 0] * n / (n - 1)
     W = chain_var.mean()
     if W == 0 or not np.isfinite(W):
@@ -229,11 +227,6 @@ def effective_sample_size(x: np.ndarray) -> float:
     rho = 1.0 - (W - acov.mean(axis=0)) / var_plus
     rho[0] = 1.0
 
-    # Geyer initial positive sequence on consecutive pairs, starting at
-    # t = 0 so the first pair is rho_0 + rho_1 = 1 + rho_1. Starting at t = 1
-    # instead makes the first pair vanish for a well-mixing chain, the loop
-    # exit immediately, and tau go negative -- which the floor below then
-    # silently converts into an ESS several times the number of draws.
     pair_sum, t = 0.0, 0
     while t + 1 < n:
         p = rho[t] + rho[t + 1]
@@ -242,8 +235,8 @@ def effective_sample_size(x: np.ndarray) -> float:
         pair_sum += p
         t += 2
 
-    tau = -1.0 + 2.0 * pair_sum                # integrated autocorrelation time
-    tau = max(tau, 1.0 / np.log10(max(m * n, 11)))   # Vehtari et al. floor
+    tau = -1.0 + 2.0 * pair_sum
+    tau = max(tau, 1.0 / np.log10(max(m * n, 11)))
     return float(m * n / tau)
 
 
@@ -253,8 +246,8 @@ def ess_tail(x: np.ndarray) -> float:
     series 1{x < q05} and 1{x > q95}.
 
     Bulk ESS says how well the chain estimates the posterior MEAN; it can be
-    perfectly adequate while the 2.5% and 97.5% quantiles -- which is what a
-    credible interval actually reports -- are still badly estimated. Since
+    perfectly adequate while the 2.5% and 97.5% quantiles, which is what a
+    credible interval actually reports, are still badly estimated. Since
     every interval in the results tables is a tail quantity, this is the
     figure that licenses those intervals.
     """
@@ -265,9 +258,6 @@ def ess_tail(x: np.ndarray) -> float:
     return float(min(effective_sample_size((x < q05).astype(float)),
                      effective_sample_size((x > q95).astype(float))))
 
-# ---------------------------------------------------------------------------
-# Applying the diagnostics to a set of chains
-# ---------------------------------------------------------------------------
 
 @dataclass
 class ParameterDiagnostics:
@@ -306,8 +296,8 @@ def _stack_chains(chains: list, field: str) -> np.ndarray:
     """
     Stack one field across chains into (n_chains, n_draws, n_params).
 
-    Fields arrive with different shapes -- b_bar is (draws, K), Sigma is
-    (draws, N, N), B is (draws, N, K) -- so everything past the draw axis is
+    Fields arrive with different shapes: b_bar is (draws, K), Sigma is
+    (draws, N, N), B is (draws, N, K), so everything past the draw axis is
     flattened to a single parameter axis. Matrix-valued fields therefore
     include duplicated off-diagonal entries; harmless for diagnostics, since
     a duplicated parameter simply gets an identical R-hat.
@@ -318,7 +308,7 @@ def _stack_chains(chains: list, field: str) -> np.ndarray:
     n_draws = min(a.shape[0] for a in arrays)
     if len({a.shape[1:] for a in arrays}) != 1:
         raise ValueError(f"field '{field}' has inconsistent shapes across chains")
-    stacked = np.stack([a[:n_draws] for a in arrays])       # (chains, draws, ...)
+    stacked = np.stack([a[:n_draws] for a in arrays])
     return stacked.reshape(stacked.shape[0], n_draws, -1)
 
 
@@ -334,7 +324,7 @@ def diagnose(chains: list, field: str) -> ParameterDiagnostics:
     N=25, K=144 that is 3,600 parameters and takes a few seconds; for
     Delta_b_diag it is instant.
     """
-    x = _stack_chains(chains, field)                        # (m, n, p)
+    x = _stack_chains(chains, field)
     m, n, p = x.shape
     rhat = np.empty(p)
     bulk = np.empty(p)
@@ -373,10 +363,6 @@ def credible_interval(chains: list, field: str, level: float = 0.95):
     return lo, hi
 
 
-# ---------------------------------------------------------------------------
-# Comparing settings against one another
-# ---------------------------------------------------------------------------
-
 def shrinkage_ratio(chains: list, reference_chains: list,
                     field: str = "b_bar") -> dict:
     """
@@ -387,7 +373,7 @@ def shrinkage_ratio(chains: list, reference_chains: list,
     medians of |coefficient|, and the correlation between the two coefficient
     vectors. The last matters as much as the first: a prior that shrinks
     everything proportionally leaves the correlation near 1, whereas one that
-    reorders which predictors matter does not -- and only the second is
+    reorders which predictors matter does not, and only the second is
     really "selecting" anything.
     """
     a = posterior_mean(chains, field).ravel()
@@ -412,7 +398,7 @@ def rank_stability(settings: dict, field: str = "b_bar", top: int = 20) -> dict:
     setting's top-`top` predictors by |posterior mean|.
 
     This is the test that decides whether a hyperparameter choice is
-    cosmetic. Coefficients MUST get smaller as the prior tightens -- that is
+    cosmetic. Coefficients MUST get smaller as the prior tightens; that is
     mechanical and says nothing. What matters is whether the ordering
     survives. High rank correlation lets the choice be reported in one
     sentence; low correlation means it has to be defended.
@@ -443,7 +429,7 @@ def chains_agree(chains_a: list, chains_b: list, field: str = "b_bar") -> dict:
 
     Used for the sequential-versus-blocked comparison. Both samplers target
     the same distribution, so their posterior means must agree up to Monte
-    Carlo noise -- and the right yardstick is the combined standard error
+    Carlo noise, and the right yardstick is the combined standard error
     sqrt(sd_a^2/ESS_a + sd_b^2/ESS_b), not a raw difference, since a
     difference of 1e-4 is either trivial or damning depending on how precise
     the estimates are.
@@ -489,12 +475,12 @@ def within_setting_rank_stability(chains: list, field: str = "b_bar",
     ------------------
     Comparing rankings ACROSS prior settings (rank_stability) only means
     something relative to how reproducible a ranking is WITHIN one setting.
-    When posterior means are tightly compressed -- as they are under a
+    When posterior means are tightly compressed (as they are under a
     strongly shrinking prior, where the 2nd through 8th largest coefficients
-    can differ by under 10% -- the ordering is dominated by Monte Carlo noise,
-    and even two halves of the same chains will disagree. Reporting a
-    between-setting Spearman of 0.63 as "unstable" is only justified if the
-    within-setting figure is materially higher.
+    can differ by under 10%), the ordering is dominated by Monte Carlo noise,
+    and even two halves of the same chains will disagree. A between-setting
+    Spearman of 0.63 can be called "unstable" only if the within-setting
+    figure is materially higher.
 
     Method: repeatedly split the pooled draws into two disjoint halves at
     random, rank |mean| within each half, and compare. This isolates Monte
@@ -511,7 +497,7 @@ def within_setting_rank_stability(chains: list, field: str = "b_bar",
     arrays = [getattr(c, field) for c in chains]
     n_draws = min(a.shape[0] for a in arrays)
     pooled = np.concatenate([a[:n_draws] for a in arrays], axis=0)
-    pooled = pooled.reshape(pooled.shape[0], -1)                # (draws, params)
+    pooled = pooled.reshape(pooled.shape[0], -1)
 
     rng = np.random.default_rng(seed)
     n = pooled.shape[0]

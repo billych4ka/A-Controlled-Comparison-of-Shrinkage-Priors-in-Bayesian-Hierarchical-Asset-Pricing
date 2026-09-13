@@ -14,7 +14,7 @@ whether the horseshoe family's economic ordering survives a wider opportunity
 set.
 
 NO REFITTING. This uses the predictions already saved by the four backtest
-runners -- the same posterior means, the same 479 forecast months, the same
+runners: the same posterior means, the same 479 forecast months, the same
 refit dates. Only the portfolio rule changes, so any difference is attributable
 to the allocation and not to the models.
 
@@ -31,7 +31,7 @@ TWO POOLING RULES, and the distinction matters.
 WHAT THIS CANNOT SHOW. The three sorts partition the SAME underlying US stock
 universe, so a given stock appears in all three. The 75 assets are therefore
 far from 75 independent bets, and a pooled long-short can hold offsetting
-positions -- long a stock through its small/high-BM portfolio and short it
+positions: long a stock through its small/high-BM portfolio and short it
 through its small/weak-OP portfolio. Realised stock-level exposure is smaller
 than the portfolio-level gross exposure suggests, which is a reason the pooled
 Sharpe might not improve even if the diversification argument is sound.
@@ -109,22 +109,18 @@ def main() -> None:
                                  f"universes; pooling would misalign them")
             P.append(p); R.append(r); Bm.append(b)
 
-        pred = np.concatenate(P, axis=0)          # (75, 479)
+        pred = np.concatenate(P, axis=0)
         real = np.concatenate(R, axis=0)
         bench = np.concatenate(Bm, axis=0)
         n_assets, n_months = pred.shape
 
-        # headline: demean across all 75
         w = pooled_weights(pred)
         r_pooled = (w * real).sum(axis=0)
 
-        # reference: three market-neutral sleeves at equal weight
         sleeves = [portfolio_returns(r, p) for p, r
                    in zip(P, R)]
         r_stacked = np.mean(np.vstack(sleeves), axis=0)
 
-        # the guardrail applies to the pooled forecasts too: a misaligned pool
-        # would show up here before it showed up in the portfolio metrics
         r2 = out_of_sample_r2(real, pred, bench)
 
         results[label] = {
@@ -139,7 +135,6 @@ def main() -> None:
             print(f"  *** {label}: pooled OOS R^2 {r2:+.4f} exceeds 0.05. "
                   f"Assume an alignment bug until proven otherwise. ***")
 
-    # ---- within-sort figures, for comparison -------------------------------
     print(f"\n{'model':<24}{'BM':>10}{'OP':>10}{'Inv':>10}"
           f"{'stacked':>10}{'POOLED':>10}")
     print("  Sharpe")
@@ -164,7 +159,6 @@ def main() -> None:
               + f"{results[label]['stacked_ce']:>10.4f}"
               + f"{results[label]['pooled_ce']:>10.4f}")
 
-    # ---- reading it ---------------------------------------------------------
     print("\n" + "=" * 82)
     hs = [results[l]["pooled_sharpe"] for l in
           ("Horseshoe", "Regularised horseshoe")]

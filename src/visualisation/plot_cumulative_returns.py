@@ -38,10 +38,6 @@ import pandas as pd
 
 from src.evaluation.metrics import portfolio_returns, sharpe_ratio
 
-# ---------------------------------------------------------------------------
-# Universes and models -- identical tags, colours and line styles to
-# plot_shrinkage_factors.py so the four models read the same across figures.
-# ---------------------------------------------------------------------------
 
 UNIVERSES = (
     ("size_bm_25", r"Size$\times$BM"),
@@ -49,7 +45,6 @@ UNIVERSES = (
     ("size_inv_25", r"Size$\times$Inv"),
 )
 
-# (label, directory, setting tag, colour, linestyle, linewidth)
 MODELS = (
     ("Gaussian baseline", "baseline_gaussian", "rescaled_r2_0p05",
      "#4A4A4A", "-", 1.15),
@@ -61,9 +56,6 @@ MODELS = (
      "#3A9679", "-.", 1.15),
 )
 
-# ---------------------------------------------------------------------------
-# Dissertation house style (as plot_ess_ratio.py)
-# ---------------------------------------------------------------------------
 
 STYLE = {
     "font.family": "sans-serif",
@@ -127,11 +119,7 @@ def main() -> None:
     results_dir = Path(args.results)
     sample_start = pd.Timestamp(args.sample_start)
 
-    # -----------------------------------------------------------------------
-    # Portfolio returns, recomputed from the saved forecasts
-    # -----------------------------------------------------------------------
-
-    series: dict[str, dict[str, np.ndarray]] = {}   # universe -> model -> (T,)
+    series: dict[str, dict[str, np.ndarray]] = {}
     dates: pd.DatetimeIndex | None = None
 
     for utag, _ in UNIVERSES:
@@ -169,10 +157,6 @@ def main() -> None:
                       f"{sharpe_ratio(stacked[label]):+.3f}")
         if stacked:
             panels.append(("stacked", "Stacked", stacked))
-
-    # -----------------------------------------------------------------------
-    # Figure
-    # -----------------------------------------------------------------------
 
     plt.rcParams.update(STYLE)
     n = len(panels)

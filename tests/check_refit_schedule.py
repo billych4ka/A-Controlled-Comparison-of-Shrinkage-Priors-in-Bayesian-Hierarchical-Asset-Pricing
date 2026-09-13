@@ -4,9 +4,9 @@ check_refit_schedule.py
 Measures what coarsening the refit schedule actually costs, on the real data
 rather than on simulation.
 
-Reproduces Appendix A.2, the refit-schedule check, and supports Section 4.6's
+Reproduces Appendix A.3, the refit-schedule check, and supports Section 4.6's
 sentence that the annual schedule reduces computational cost with little
-apparent loss. NOTE what Appendix A.2's headline figures are: 200 fits reduced
+apparent loss. NOTE what Appendix A.3's headline figures are: 200 fits reduced
 to 17, moving out-of-sample R^2 by 0.15 percentage points and the Sharpe ratio
 by 0.04. Those come from the SIMULATED comparison described below, not from
 this script, and the paragraph below argues they are a poor guide at this
@@ -31,8 +31,8 @@ acceptable.
 The 12-month result is loaded from the saved backtest rather than recomputed,
 so the runtime below covers only the coarser schedules.
 
-    python3 check_refit_schedule.py                     # 60-month only, ~20 min
-    python3 check_refit_schedule.py --schedules 24 60   # ~70 min
+    python3 check_refit_schedule.py                     (60-month only, ~20 min)
+    python3 check_refit_schedule.py --schedules 24 60   (~70 min)
 """
 from __future__ import annotations
 
@@ -71,18 +71,16 @@ def metrics(realised, predicted, benchmark):
 
 rows = []
 
-# --- the production schedule, loaded rather than recomputed ---------------
 saved = (Path("results") / args.universe / "baseline_gaussian" / "backtest"
          / f"baseline_gaussian_rescaled_r2_0p{str(args.target_r2)[2:]}_backtest.npz")
 if not saved.exists():
-    raise SystemExit(f"{saved} not found -- run the 12-month backtest first, or "
+    raise SystemExit(f"{saved} not found; run the 12-month backtest first, or "
                      f"point this script at the correct filename")
 z = np.load(saved)
 n_fits_12 = len(z["refit_index"])
 rows.append((12, n_fits_12, *metrics(z["realised"], z["predicted"], z["benchmark"]), 0.0))
 print(f"loaded 12-month schedule from disk: {n_fits_12} fits\n")
 
-# --- the coarser schedules ------------------------------------------------
 for every in sorted(args.schedules):
     fit_fn = gaussian_fit_fn(prior="rescaled", target_r2=args.target_r2,
                              n_draws=args.draws, n_burn=args.burn, seed=args.seed)
@@ -95,7 +93,6 @@ for every in sorted(args.schedules):
                  time() - t0))
     print(f"    done in {time()-t0:.0f}s\n", flush=True)
 
-# --- report ---------------------------------------------------------------
 base_r2, base_sr, base_ce = rows[0][2], rows[0][3], rows[0][4]
 print("=" * 74)
 print(f"REFIT SCHEDULE SENSITIVITY | {args.universe} | rescaled, "

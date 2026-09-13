@@ -48,11 +48,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import FuncFormatter
 
-# ---------------------------------------------------------------------------
-# Portfolio universes
-# ---------------------------------------------------------------------------
 
-# (label, directory stem, colour, linestyle)
 UNIVERSES = (
     ("Size$\\times$BM", "size_bm_25", "#4A4A4A", "-"),
     ("Size$\\times$OP", "size_op_25", "#3B75AF", "--"),
@@ -61,25 +57,18 @@ UNIVERSES = (
 
 PRIMARY = "size_bm_25"
 
-# The modelling sample, as reported in Section 3.1.
 START_YEAR = 1966
 START_MONTH = 1
 
-ROLL = 36  # months in the rolling volatility window
+ROLL = 36
 
-
-# ---------------------------------------------------------------------------
-# Dissertation house style
-# ---------------------------------------------------------------------------
 
 STYLE = {
-    # Typography
     "font.family": "sans-serif",
     "font.sans-serif": ["Arial", "Helvetica", "Liberation Sans", "DejaVu Sans"],
     "mathtext.fontset": "stixsans",
     "font.size": 8.0,
 
-    # Axes
     "axes.labelsize": 8.2,
     "axes.labelweight": "normal",
     "axes.linewidth": 0.65,
@@ -88,7 +77,6 @@ STYLE = {
     "axes.spines.right": False,
     "axes.facecolor": "white",
 
-    # Ticks
     "xtick.labelsize": 7.4,
     "ytick.labelsize": 7.4,
     "xtick.direction": "out",
@@ -98,20 +86,16 @@ STYLE = {
     "xtick.major.width": 0.55,
     "ytick.major.width": 0.55,
 
-    # Lines
     "lines.linewidth": 1.15,
     "lines.solid_capstyle": "round",
     "lines.dash_capstyle": "round",
 
-    # Grid
     "grid.color": "#DDDDDD",
     "grid.linewidth": 0.5,
 
-    # Legend
     "legend.frameon": False,
     "legend.fontsize": 7.2,
 
-    # Figure and export
     "figure.facecolor": "white",
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
@@ -162,10 +146,9 @@ def main() -> None:
     with plt.rc_context(STYLE):
         fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.6))
 
-        # ---- (a) cumulative log excess return --------------------------
         ax = axes[0]
         for label, stem, colour, ls in UNIVERSES:
-            ew = loaded[stem].mean(axis=0)            # equally weighted
+            ew = loaded[stem].mean(axis=0)
             cum = np.cumsum(np.log1p(ew))
             ax.plot(years, cum, color=colour, linestyle=ls, label=label,
                     zorder=3)
@@ -176,10 +159,8 @@ def main() -> None:
         ax.text(0.02, 0.95, "(a)", transform=ax.transAxes,
                 fontsize=8.2, fontweight="bold", va="top")
 
-        # ---- (b) rolling volatility ------------------------------------
         ax = axes[1]
 
-        # cross-sectional spread within the primary universe, behind the lines
         Rp = loaded[PRIMARY]
         per_asset = np.array([rolling_vol(Rp[i], args.roll)
                               for i in range(Rp.shape[0])])
@@ -222,7 +203,6 @@ def main() -> None:
         fig.savefig(out, bbox_inches="tight")
         print(f"wrote {out}")
 
-        # the numbers the caption quotes, so it is not written from memory
         for label, stem, _, _ in UNIVERSES:
             ew = loaded[stem].mean(axis=0)
             v = rolling_vol(ew, args.roll)

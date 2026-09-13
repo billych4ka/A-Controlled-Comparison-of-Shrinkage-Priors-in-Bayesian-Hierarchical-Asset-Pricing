@@ -27,21 +27,17 @@ import pandas as pd
 
 from src.data_pipeline.clean import clean_universe
 
-RAW_MACRO_COLUMNS = ["DY", "EP", "BM", "NTIS", "SVAR", "TBL", "CPI", "DFY", "TMS"]  # 9, from Goyal
-FACTOR_COLUMNS = ["Mkt-RF", "SMB", "HML", "RMW", "CMA", "UMD"]  # 6, shared across assets -> macro-type
-MACRO_COLUMNS = RAW_MACRO_COLUMNS + FACTOR_COLUMNS  # 15 total, the combined "macro-type" block
+RAW_MACRO_COLUMNS = ["DY", "EP", "BM", "NTIS", "SVAR", "TBL", "CPI", "DFY", "TMS"]
+FACTOR_COLUMNS = ["Mkt-RF", "SMB", "HML", "RMW", "CMA", "UMD"]
+MACRO_COLUMNS = RAW_MACRO_COLUMNS + FACTOR_COLUMNS
 
 ASSET_COLUMNS = [
     "lag1", "lag3", "lag6", "lag12", "roll_mean12", "roll_vol12",
     "roll_skew12", "mom_12_1",
-]  # 8, genuinely asset-specific
+]
 
 ROLLING_WINDOW = 12
-STABILISATION_WINDOW = 30  # months dropped at the start of each series, beyond what NaNs
-              # alone would force -- see thesis \S4.3 standardisation deviation
-              # note: an expanding-window mean/std is unstable for roughly its
-              # first 24-36 observations, so the stabilisation-window is set at 30 rather
-              # than just the ~13 months strictly required to clear all NaNs.
+STABILISATION_WINDOW = 30
 
 def expanding_standardise(data: pd.Series | pd.DataFrame) -> pd.Series | pd.DataFrame:
     """
@@ -64,14 +60,12 @@ def construct_macro_features(macro_df: pd.DataFrame) -> pd.DataFrame:
     """
     out = pd.DataFrame(index=macro_df.index)
 
-    # Direct columns
     out["BM"] = macro_df["b/m"]
     out["NTIS"] = macro_df["ntis"]
     out["SVAR"] = macro_df["svar"]
     out["TBL"] = macro_df["tbl"]
     out["CPI"] = macro_df["infl"]
 
-    # Constructed columns
     out["DY"] = np.log(macro_df["D12"]) - np.log(macro_df["Index"].shift(1))
     out["EP"] = np.log(macro_df["E12"]) - np.log(macro_df["Index"])
     out["DFY"] = macro_df["BAA"] - macro_df["AAA"]
@@ -96,9 +90,6 @@ def construct_own_history_features(excess_return: pd.Series) -> pd.DataFrame:
     out["roll_vol12"] = excess_return.rolling(ROLLING_WINDOW).std()
     out["roll_skew12"] = excess_return.rolling(ROLLING_WINDOW).skew()
 
-    # 12-1 momentum: skip the most recent month (shift(1) drops this
-    # month's own return), then compound the following 11 months of
-    # returns into one cumulative return.
     skipped = excess_return.shift(1)
     out["mom_12_1"] = (1 + skipped).rolling(ROLLING_WINDOW - 1).apply(
         lambda x: x.prod(), raw=True
@@ -114,7 +105,7 @@ def build_asset_panel(
     Assemble the full f_i (T x K) predictor matrix and r_i (T x 1) response
     for a single asset, given its own excess-return series and the
     already-standardised, shared 15-column macro block (9 macro + 6
-    factors -- factors are shared across every asset, so structurally they
+    factors; factors are shared across every asset, so structurally they
     belong with the macro predictors, not the asset-level block).
 
     Returns (F_i, r_i), with unusable rows dropped (see below).
@@ -122,8 +113,6 @@ def build_asset_panel(
     own_history = construct_own_history_features(asset_excess_return)
     asset_std = expanding_standardise(own_history)[ASSET_COLUMNS]
 
-    # 15 x 8 = 120 interaction terms, computed after standardising the base
-    # variables, per asset (since asset_std differs by asset).
     interaction_cols = {}
     for macro_col in MACRO_COLUMNS:
         for asset_col in ASSET_COLUMNS:
@@ -135,31 +124,13 @@ def build_asset_panel(
     f_i = pd.concat([macro_std, asset_std, interactions], axis=1)
     f_i.insert(0, "intercept", 1.0)
 
-    # response: r_{i,t+1}, i.e. next month's excess return
     r_i = asset_excess_return.shift(-1)
     r_i.name = "r_next"
 
-    # Drop any row that isn't fully usable. This single dropna (rather than
-    # a fixed iloc[ROLLING_WINDOW:] slice) correctly handles THREE distinct
-    # sources of NaN at once: (1) the first ROLLING_WINDOW months, where the
-    # lag/rolling windows aren't yet available; (2) one additional row after
-    # that, where a column's raw value has just become available but its
-    # expanding standard deviation still can't be computed from a single
-    # observation (this affects lag12 and mom_12_1 specifically, since they
-    # are the last columns to "start", and this edge case only becomes
-    # visible once expanding-window standardisation -- rather than one-shot
-    # global standardisation -- is used); and (3) the final month, where
-    # r_{t+1} doesn't exist yet.
     combined = pd.concat([f_i, r_i], axis=1).dropna()
     f_i = combined.drop(columns="r_next")
     r_i = combined["r_next"]
 
-    # Additionally enforce a fixed BURN_IN-month cutoff from the start of
-    # the asset's own history, regardless of how many months the dropna
-    # step above already removed. This guarantees every surviving row's
-    # expanding-window standardisation has at least BURN_IN months of
-    # accumulated history behind it, not just the bare minimum needed to
-    # clear NaNs (see thesis standardisation-deviation note).
     cutoff_date = asset_excess_return.index[STABILISATION_WINDOW]
     f_i = f_i.loc[f_i.index >= cutoff_date]
     r_i = r_i.loc[r_i.index >= cutoff_date]

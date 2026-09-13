@@ -43,7 +43,7 @@ Recorded results (size_bm_25, rescaled_r2_0p05, 8 chains x 3,000 kept draws):
         8          1.0177     384
 
 After enlarging to 8 x 9,500 (8,500 kept), lambda_L reached R-hat 1.0058 with
-bulk ESS 1,177 and tail ESS 2,652 -- consistent with the extrapolation from
+bulk ESS 1,177 and tail ESS 2,652, consistent with the extrapolation from
 (R-hat - 1) x ESS ~ 5.7, which predicted approximately 1.006 at ESS 950.
 
 Run from the project root:  python3 tests/check_lasso_chain_length.py
@@ -57,7 +57,7 @@ from src.gibbs.bayesian_lasso import LassoDraws
 UNIVERSE, SETTING = "size_bm_25", "rescaled_r2_0p05"
 
 chains = load_chains(UNIVERSE, "bayesian_lasso", SETTING, LassoDraws)
-lam = np.array([c.lam for c in chains])          # (n_chains, n_draws)
+lam = np.array([c.lam for c in chains])
 n_chains, n_draws = lam.shape
 print(f"{UNIVERSE} | {SETTING} | {n_chains} chains x {n_draws} kept draws\n")
 
@@ -99,7 +99,6 @@ print("    was forfeited when the plug-in scale replaced their sampled")
 print("    sigma^2, so chain agreement is the evidence that nothing went")
 print("    wrong as a result.]")
 
-# ---- what budget would clear the threshold? ----------------------------
 k = float(np.mean(products))
 print(f"\nIMPLIED BUDGET   (from (R-hat - 1) x ESS ~ {k:.1f})")
 print(f"   {'target R-hat':>13s} {'ESS needed':>11s} {'draws/chain at 8':>18s}")

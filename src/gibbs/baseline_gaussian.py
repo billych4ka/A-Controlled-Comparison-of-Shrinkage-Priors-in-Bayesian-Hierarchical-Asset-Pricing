@@ -12,8 +12,8 @@ only the prior on the deviations theta_i = b_i - b_bar changes. Here that
 prior is Gaussian, theta_i ~ N(0, Delta_b), which is exactly Feng & He's
 own b_i ~ N(b_bar, Delta_b) after a unit-Jacobian change of variables.
 
-Disclosed deviations from the paper as printed
-----------------------------------------------
+Deviations from Feng and He (2022)
+----------------------------------
 1. Eq. (17)'s posterior scale matrix carries a spurious inverse. We
    implement the standard Normal-Inverse-Wishart conjugate update,
        Delta_b | B, b_bar ~ IW(nu_b + N, V_b + sum_i (b_i - b_bar)(b_i - b_bar)'),
@@ -24,7 +24,7 @@ Disclosed deviations from the paper as printed
    magnitude of the posterior draws in their own Appendix C (Fig. 4,
    one off-diagonal element spanning about +/- 2e-4) matches the
    un-inverted form and is ~9x too large for the inverted one, so their
-   code evidently does the correct thing -- this is a typesetting slip.
+   code evidently does the correct thing; this is a typesetting slip.
 2. Eq. (7)'s asset-major stacking implies Omega = Sigma (x) I_T, not
    Sigma (x) I_N as printed (which is not even conformable at NT x NT).
    sur.py already implements the correct block structure.
@@ -66,15 +66,15 @@ import numpy as np
 @dataclass
 class GaussianBaselineHyperparams:
     """
-    The fixed hyperparameters of the Gaussian baseline -- the numbers that
+    The fixed hyperparameters of the Gaussian baseline: the numbers that
     are chosen once, before sampling, and never updated by the sampler.
 
-    b_bar_bar   : (K,)   prior mean of b_bar         -- Feng & He's b_bar_bar = 0
-    Delta_b_bar : (K,K)  prior covariance of b_bar   -- diag(0.1, K)
-    nu_b        : IW degrees of freedom for Delta_b  -- 1001 + K
-    V_b         : (K,K)  IW scale matrix for Delta_b -- diag(3, K)
-    nu_Sigma    : IW degrees of freedom for Sigma    -- our own choice, N + 2
-    V_Sigma     : (N,N)  IW scale for Sigma          -- our own choice,
+    b_bar_bar   : (K,)   prior mean of b_bar:           Feng & He's b_bar_bar = 0
+    Delta_b_bar : (K,K)  prior covariance of b_bar:     diag(0.1, K)
+    nu_b        : IW degrees of freedom for Delta_b:    1001 + K
+    V_b         : (K,K)  IW scale matrix for Delta_b:   diag(3, K)
+    nu_Sigma    : IW degrees of freedom for Sigma:      our own choice, N + 2
+    V_Sigma     : (N,N)  IW scale for Sigma:            our own choice,
                          (nu_Sigma - N - 1) * S_hat
     """
 
@@ -102,13 +102,12 @@ def sample_covariance(R: np.ndarray) -> np.ndarray:
 
     Each entry S_hat[i,j] is the covariance, over the T time periods,
     between asset i's and asset j's excess returns, with the usual
-    unbiased 1/(T-1) normalisation. This is not a model quantity -- it is
+    unbiased 1/(T-1) normalisation. This is not a model quantity; it is
     a purely empirical summary of the data, used only to centre Sigma's
     prior somewhere plausible rather than at an arbitrary identity matrix.
     """
     S_hat = np.cov(R, ddof=1)
-    # an IW scale matrix must be symmetric positive definite
-    S_hat = 0.5 * (S_hat + S_hat.T)          # kill any 1e-17 asymmetry
+    S_hat = 0.5 * (S_hat + S_hat.T)
     eigmin = np.linalg.eigvalsh(S_hat).min()
     if eigmin <= 0:
         raise ValueError(
@@ -123,14 +122,14 @@ def default_hyperparameters(R: np.ndarray, K: int) -> GaussianBaselineHyperparam
     Feng & He's "mild" prior setting, plus our own disclosed choice for
     Sigma's two hyperparameters (which they never specify).
 
-    R : (N,T) excess returns -- used only to compute S_hat for V_Sigma
+    R : (N,T) excess returns, used only to compute S_hat for V_Sigma
     K : number of predictors (144 for size_bm_25)
 
     The mean of IW(nu, V) is V / (nu - p - 1) with p the dimension, so
     E[Delta_b] = diag(3,K)/(1001+K-K-1) = diag(0.003, K): a prior SD of
     about 0.055 on each deviation theta_ij. (Cross-check: their "tight"
     setting nu_b = 5001+K gives 3/5000 -> SD 0.0245, matching the "around
-    0.02" their own footnote claims -- confirming this reading of the
+    0.02" their own footnote claims, confirming this reading of the
     parameterisation.)
 
     Sigma's hyperparameters are ours: nu_Sigma = N + 2 is the smallest
@@ -156,18 +155,15 @@ def default_hyperparameters(R: np.ndarray, K: int) -> GaussianBaselineHyperparam
         V_Sigma=V_Sigma,
     )
 
-# ---------------------------------------------------------------------------
-# Step (1) of Feng & He's Gibbs loop: update B  (their eq. 14-15)
-# ---------------------------------------------------------------------------
 
 def _spd_inverse(A: np.ndarray) -> np.ndarray:
     """
     Inverse of a symmetric positive-definite matrix, via its Cholesky factor.
 
     Preferred over np.linalg.inv here for two reasons: it exploits (and
-    implicitly checks) positive-definiteness -- np.linalg.cholesky raises
+    implicitly checks) positive-definiteness (np.linalg.cholesky raises
     if A has drifted non-PD, which is exactly the failure we want to hear
-    about loudly -- and it returns an exactly symmetric result, so
+    about loudly) and it returns an exactly symmetric result, so
     round-off cannot accumulate asymmetry across thousands of sweeps.
     """
     L = np.linalg.cholesky(A)
@@ -186,7 +182,7 @@ def precompute_cross_products(F: np.ndarray, R: np.ndarray):
     -> G  : (N,K,N,K)  with G[i,:,j,:] = f_i' f_j     (K x K Gram blocks)
        Fr : (N,N,K)    with Fr[i,j,:]  = f_i' r_j     (K-vectors)
 
-    G is stored in the axis order (i,k,j,l) -- deliberately NOT (i,j,k,l) --
+    G is stored in the axis order (i,k,j,l), deliberately NOT (i,j,k,l),
     because that is exactly the layout the NK x NK precision matrix needs:
     reshaping (N,K,N,K) -> (NK,NK) then gives the right block structure with
     no transpose, and a transpose of a 104 MB array every sweep is the
@@ -205,7 +201,7 @@ def sample_B(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
     multivariate normal over ALL N assets' coefficient vectors at once,
     dimension NK (= 3,600 for size_bm_25).
 
-    Plain English: each asset's coefficients are pulled by three forces --
+    Each asset's coefficients are pulled by three forces:
     its own data, the other assets' data (because residuals are correlated
     across assets, so another asset's surprise is informative about this
     one's), and the shared prior mean b_bar. This step resolves all three
@@ -242,34 +238,23 @@ def sample_B(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
     Sigma_inv = _spd_inverse(Sigma)
     Delta_b_inv = _spd_inverse(Delta_b)
 
-    # --- precision matrix, as a 4-D array then viewed as (NK, NK) ---
-    # broadcasting Sigma_inv over the (i,j) axes multiplies each K x K Gram
-    # block G[i,:,j,:] by the scalar Sigma_inv[i,j] -- this single line is
-    # the whole of F' Omega^{-1} F.
-    P = G * Sigma_inv[:, None, :, None]          # (N,K,N,K)
+    P = G * Sigma_inv[:, None, :, None]
     diag = np.arange(N)
-    P[diag, :, diag, :] += Delta_b_inv           # add I_N (x) Delta_b^{-1}
+    P[diag, :, diag, :] += Delta_b_inv
     P = P.reshape(N * K, N * K)
 
-    # --- location term ---
-    rhs = np.einsum("ij,ijk->ik", Sigma_inv, Fr, optimize=True)  # (N,K)
-    rhs = rhs + (Delta_b_inv @ b_bar)[None, :]                   # broadcast over assets
+    rhs = np.einsum("ij,ijk->ik", Sigma_inv, Fr, optimize=True)
+    rhs = rhs + (Delta_b_inv @ b_bar)[None, :]
     rhs = rhs.reshape(N * K)
 
-    # --- draw: b = b* + L^{-T} z,  where P = L L' ---
-    # Cov(L^{-T} z) = L^{-T} L^{-1} = (L L')^{-1} = P^{-1}, exactly the
-    # target covariance -- so we never form or invert P itself.
     L = np.linalg.cholesky(P)
-    y = solve_triangular(L, rhs, lower=True)             # L y   = rhs
-    b_star = solve_triangular(L.T, y, lower=False)       # L' b* = y
+    y = solve_triangular(L, rhs, lower=True)
+    b_star = solve_triangular(L.T, y, lower=False)
     z = rng.standard_normal(N * K)
-    noise = solve_triangular(L.T, z, lower=False)        # L' n  = z
+    noise = solve_triangular(L.T, z, lower=False)
 
     return (b_star + noise).reshape(N, K)
 
-# ---------------------------------------------------------------------------
-# Step (2) of Feng & He's Gibbs loop: update b_bar  (their eq. 16)
-# ---------------------------------------------------------------------------
 
 def sample_b_bar(rng: np.random.Generator, B: np.ndarray, Delta_b: np.ndarray,
                  b_bar_bar: np.ndarray, Delta_b_bar: np.ndarray) -> np.ndarray:
@@ -277,7 +262,7 @@ def sample_b_bar(rng: np.random.Generator, B: np.ndarray, Delta_b: np.ndarray,
     Draw b_bar from its full conditional (Feng & He eq. 16), a K-dimensional
     multivariate normal.
 
-    Plain English: this is the "information grouping" step -- the N assets
+    This is the "information grouping" step: the N assets
     have just been given their own coefficient vectors, and this step asks
     what common value they are scattered around. It is the textbook
     conjugate update for the mean of a normal sample with known covariance:
@@ -286,7 +271,7 @@ def sample_b_bar(rng: np.random.Generator, B: np.ndarray, Delta_b: np.ndarray,
     N(b_bar_bar, Delta_b_bar), weighting each by its precision.
 
     Note this conditional does NOT involve R, F or Sigma at all. Once B is
-    known, the returns carry no further information about b_bar -- b_bar
+    known, the returns carry no further information about b_bar; b_bar
     influences the data only through B. That conditional independence is
     what makes the hierarchy tractable and is why this step is cheap
     (K x K = 144 x 144) even though the previous one was NK x NK.
@@ -314,7 +299,6 @@ def sample_b_bar(rng: np.random.Generator, B: np.ndarray, Delta_b: np.ndarray,
     precision = Delta_b_bar_inv + N * Delta_b_inv
     location = Delta_b_bar_inv @ b_bar_bar + Delta_b_inv @ B.sum(axis=0)
 
-    # same never-invert-the-precision trick as sample_B
     L = np.linalg.cholesky(precision)
     y = solve_triangular(L, location, lower=True)
     mean = solve_triangular(L.T, y, lower=False)
@@ -322,9 +306,6 @@ def sample_b_bar(rng: np.random.Generator, B: np.ndarray, Delta_b: np.ndarray,
 
     return mean + noise
 
-# ---------------------------------------------------------------------------
-# Blocked update of (B, b_bar) -- see "Disclosed deviations", point 5
-# ---------------------------------------------------------------------------
 
 def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
                        Sigma: np.ndarray, Delta_b: np.ndarray,
@@ -338,7 +319,7 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
     Feng & He's scan updates b_i given b_bar, then b_bar given the b_i. When
     Delta_b is small each b_i is nearly pinned to b_bar and b_bar is nearly
     pinned to their mean, so the two conditionals almost determine each other
-    and the chain moves in tiny steps -- the classic inefficiency of a CENTRED
+    and the chain moves in tiny steps: the classic inefficiency of a CENTRED
     parameterisation at small hierarchical variance (Papaspiliopoulos, Roberts
     & Skold, 2007). At our calibrated hyperparameters (Delta_b ~ 1.7e-8) this
     is severe: measured lag-1 autocorrelation of ||b_bar|| was 1.000, with the
@@ -349,7 +330,7 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
 
     Blocking leaves the target distribution unchanged and cannot worsen
     mixing (Liu, Wong & Kong, 1994), so this is a pure efficiency gain. It
-    costs one Cholesky of dimension NK+K instead of NK -- about 25% more time
+    costs one Cholesky of dimension NK+K instead of NK, about 25% more time
     per sweep at N=25, K=144.
 
     Math
@@ -397,29 +378,27 @@ def sample_B_and_b_bar(rng: np.random.Generator, G: np.ndarray, Fr: np.ndarray,
 
     return draw[:N * K].reshape(N, K), draw[N * K:]
 
-# ---------------------------------------------------------------------------
-# Steps (3) and (4): update Delta_b and Sigma  (their eq. 17-18)
-# ---------------------------------------------------------------------------
 
 def sample_Delta_b(rng: np.random.Generator, B: np.ndarray, b_bar: np.ndarray,
                    nu_b: float, V_b: np.ndarray) -> np.ndarray:
     """
-    Draw Delta_b from its full conditional (Feng & He eq. 17, corrected --
-    see the "Disclosed deviations" note at the top of this file).
+    Draw Delta_b from its full conditional (Feng & He eq. 17, corrected;
+    see the "Deviations from Feng and He (2022)" note at the top of this
+    file).
 
         Delta_b | B, b_bar ~ IW(nu_b + N, V_b + sum_i (b_i - b_bar)(b_i - b_bar)')
 
-    Plain English: having seen how far each asset's coefficients sit from
+    Having seen how far each asset's coefficients sit from
     the common b_bar, this step asks how spread out those deviations are.
     Delta_b is the model's own estimate of "how heterogeneous are the
     assets?", and it is what sets the strength of shrinkage applied back to
-    B on the next sweep -- large Delta_b means assets are allowed to differ,
+    B on the next sweep: large Delta_b means assets are allowed to differ,
     small Delta_b pulls them all toward b_bar.
 
     The conjugate pattern is the same one as any Inverse-Wishart update:
     the degrees of freedom gain the number of observations (N assets), and
     the scale matrix gains their sum of squared deviations. The two must
-    move TOGETHER -- that pairing is the entire content of conjugacy, and
+    move TOGETHER; that pairing is the entire content of conjugacy, and
     it is why Eq. (17)'s printed inverse on the scale matrix cannot be
     right (it would shrink Delta_b as observed dispersion grows).
 
@@ -430,11 +409,11 @@ def sample_Delta_b(rng: np.random.Generator, B: np.ndarray, b_bar: np.ndarray,
     """
     N, K = B.shape
 
-    theta = B - b_bar[None, :]                 # (N,K) deviations
-    S = theta.T @ theta                        # (K,K) sum_i theta_i theta_i'
+    theta = B - b_bar[None, :]
+    S = theta.T @ theta
 
     scale = V_b + S
-    scale = 0.5 * (scale + scale.T)            # enforce exact symmetry
+    scale = 0.5 * (scale + scale.T)
     return invwishart.rvs(df=nu_b + N, scale=scale, random_state=rng)
 
 
@@ -446,11 +425,11 @@ def sample_Sigma(rng: np.random.Generator, R: np.ndarray, F: np.ndarray,
         Sigma | B, R, F ~ IW(nu_Sigma + T, V_Sigma + E~' E~)
 
     where E~ is their T x N residual matrix. Our residuals come back from
-    sur_residuals as (N,T), so E~' E~ is simply E @ E.T -- an N x N matrix
+    sur_residuals as (N,T), so E~' E~ is simply E @ E.T, an N x N matrix
     whose (i,j) entry is sum_t e_it e_jt, the cross-asset co-movement of
     what the model failed to explain.
 
-    Plain English: exactly the same conjugate pattern as Delta_b, one level
+    Exactly the same conjugate pattern as Delta_b, one level
     down. There the "observations" were the N assets' deviations from
     b_bar; here they are the T months' residual vectors. Degrees of freedom
     gain T, the scale gains the residual sum of squares and cross-products.
@@ -464,14 +443,11 @@ def sample_Sigma(rng: np.random.Generator, R: np.ndarray, F: np.ndarray,
     """
     N, T = R.shape
 
-    E = sur_residuals(R, F, B)                 # (N,T)
+    E = sur_residuals(R, F, B)
     scale = V_Sigma + E @ E.T
     scale = 0.5 * (scale + scale.T)
     return invwishart.rvs(df=nu_Sigma + T, scale=scale, random_state=rng)
 
-# ---------------------------------------------------------------------------
-# Initialisation and the assembled Gibbs loop
-# ---------------------------------------------------------------------------
 
 @dataclass
 class GibbsDraws:
@@ -487,7 +463,7 @@ class GibbsDraws:
     Delta_b_off_idx : (n_track, 2) which (row, col) those entries are
     Delta_b_mean : (K,K) posterior mean of the full Delta_b, accumulated as
                    a running sum so the full matrix never has to be stored
-    Delta_b      : (n_keep, K, K) or None -- the full matrix, only if asked
+    Delta_b      : (n_keep, K, K) or None: the full matrix, only if asked
     meta         : bookkeeping (seed, timings, settings)
     """
 
@@ -505,7 +481,7 @@ class GibbsDraws:
 def initialise_state(R: np.ndarray, F: np.ndarray,
                      hp: GaussianBaselineHyperparams) -> dict:
     """
-    Data-driven starting values for the chain (NOT the prior -- this is only
+    Data-driven starting values for the chain (NOT the prior; this is only
     where the sampler begins, and has no effect on what it converges to;
     starting somewhere sensible just shortens burn-in). Standard practice,
     e.g. George & McCulloch (1993) initialise their SSVS sampler at the
@@ -517,7 +493,7 @@ def initialise_state(R: np.ndarray, F: np.ndarray,
         Delta_b  : the PRIOR MEAN, V_b / (nu_b - K - 1)
 
     Delta_b is the exception, and deliberately so: the obvious data-driven
-    choice -- the sample covariance of the N deviation vectors -- is a K x K
+    choice, the sample covariance of the N deviation vectors, is a K x K
     matrix built from only N observations. At N=25 and K=144 that matrix has
     rank at most 25 and is therefore singular, and the B-update needs its
     inverse on the very first sweep. The prior mean is well-conditioned by
@@ -532,8 +508,6 @@ def initialise_state(R: np.ndarray, F: np.ndarray,
     Sigma0 = np.cov(E0, ddof=1)
     Sigma0 = 0.5 * (Sigma0 + Sigma0.T)
     if np.linalg.eigvalsh(Sigma0).min() <= 0:
-        # can happen only if T <= N (not the case for our data, but small
-        # simulation studies can hit it) -- fall back to the prior mean
         Sigma0 = hp.V_Sigma / (hp.nu_Sigma - N - 1)
 
     return {
@@ -554,10 +528,10 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: GaussianBaselineHyperparams,
     Gaussian baseline.
 
     Each sweep updates, in their order:
-        (1) B        given b_bar, Delta_b, Sigma   -- information sharing
-        (2) b_bar    given B, Delta_b              -- information grouping
-        (3) Delta_b  given B, b_bar                -- how heterogeneous?
-        (4) Sigma    given B, R, F                 -- how correlated are the errors?
+        (1) B        given b_bar, Delta_b, Sigma:     information sharing
+        (2) b_bar    given B, Delta_b:                information grouping
+        (3) Delta_b  given B, b_bar:                  how heterogeneous?
+        (4) Sigma    given B, R, F:                   how correlated are the errors?
 
     Order matters only for efficiency, not correctness: any fixed sweep
     order over the full conditionals leaves the same joint posterior
@@ -585,8 +559,6 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: GaussianBaselineHyperparams,
     state = initialise_state(R, F, hp)
     n_keep = n_draws - n_burn
 
-    # which off-diagonal entries of Delta_b to track: fixed independently of
-    # `seed`, so the same elements are monitored across every run and model
     tracker_rng = np.random.default_rng(0)
     iu = np.triu_indices(K, k=1)
     pick = tracker_rng.choice(len(iu[0]), size=min(n_track_offdiag, len(iu[0])),
@@ -648,10 +620,6 @@ def run_gibbs(R: np.ndarray, F: np.ndarray, hp: GaussianBaselineHyperparams,
     )
 
 
-# ---------------------------------------------------------------------------
-# Scale-calibrated hyperparameters (see "Disclosed deviations", point 4)
-# ---------------------------------------------------------------------------
-
 def prior_implied_r2(hp: GaussianBaselineHyperparams, R: np.ndarray,
                      F: np.ndarray) -> float:
     """
@@ -672,7 +640,7 @@ def prior_implied_r2(hp: GaussianBaselineHyperparams, R: np.ndarray,
     coefficient prior variance. Dividing by Var(r) gives the implied R^2.
 
     Values far above 1 mean the prior expects the predictable part of returns
-    to be more variable than returns themselves -- incoherent, and a sign the
+    to be more variable than returns themselves: incoherent, and a sign the
     hyperparameters were calibrated for a different predictor scale.
     """
     K = hp.K
@@ -693,7 +661,7 @@ def rescaled_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
     Feng & He standardise firm characteristics cross-sectionally to [-1,1]
     and use Welch-Goyal macro predictors in raw units (dividend yield ~0.03,
     T-bill ~0.05). We use expanding-window z-scores, so our predictors have
-    standard deviation ~1 -- between 60 and 130 times larger. Prior
+    standard deviation ~1, between 60 and 130 times larger. Prior
     hyperparameters are NOT scale-invariant: V_b = diag(3) is a statement
     about coefficient magnitude, and the same numbers therefore mean
     something entirely different under our scaling. Applied verbatim, their
@@ -702,8 +670,8 @@ def rescaled_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
 
     What is preserved and what is changed
     -------------------------------------
-    Their split between the common and deviation components -- 0.1 vs 0.003,
-    i.e. 97.1% / 2.9% -- is a RATIO and so is scale-free. It encodes their
+    Their split between the common and deviation components (0.1 vs 0.003,
+    i.e. 97.1% / 2.9%) is a RATIO and so is scale-free. It encodes their
     substantive belief that assets are mostly alike, and is kept exactly.
     Only the overall magnitude changes, via a single factor applied to both
     Delta_b_bar and V_b. nu_b and b_bar_bar are untouched.
@@ -713,17 +681,15 @@ def rescaled_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
 
     Two independent arguments agree on the resulting scale to within
     0.3-4.3%: equating prior precision to the median data precision, and
-    targeting a plausible R^2. An earlier version of this note claimed three
-    agreeing routes, the third being a match to Feng & He's own effective
-    predictor scale. That comparison was not like-for-like -- it put a
-    DEVIATION scale against two TOTAL scales -- and the route is withdrawn
-    rather than reconciled.
+    targeting a plausible R^2. A third route, matching Feng & He's own
+    effective predictor scale, is not used: it puts a DEVIATION scale against
+    two TOTAL scales, so the comparison is not like-for-like.
 
     On the intercept: this shrinks b_bar_0 toward zero with a prior standard
     deviation of 0.91% annualised at target_r2 = 0.05 (0.076% monthly, x12).
     That is a belief-in-the-pricing-model prior on alpha, marginally TIGHTER
     than the range Pastor (2000) uses (1-3% annualised) rather than inside
-    it -- close enough to the same order to be read as consistent with the
+    it, close enough to the same order to be read as consistent with the
     source already cited for Sigma's hyperparameters, but the claim is
     "marginally tighter than", not "within". The figure is not tuned to
     Pastor: it falls out of target_r2 = 0.05 and the Feng-He ratio, and it
@@ -743,8 +709,8 @@ def rescaled_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
 
     base = default_hyperparameters(R, K)
 
-    v_common = base.Delta_b_bar[0, 0]                       # 0.1
-    v_dev = base.V_b[0, 0] / (base.nu_b - K - 1)            # 0.003
+    v_common = base.Delta_b_bar[0, 0]
+    v_dev = base.V_b[0, 0] / (base.nu_b - K - 1)
     v_total = v_common + v_dev
 
     C = np.cov(F.reshape(-1, K).T)

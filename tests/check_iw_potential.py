@@ -2,7 +2,7 @@
 check_iw_potential.py
 
 Reproduces the inverse-Wishart implementation check reported in
-Appendix A.6.3.
+Appendix A.7.3.
 
 WHAT WENT WRONG, AND WHY IT MATTERED. The NUTS models represent the residual
 covariance through an unconstrained packed Cholesky coordinate, with the
@@ -18,8 +18,8 @@ exception was raised, R-hat and ESS were unremarkable, and the posterior
 looked plausible. Only comparison against a quantity whose answer is known
 in advance detected it.
 
-WHAT THIS SCRIPT DOES. It samples the prior ALONE -- no likelihood, no data
--- so the posterior is exactly the inverse-Wishart prior and its moments are
+WHAT THIS SCRIPT DOES. It samples the prior ALONE (no likelihood, no data),
+so the posterior is exactly the inverse-Wishart prior and its moments are
 available in closed form:
 
     E[Sigma]     = V / (nu - N - 1)                       for nu > N + 1
@@ -60,7 +60,7 @@ INTERPRETATION. Passing this check establishes that the implemented density
 and its Jacobian correspond to the intended prior. It does not establish
 that the sampler targets the correct posterior once a likelihood is present;
 that is what the joint-composition and prior-generative checks in
-Appendix A.6 address.
+Appendix A.7 address.
 
 Run from the project root, a few minutes:
 
@@ -105,9 +105,9 @@ def sample_prior(nu: float, V: np.ndarray, coordinate_prior: str,
     coordinate used by the NUTS models.
 
     coordinate_prior:
-        'flat'     -- pm.Flat, the correct construction. The Potential is
+        'flat':      pm.Flat, the correct construction. The Potential is
                       then the only density acting on the coordinate.
-        'gaussian' -- the bug. A proper N(0,1) prior on the coordinate,
+        'gaussian':  the bug. A proper N(0,1) prior on the coordinate,
                       with the inverse-Wishart density added on top, so the
                       model targets the product of two densities.
     """
@@ -122,9 +122,6 @@ def sample_prior(nu: float, V: np.ndarray, coordinate_prior: str,
         else:
             raise ValueError(coordinate_prior)
 
-        # returns the reconstructed covariance together with the total log
-        # density in terms of the packed coordinate -- the IW density plus
-        # the Jacobian of the Cholesky and log-diagonal transformations
         Sigma_expr, total_logp = inverse_wishart_cholesky_logp(packed, nu, V)
         Sigma = pm.Deterministic("Sigma", Sigma_expr)
         pm.Potential("Sigma_prior", total_logp)
@@ -141,9 +138,6 @@ def report(label: str, draws: np.ndarray, mean: np.ndarray,
     """Discrepancy between sampled and theoretical means, in MCSE units."""
     n = draws.shape[0]
     emp = draws.mean(axis=0)
-    # MCSE of a sample mean, using the THEORETICAL variance rather than the
-    # sampled one: under the bug the sampled variance is itself wrong, and
-    # using it would partly absorb the error being tested for.
     mcse = np.sqrt(var / n)
     z = np.abs(emp - mean) / mcse
     iu = np.triu_indices(mean.shape[0])
@@ -166,12 +160,10 @@ def main() -> None:
     args = ap.parse_args()
 
     N = args.n_assets
-    # nu comfortably above N + 3 so both moments exist and the prior is not
-    # so diffuse that the Monte Carlo error swamps the comparison
     nu = float(N + 8)
     rng = np.random.default_rng(args.seed)
     A = rng.standard_normal((N, N))
-    V = (A @ A.T + N * np.eye(N)) * 0.01      # arbitrary but well conditioned
+    V = (A @ A.T + N * np.eye(N)) * 0.01
 
     mean, var = iw_moments(nu, V)
     print(f"inverse-Wishart prior alone: N={N}, nu={nu:.0f}, "

@@ -1,5 +1,5 @@
 """
-check_divergences_horseshoe.py  --  does target_accept fix the horseshoe's divergences,
+check_divergences_horseshoe.py: does target_accept fix the horseshoe's divergences,
 and where are they actually coming from?
 
 WHAT THE FIRST ROUND ESTABLISHED (check_divergences_horseshoe.py, 13 Aug)
@@ -9,7 +9,7 @@ WHAT THE FIRST ROUND ESTABLISHED (check_divergences_horseshoe.py, 13 Aug)
 
   C.2 REJECTED: 16 vs 13 is inside binomial noise (sd ~3.5 at n=200; three runs
   of the IDENTICAL simple model gave 10 and 16), for 1.90x the wall clock. The
-  location scan showed why it was never going to help -- divergent draws sat at
+  location scan showed why it was never going to help: divergent draws sat at
   the 60th percentile of log tau under C.1 and the 44th under C.2, either side
   of 50 and disagreeing with each other, so THE DIVERGENCES ARE NOT IN THE
   LOW-TAU NECK. C.2 is aimed at a neck that is not the problem.
@@ -20,7 +20,7 @@ WHAT THE FIRST ROUND ESTABLISHED (check_divergences_horseshoe.py, 13 Aug)
 
 WHAT THIS SCRIPT DOES
 
-  1. A wider location scan -- log tau, mean AND max log lambda, ||b_bar_z||,
+  1. A wider location scan: log tau, mean AND max log lambda, ||b_bar_z||,
      ||Sigma_packed_z||, and the energy. The first scan checked two quantities
      and both came back null, so the cause is in something not yet looked at.
   2. E-BFMI computed directly from the energy trace. arviz 1.2.0's az.bfmi
@@ -29,7 +29,7 @@ WHAT THIS SCRIPT DOES
   3. Saves the posterior mean of b, so the settings can be compared on the
      quantity the backtest actually uses.
 
-USAGE -- the ta=0.9 run must be REPEATED here, since the earlier file predates
+USAGE: the ta=0.9 run must be REPEATED here, since the earlier file predates
 the scan fields:
 
     caffeinate -i python3 check_divergences_horseshoe.py --target-accept 0.9
@@ -43,7 +43,7 @@ That doubling IS the decision-relevant number as much as the divergence count.
 
 READING IT: if divergences fall to ~0 by 0.99, apply that setting uniformly
 (option A) and the backtest costs ~11 h per universe. If they plateau around
-5%, target_accept is not the remedy and the question becomes disclosure --
+5%, target_accept is not the remedy and the question becomes disclosure,
 or the regularised horseshoe, whose bounded tails address exactly this
 geometry. Do not reach for that first.
 """
@@ -65,8 +65,6 @@ def load_universe(universe: str):
 
 
 def tag_for(param: str, ta: float) -> str:
-    # no dots anywhere in the tag: Path.with_suffix once parsed "..._ta0.9" as a
-    # suffix and silently overwrote three of four chains elsewhere in this project
     return f"divcheck2_{param}_ta{ta:g}".replace(".", "p") + ".npz"
 
 
@@ -140,7 +138,7 @@ def run(args) -> None:
     step = ss["step_size"].values.ravel()
     energy = ss["energy"].values
 
-    lam_v = po["lam"].values                      # (chain, draw, N, K)
+    lam_v = po["lam"].values
     scan = {
         "log_tau": np.log(po["tau"].values).ravel(),
         "mean_log_lam": np.log(lam_v).mean(axis=(-1, -2)).ravel(),
@@ -195,7 +193,7 @@ def compare(args) -> None:
     fa, fb = out / tag_for(args.param, ta_a), out / tag_for(args.param, ta_b)
     for f in (fa, fb):
         if not f.exists():
-            raise SystemExit(f"{f} missing -- run it first")
+            raise SystemExit(f"{f} missing; run it first")
     A, B = np.load(fa, allow_pickle=True), np.load(fb, allow_pickle=True)
 
     print(f"target_accept {ta_a:g} vs {ta_b:g}\n")
@@ -218,7 +216,6 @@ def compare(args) -> None:
               f"max |z| {np.nanmax(zs):6.2f}  within 3 SE {100*np.nanmean(zs<3):5.1f}%"
               f"  median ESS {np.median(ea):.0f} vs {np.median(eb):.0f}")
 
-    # the quantity the backtest actually uses
     mba, mbb = A["b_mean"].ravel(), B["b_mean"].ravel()
     sd = 0.5 * (A["b_sd"].ravel() + B["b_sd"].ravel())
     print(f"\n  posterior mean of b, the ONLY thing the backtest uses:")

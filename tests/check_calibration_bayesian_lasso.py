@@ -3,9 +3,9 @@ tests/check_calibration_bayesian_lasso.py
 
 Calibration of the Bayesian LASSO sampler.
 
-Reproduces Table 4.6, the Bayesian LASSO column, and Appendix A.6.4, the Sigma
+Reproduces Table 4.6, the Bayesian LASSO column, and Appendix A.7.4, the Sigma
 mismatch that moved coverage by less than Monte Carlo error. Supports Section
-4.5 on prior-generative calibration, and Appendix A.6.5's second example, the
+4.5 on prior-generative calibration, and Appendix A.7.5's second example, the
 rank-uniformity chi^2 that returned p = 0.004 on clustered ranks.
 
 The truth is drawn from the MODEL'S OWN PRIOR. Bayesian coverage is nominal
@@ -17,13 +17,13 @@ the sampler or could be the mismatch, and there is no way to tell.
 Two mismatches were present in the original version of this test and both are
 corrected here:
 
-  theta  -- generate.py's draw_deviations_gaussian is the BASELINE's
+  theta:    generate.py's draw_deviations_gaussian is the BASELINE's
             generative process. Fitting a Laplace prior to Gaussian truth would
             show under-coverage that is correct model behaviour, not a bug.
             theta is therefore drawn from Laplace(0, s/lambda) by inverse
             transform, with lambda from the model's own Gamma hyperprior.
             (This was correct in the original version.)
-  Sigma  -- was drawn from generate.py's _random_pd_matrix rather than from
+  Sigma:    was drawn from generate.py's _random_pd_matrix rather than from
             IW(nu_Sigma, V_Sigma). This was the one quantity that slipped
             through. Correcting it moved no row by more than its own Monte
             Carlo error at 20 datasets, which is itself informative: Sigma does
@@ -36,7 +36,7 @@ WEAK BUT PROPER hyperparameters throughout. At the production prior
 (Delta_b_bar = 5.7e-07) the posterior for b_bar is pinned near its prior mean
 whatever the data says, so intervals would cover trivially and the test would
 confirm the prior rather than the code. Delta_b_bar = 4.0 here is weak but
-proper -- coverage of b_bar is undefined if b_bar is not actually drawn from
+proper: coverage of b_bar is undefined if b_bar is not actually drawn from
 the prior the model uses.
 
 REPORT THE PER-DATASET TEST, NOT THE POOLED BINOMIAL. Intervals within one
@@ -66,25 +66,22 @@ weak = LassoHyperparams(
     Delta_b_bar=np.eye(K) * 4.0,
     nu_Sigma=N + 2.0,
     V_Sigma=np.eye(N) * 1.0,
-    s=1.0,                    # the plug-in scale is a constant of the model,
-                              # not a parameter, so it is treated as known
+    s=1.0,
     lambda_r=1.0,
-    lambda_delta=0.04,        # prior mean lambda = sqrt(r/delta) = 5
-    sd_target=np.nan,         # not used during sampling
+    lambda_delta=0.04,
+    sd_target=np.nan,
 )
 
-iu = np.triu_indices(N)       # unique Sigma entries only; the lower triangle
-                              # duplicates them and would inflate the count
+iu = np.triu_indices(N)
 res = {k: [] for k in ["b_bar", "theta", "B", "Sigma", "lambda"]}
 
 t0 = time.time()
 for r in range(REPS):
     rng = np.random.default_rng(9000 + r)
 
-    # ---- draw the truth from the model's own prior ------------------------
     lam = np.sqrt(rng.gamma(shape=weak.lambda_r, scale=1.0 / weak.lambda_delta))
     b_bar = rng.multivariate_normal(weak.b_bar_bar, weak.Delta_b_bar)
-    u = rng.random((N, K)) - 0.5                      # Laplace by inverse transform
+    u = rng.random((N, K)) - 0.5
     theta = -(weak.s / lam) * np.sign(u) * np.log(1.0 - 2.0 * np.abs(u))
     b = b_bar[None, :] + theta
     Sigma = invwishart.rvs(df=weak.nu_Sigma, scale=weak.V_Sigma, random_state=rng)
@@ -92,7 +89,6 @@ for r in range(REPS):
     F = generate_predictors(rng, N, T, K)
     R = compute_returns(F, b, generate_residuals(rng, N, T, Sigma))
 
-    # ---- fit and record interval coverage --------------------------------
     fit = run_gibbs(R, F, weak, n_draws=DRAWS, n_burn=BURN, seed=r)
     theta_draws = fit.B - fit.b_bar[:, None, :]
 
@@ -124,7 +120,7 @@ for k in res:
           f"{per_ds.mean():.3f} +/- {se:.3f}  ({z:+.1f} se)")
 
 print("\n   [The per-dataset column is the honest test. Intervals within one")
-print("    dataset are not independent -- they share b_bar, Sigma and lambda --")
+print("    dataset are not independent (they share b_bar, Sigma and lambda),")
 print("    so a pooled binomial test treats clustered data as independent and")
 print("    manufactures significance.]")
 print("   [lambda is expected to be the weakest row. It is the slowest-mixing")

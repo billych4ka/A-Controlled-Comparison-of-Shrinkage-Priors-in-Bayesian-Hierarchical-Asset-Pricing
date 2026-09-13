@@ -4,13 +4,13 @@ src/gibbs/io.py
 Saving and loading Gibbs output. Deliberately generic: it serialises any
 dataclass whose fields are numpy arrays, plus a JSON-able `meta` dict, so
 the Gaussian baseline and the Bayesian LASSO can share it without either
-importing from the other. That matters for the dissertation's framing --
+importing from the other. That matters for the dissertation's framing:
 the four models are meant to be independent implementations differing only
 in the prior, and a shared save/load helper keeps that true in the code.
 
 Format is .npz (compressed) for the arrays plus a sidecar .json for meta.
 Two reasons not to pickle: a pickle silently breaks if the dataclass
-definition later changes, and .npz needs no third-party reader -- the same
+definition later changes, and .npz needs no third-party reader, the same
 lesson as the size_bm_25.pkl / pyarrow problem earlier in this project.
 """
 
@@ -40,7 +40,7 @@ def save_draws(draws, path: str | Path) -> Path:
 
     path = Path(path)
     if path.suffix == ".npz":
-        path = path.with_suffix("")   # only strip a real .npz, not "0.05"
+        path = path.with_suffix("")
     path.parent.mkdir(parents=True, exist_ok=True)
 
     arrays, absent = {}, []
@@ -68,14 +68,14 @@ def save_draws(draws, path: str | Path) -> Path:
 def load_draws(path: str | Path, cls):
     """
     Inverse of save_draws. `cls` is the dataclass to rebuild (e.g.
-    GibbsDraws) -- passed explicitly rather than looked up by name, so that
+    GibbsDraws), passed explicitly rather than looked up by name, so that
     loading never depends on importing every model's module.
 
     Returns an instance of cls with arrays restored and meta re-attached.
     """
     path = Path(path)
     if path.suffix == ".npz":
-        path = path.with_suffix("")   # only strip a real .npz, not "0.05"
+        path = path.with_suffix("")
 
     with np.load(path.with_suffix(".npz")) as npz:
         arrays = {k: npz[k] for k in npz.files}

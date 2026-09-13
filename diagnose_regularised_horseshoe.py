@@ -7,7 +7,7 @@ two additions specific to this model: the slab's own convergence and interval,
 and the BINDING diagnostic measured from the draws.
 
 THE QUESTION THIS SCRIPT EXISTS TO SETTLE. The production run gave tau =
-3.6064e-05 against the plain horseshoe's 2.1019e-05 -- 1.72x larger, all four
+3.6064e-05 against the plain horseshoe's 2.1019e-05, 1.72x larger, all four
 chains agreeing to within 3%. The tempting reading is that the slab relieves
 tau: with the tails bounded, tau no longer has to collapse to control them.
 That is a real mechanism and the binding fraction supports it.
@@ -16,7 +16,7 @@ BUT matched-dimension calibration found tau's recovery correlation at -0.036
 for this model against +0.996 for the plain horseshoe. Where the slab binds,
 tau * lambda~ -> c, so the coefficient scale becomes c REGARDLESS of tau and
 the global scale stops being identified through those coefficients. Coverage
-stayed honest (0.980) because the intervals widen correctly -- but tau was not
+stayed honest (0.980) because the intervals widen correctly, but tau was not
 being recovered.
 
 At 61% binding, which is where that calibration sat. Production binds at
@@ -64,7 +64,6 @@ HORSESHOE, HS_SETTING = "horseshoe", "p0_23_r2_0p05"
 BASELINE, BL_SETTING = "baseline_gaussian", "rescaled_r2_0p05"
 LASSO, LA_SETTING = "bayesian_lasso", "rescaled_r2_0p05"
 
-# the plain horseshoe's figures on size_bm_25, for direct comparison
 HS_TAU, HS_TAU_ESS, HS_TAU_RHAT = 2.1019e-05, 1012.0, 1.0015
 
 
@@ -125,7 +124,6 @@ def main() -> None:
     print(f"   target_accept={meta.get('target_accept')}  "
           f"max_treedepth={meta.get('max_treedepth')}")
 
-    # ---- 1. convergence ----------------------------------------------------
     print("\n" + "=" * 78)
     print("1. CONVERGENCE   (R-hat < 1.01; ESS target 400 for posterior means)")
     print("=" * 78)
@@ -140,7 +138,7 @@ def main() -> None:
             tau_rhat = float(np.nanmax(getattr(dg, "rhat", np.array([np.nan]))))
 
     print("\n" + "-" * 78)
-    print("   TAU'S IDENTIFICATION -- the question this script exists to settle")
+    print("   TAU'S IDENTIFICATION: the question this script exists to settle")
     print("-" * 78)
     print(f"   this model : ESS {tau_ess:.0f}, R-hat {tau_rhat:.4f}")
     print(f"   horseshoe  : ESS {HS_TAU_ESS:.0f}, R-hat {HS_TAU_RHAT:.4f}")
@@ -152,7 +150,7 @@ def main() -> None:
             print("      point, the calibration's -0.036 recovery correlation")
             print("      belongs to that 61%-binding regime, and the 1.72x")
             print("      difference from the plain horseshoe can be stated as")
-            print("      substantive -- with the mechanism (the slab relieves tau)")
+            print("      substantive, with the mechanism (the slab relieves tau)")
             print("      supported by the binding fraction below.")
         else:
             print("   -> tau mixes MUCH worse. Weak identification is the likely")
@@ -161,7 +159,6 @@ def main() -> None:
             print("      binding fraction and kappa as the interpretable")
             print("      quantities, and CAVEAT any tau comparison.")
 
-    # ---- 2. NUTS -----------------------------------------------------------
     print("\n" + "=" * 78)
     print("2. NUTS DIAGNOSTICS, per chain")
     print("=" * 78)
@@ -182,12 +179,11 @@ def main() -> None:
     print("\n   [the plain horseshoe on this universe: 57 of 6,000 (0.9%), tree")
     print("    depth 9.00, step size 0.006-0.011, 3h12m. P&V report the")
     print("    regularised version as no slower and often faster BECAUSE the")
-    print("    posterior behaves better -- a bounded prior means milder worst-case")
+    print("    posterior behaves better: a bounded prior means milder worst-case")
     print("    curvature, so the step size can rise and trees shorten.]")
 
-    # ---- 3. the slab -------------------------------------------------------
     print("\n" + "=" * 78)
-    print("3. THE SLAB   -- what the regularised horseshoe adds")
+    print("3. THE SLAB: what the regularised horseshoe adds")
     print("=" * 78)
     c_all = np.concatenate([c.c for c in chains])
     clo, chi = np.percentile(c_all, [2.5, 97.5])
@@ -219,12 +215,11 @@ def main() -> None:
     print("    the slab, tau no longer has to collapse to control them. That also")
     print("    explains why binding stays near its prior value of 12.91% rather")
     print("    than falling to the 0.70% predicted by holding tau at the plain")
-    print("    horseshoe's posterior -- tau is not fixed, it is what the slab")
+    print("    horseshoe's posterior; tau is not fixed, it is what the slab")
     print("    relieves.]")
 
-    # ---- 4. kappa across all four models -----------------------------------
     print("\n" + "=" * 78)
-    print("4. SHRINKAGE FACTORS kappa   -- the axis on which all four compare")
+    print("4. SHRINKAGE FACTORS kappa: the axis on which all four compare")
     print("=" * 78)
     kap = np.concatenate([shrinkage_factors(c, F, hp) for c in chains], axis=0)
     print(f"   reg. horseshoe : mean {kap.mean():.4f}   "
@@ -247,7 +242,6 @@ def main() -> None:
     except (FileNotFoundError, AttributeError, KeyError) as exc:
         print(f"   horseshoe      : not comparable ({type(exc).__name__})")
 
-    # ---- 5. cross-model agreement ------------------------------------------
     print("\n" + "=" * 78)
     print(f"5. CROSS-MODEL AGREEMENT ON b_bar   (top-{args.top})")
     print("=" * 78)
@@ -279,7 +273,6 @@ def main() -> None:
             print(f"      {a:<14s} vs {b:<14s} spearman {v['spearman']:+.3f}   "
                   f"overlap {v[f'top{args.top}_overlap']:.2f}")
 
-    # ---- 6. top predictors --------------------------------------------------
     print("\n" + "=" * 78)
     print(f"6. TOP {args.top} PREDICTORS BY |posterior mean b_bar|")
     print("=" * 78)
@@ -291,7 +284,7 @@ def main() -> None:
         print(f"   {star} {names[j]:<24s} {m_rh[j]:+.5f}  "
               f"[{lo_i[j]:+.5f}, {hi_i[j]:+.5f}]   kappa {kap_mean[:, j].mean():.4f}")
     print("\n   NOTE: intervals are not significance tests. Counting stars across")
-    print("   models compares priors, not evidence -- the baseline gave 0, 11, 8")
+    print("   models compares priors, not evidence: the baseline gave 0, 11, 8")
     print("   and 17 across four settings, non-monotonic in prior strength.")
 
 

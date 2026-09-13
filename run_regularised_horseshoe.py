@@ -18,7 +18,7 @@ numbers, and they are printed together at the end:
 
   2. TAU's ESS AND R-HAT, read against the plain horseshoe's 1,012 and 1.0015.
      Calibration at matched dimensions found tau's recovery correlation at
-     -0.036 for this model against +0.996 for the plain horseshoe -- where the
+     -0.036 for this model against +0.996 for the plain horseshoe: where the
      slab binds, tau*lambda~ -> c, so the coefficient scale is c REGARDLESS of
      tau and the global scale stops being identified through those
      coefficients. Coverage stayed honest (0.980) because the intervals widen
@@ -30,7 +30,7 @@ numbers, and they are printed together at the end:
      R-hat and interval.
 
 The consequence for reporting: for the plain horseshoe, tau is a headline
-result -- it lands at 5% of tau_0 with the interval excluding it. For this
+result: it lands at 5% of tau_0 with the interval excluding it. For this
 model the interpretable quantities are c, the binding fraction, and the
 shrinkage factors kappa, with tau reported and caveated. Do not read a
 difference between the two models' tau as "the slab changes the global scale"
@@ -46,10 +46,11 @@ Usage:
     caffeinate -i python3 -u run_regularised_horseshoe.py 2>&1 \
         | tee -a results/size_bm_25/regularised_horseshoe/run_log.txt
 
-    python3 run_regularised_horseshoe.py --slab-scale 2.0   # P&V's default;
-        # EVIDENCE, not a mistake -- it should bind for ~0.02 of 3,600
-        # coefficients, demonstrating that applied verbatim the regularised
-        # horseshoe IS the plain horseshoe at this data's scale
+    python3 run_regularised_horseshoe.py --slab-scale 2.0
+
+The --slab-scale 2.0 run uses P&V's default and is EVIDENCE, not a mistake: it
+should bind for ~0.02 of 3,600 coefficients, demonstrating that applied
+verbatim the regularised horseshoe IS the plain horseshoe at this data's scale.
 """
 
 from __future__ import annotations
@@ -122,8 +123,6 @@ def main() -> None:
                                        n_choice=args.n_choice,
                                        slab_scale=args.slab_scale)
 
-    # no dots in the tag: Path.with_suffix("") once parsed "..._r2_0.05_chain0"
-    # as stem "..._r2_0" plus suffix ".05_chain0"
     tag = f"p0_{args.p0}_r2_{args.target_r2:g}".replace(".", "p")
     if args.slab_scale is not None:
         tag += f"_s{args.slab_scale:g}".replace(".", "p")
@@ -138,7 +137,7 @@ def main() -> None:
     print(f"  Delta_b_bar={hp.Delta_b_bar[0,0]:.4e}  (shared with all four models)")
     print(f"  sigma={hp.sigma_pooled:.4f}  sd_target={hp.sd_target:.4e}")
     print(f"  tau_0={hp.tau_0:.4e}  (p0={hp.p0} per asset, n={hp.n_choice})"
-          f"   -- IDENTICAL to the plain horseshoe")
+          f", IDENTICAL to the plain horseshoe")
     print(f"  slab: s={hp.slab_scale:.4e}, nu={hp.slab_df:g}, "
           f"E[c]={hp.slab_sd:.4e} = {hp.slab_sd/hp.sd_target:.1f} x sd_target")
     print(f"  prior binding P(lam > c/tau): {100*hp.binding_fraction():.2f}% at "
@@ -158,9 +157,6 @@ def main() -> None:
         draws.meta["setting"] = tag
         draws.meta["target_r2"] = args.target_r2
         draws.meta["universe"] = args.universe
-        # seed0 + k in the FILENAME, not k, so --seed0 4 cannot overwrite
-        # chains 0-3. The Gibbs runners used the loop index and were
-        # corrected to match; with the default seed0 = 0 no name changes.
         out = save_draws(draws, outdir / f"{MODEL}_{tag}_chain{args.seed0 + k}")
         print(f"  chain {args.seed0 + k} (seed {draws.meta['seed']}): "
               f"tau {draws.tau.mean():.4e}, c {draws.c.mean():.4e}, "
@@ -171,7 +167,6 @@ def main() -> None:
 
     print(f"\ntotal {time()-t_all:.0f}s")
 
-    # ---- a first look ------------------------------------------------------
     d0 = load_draws(outdir / f"{MODEL}_{tag}_chain{args.seed0}", RegHorseshoeDraws)
     names = load_predictor_names(args.universe, K)
     tau_all = np.concatenate([c.tau for c in chains])
@@ -195,7 +190,7 @@ def main() -> None:
           f"lam above that")
 
     bs = binding_summary(d0, hp)
-    print(f"\nSLAB BINDING (chain {args.seed0}) -- the diagnostic this model exists for")
+    print(f"\nSLAB BINDING (chain {args.seed0}): the diagnostic this model exists for")
     print(f"   lam~/lam < 0.99 for {100*bs['frac_binding']:.2f}% of local scales, "
           f"{bs['n_binding_per_draw']:.0f} of {N*K} per draw")
     print(f"   halved or more: {100*bs['frac_halved']:.2f}%   "

@@ -2,13 +2,13 @@
 check_horseshoe_prior_tails.py
 
 Demonstrates why full-dimensional prior-generative calibration of the plain
-horseshoe was abandoned, as reported in Appendix A.6.7.
+horseshoe was abandoned, as reported in Appendix A.7.7.
 
 THE PROBLEM. Prior-generative calibration draws parameters from the model's
 own prior, simulates data, refits, and checks that credible intervals cover
 the drawn values at their nominal rate. It requires the fit to succeed on
 every simulated dataset, or the exercise conditions on the draws that
-happened to be tractable -- which biases coverage towards easier regions of
+happened to be tractable, which biases coverage towards easier regions of
 the prior and defeats the purpose.
 
 At production dimensions the plain horseshoe has NK = 3,600 half-Cauchy
@@ -16,7 +16,7 @@ local scales. A half-Cauchy has no finite mean, and the maximum of n
 independent draws grows roughly linearly in n rather than logarithmically as
 it would for a light-tailed distribution. A regime that behaves at a few
 hundred scales therefore produces coefficient vectors thousands of residual
-standard errors from zero at 3,600 -- datasets that are not merely slow to
+standard errors from zero at 3,600: datasets that are not merely slow to
 fit but effectively unfittable.
 
 WHY A SCRIPT THAT DOES NOT FIT ANYTHING. The original attempt ran for over
@@ -30,7 +30,7 @@ WHAT THIS DOES NOT SHOW. Extreme prior draws do not imply the model
 misbehaves on observed data, where the likelihood constrains the same tails.
 The finding is a limitation of prior-generative calibration for unbounded
 global-local priors at high dimension, not evidence about the fitted
-posterior. Section 4.5 and Appendix A.6.7 state this distinction; the
+posterior. Section 4.5 and Appendix A.7.7 state this distinction; the
 reduced-dimension calibration reported in Table 4.5 is what establishes
 coverage.
 
@@ -66,8 +66,6 @@ def main() -> None:
 
     rng = np.random.default_rng(args.seed)
 
-    # NK settings spanning the calibration dimensions actually used and the
-    # production dimension that failed
     settings = [(6, 5), (10, 30), (25, 30), (25, 72), (25, 144)]
 
     print(f"plain horseshoe prior draws: tau_0 = {args.tau0:.4e}, "
@@ -80,9 +78,6 @@ def main() -> None:
     for N, K in settings:
         nk = N * K
         med, p90, mx, frac = [], [], [], 0
-        # draws are generated one replicate at a time rather than as one
-        # large array, since NK x draws would be 36 million floats at the
-        # production setting and the summary needs only the maximum
         worst = np.empty(args.draws)
         for d in range(args.draws):
             tau = args.tau0 * half_cauchy(rng, 1)[0]

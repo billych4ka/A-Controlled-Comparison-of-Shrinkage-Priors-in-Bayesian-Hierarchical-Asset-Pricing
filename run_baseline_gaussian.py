@@ -10,7 +10,7 @@ variance and is undefined for a single chain. Each chain is independent, so
 this is also the natural place to parallelise later if runtimes grow.
 
 Usage:
-    python run_baseline_gaussian.py                       # defaults
+    python run_baseline_gaussian.py                       (defaults)
     python run_baseline_gaussian.py --chains 4 --draws 3000 --burn 1000
     python run_baseline_gaussian.py --universe size_bm_100
 """
@@ -32,7 +32,7 @@ def load_predictor_names(universe: str, K: int) -> list[str]:
     """
     Predictor column names from the data pipeline's metadata sidecar, so
     output reads "DY_x_lag3" rather than "predictor 27". Falls back to
-    indices if the file isn't where we expect -- a missing sidecar should
+    indices if the file isn't where we expect: a missing sidecar should
     make the report less readable, not stop a 45-minute run.
     """
     import json
@@ -105,8 +105,6 @@ def main() -> None:
                           seed=seed, progress_every=max(args.draws // 10, 1))
         draws.meta["prior"] = tag
         draws.meta["target_r2"] = args.target_r2 if args.prior == "rescaled" else None
-        # seed0 + k in the FILENAME, not k, so --seed0 4 cannot overwrite
-        # chains 0-3. With the default seed0 = 0 the names are unchanged.
         out = save_draws(draws, outdir / f"baseline_gaussian_{tag}_chain{seed}")
         print(f"  chain {seed} (seed {seed}): {time()-t0:.0f}s, "
               f"{out.stat().st_size/1e6:.0f} MB -> {out}")

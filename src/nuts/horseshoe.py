@@ -25,7 +25,7 @@ Delta_b_bar is imported from baseline_gaussian.rescaled_hyperparameters rather
 than re-derived, which makes "all models share one hierarchy" true by
 construction instead of by two copies of a formula agreeing. sigma comes from
 bayesian_lasso.pooled_residual_scale, the same df-corrected quantity the LASSO
-calibrates against -- the same quantity computed two different ways across two
+calibrates against; the same quantity computed two different ways across two
 models is precisely what the hold-the-procedure-fixed discipline exists to
 prevent. Everything else is derived from R and F, so the backtest recomputes
 per window from training data only and the robustness universes recalibrate
@@ -40,9 +40,9 @@ discipline applied to target_r2 = 0.05. Piironen & Vehtari characterise p_0
 explicitly as a prior guess at the number of relevant variables rather than
 an estimate, and note that Eq. (3.12) is derived for the linear Gaussian
 model; for more complicated models they recommend drawing from the prior at
-different tau and studying the implied sparsity instead. This model --
+different tau and studying the implied sparsity instead. This model,
 hierarchical SUR with cross-asset error correlation and a common coefficient
-vector -- is not the model the construction was derived for, so tau_0 is a
+vector, is not the model the construction was derived for, so tau_0 is a
 ballpark rather than a derivation, and implied_m_eff below is the P&V-
 recommended substitute.
 
@@ -59,11 +59,11 @@ above the true value can give better results. p_0 = 12 is reported as a
 sensitivity.
 
 The justification is deliberately a claim about HOW MANY coefficients are
-active and never about WHICH. An earlier version argued that the 120
-mechanically-generated interactions were predominantly noise; that claim is
-withdrawn, having been contradicted by three converged prior settings of the
-Gaussian baseline, by the Bayesian LASSO independently, and by both models on
-two further portfolio sorts.
+active and never about WHICH. It does not assume that the 120
+mechanically-generated interactions are predominantly noise; that claim is
+contradicted by three converged prior settings of the Gaussian baseline, by
+the Bayesian LASSO independently, and by both models on two further portfolio
+sorts.
 
 TWO DISCLOSURES
 ---------------
@@ -72,7 +72,7 @@ TWO DISCLOSURES
 2. Eq. (3.10), from which (3.12) is obtained, assumes unit-variance
    predictors. At this project's standardisation the interaction columns have
    a median standard deviation of 1.41, so tau_0 in fact centres the prior on
-   30.0 active coefficients per asset rather than 23 -- an overshoot in the
+   30.0 active coefficients per asset rather than 23, an overshoot in the
    same direction consideration (3) prefers. implied_m_eff reports both.
 
 n = T, NOT NT
@@ -80,24 +80,23 @@ n = T, NOT NT
 Each b_i has T months of direct evidence; cross-asset information enters only
 through Sigma in the likelihood, a much weaker channel than 25x more data.
 n = NT is the disclosed robustness alternative, giving tau_0 = 7.891e-05.
-sigma is POOLED rather than per-asset because tau is a global scale -- the
+sigma is POOLED rather than per-asset because tau is a global scale, the
 same argument that made the LASSO's plug-in scale pooled.
 
 SAMPLER SETTINGS LIVE IN THE DATACLASS
 --------------------------------------
 target_accept, init and max_treedepth are fields here rather than arguments in
 the runner, so the backtest adapter cannot silently use different settings from
-the production run. target_accept = 0.99 was chosen by measurement (13 Aug):
+the production run. target_accept = 0.99 was chosen by measurement:
 divergences fell 16/200 -> 7/200 -> 3/200 across 0.90 / 0.95 / 0.99 at a cost
 of 0.375 -> 0.540 -> 1.012 seconds per iteration. The setting is applied
 uniformly to production and backtest fits, validated by the finding that the
-posterior mean of b at 0.90 and 0.99 correlates at 0.9944 -- the same
-agreement the LASSO showed between random seeds -- so the uniform choice is
+posterior mean of b at 0.90 and 0.99 correlates at 0.9944, the same
+agreement the LASSO showed between random seeds, so the uniform choice is
 conservative rather than necessary.
 
-VERIFIED (13 August, 20 checks, all passed, against an independent
-NumPy reference written during development)
-------------------------------------------------------------
+VERIFIED (20 checks, all passed, against an independent NumPy reference)
+------------------------------------------------------------------------
 Shared hierarchy, compared against the source functions at ZERO tolerance
 rather than against recalled constants:
     Delta_b_bar   5.71048286e-07   identical to rescaled_hyperparameters
@@ -115,13 +114,13 @@ implied_m_eff round-trips to EXACTLY 23.0 and 12.0 at unit-variance
 predictors, which is what proves Eq. (3.12) was implemented as specified
 rather than merely producing a plausible small number. With the real
 predictor standard deviations it gives 30.04 per asset, 751 of 3,600 in
-total -- the disclosed overshoot. At n = NT it gives 7.26, confirming the
+total: the disclosed overshoot. At n = NT it gives 7.26, confirming the
 diagnostic does not collapse to p0 by construction.
 
     tau_0 / sd_target = 3.0144
 
-Two unrelated constructions -- one from a target R^2, one from a sparsity
-guess -- landing within a factor of three, with the horseshoe's the looser
+Two unrelated constructions (one from a target R^2, one from a sparsity
+guess) landing within a factor of three, with the horseshoe's the looser
 of the two, in the generous direction the asymmetry argument prefers.
 """
 
@@ -139,20 +138,20 @@ from src.gibbs.bayesian_lasso import pooled_residual_scale
 @dataclass
 class HorseshoeHyperparams:
     """
-    Fixed hyperparameters of the Horseshoe model -- chosen once, before
+    Fixed hyperparameters of the Horseshoe model, chosen once, before
     sampling, and never updated by the sampler.
 
-    b_bar_bar     : (K,)   prior mean of b_bar -- zeros, Feng & He footnote 15
+    b_bar_bar     : (K,)   prior mean of b_bar: zeros, Feng & He footnote 15
     Delta_b_bar   : (K,K)  prior covariance of b_bar. SHARED with all four
                            models; must be identical or the comparison is
                            confounded. NOT to be confused with Delta_b, the
                            baseline's covariance of the DEVIATIONS, which does
                            not exist in this model and differs by 33.3x
-    nu_Sigma      : IW degrees of freedom for Sigma -- N + 2
-    V_Sigma       : (N,N)  IW scale for Sigma -- S_hat
+    nu_Sigma      : IW degrees of freedom for Sigma: N + 2
+    V_Sigma       : (N,N)  IW scale for Sigma: S_hat
     tau_0         : scale of tau's half-Cauchy hyperprior, derived below
     p0            : prior guess at the number of active deviations PER ASSET
-    n_choice      : "T" or "NT" -- which sample size entered tau_0. A string
+    n_choice      : "T" or "NT": which sample size entered tau_0. A string
                     rather than an integer so the disclosed robustness setting
                     appears by name in every metadata sidecar
     sigma_pooled  : df-corrected pooled residual sd; the sigma in tau_0
@@ -189,7 +188,7 @@ class HorseshoeHyperparams:
         """tau_0 as a multiple of the independently-calibrated deviation scale.
 
         A corroboration statistic, not an input: two unrelated constructions
-        -- one from a target R^2, one from a sparsity guess -- landing within
+        (one from a target R^2, one from a sparsity guess) landing within
         a factor of a few is the cross-check. Reported as a ratio so the
         write-up quotes a measured number rather than a recalled one.
         """
@@ -213,7 +212,7 @@ def horseshoe_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
                 backtest's per-window recomputation is automatic
     p0        : 23 primary, 12 sensitivity. Fixed a priori; NOT to be revised
                 after seeing results, and in particular not to be moved toward
-                wherever the posterior tau lands -- that would centre the prior
+                wherever the posterior tau lands; that would centre the prior
                 on the answer and destroy the result it appears to support
     target_r2 : 0.05, fixed a priori, sets Delta_b_bar via the baseline
     n_choice  : "T" (adopted) or "NT" (disclosed robustness)
@@ -231,9 +230,6 @@ def horseshoe_hyperparameters(R: np.ndarray, F: np.ndarray, K: int,
     n = T if n_choice == "T" else N * T
     tau_0 = (p0 / (K - p0)) * sigma_pooled / np.sqrt(n)
 
-    # the deviation scale the baseline's rescaled prior implies -- the same
-    # quantity the LASSO calibrates lambda against, retained only as a
-    # cross-check on tau_0
     sd_target = float(np.sqrt(base.V_b[0, 0] / (base.nu_b - K - 1)))
 
     return HorseshoeHyperparams(
@@ -255,18 +251,21 @@ def implied_m_eff(hp: HorseshoeHyperparams, F: np.ndarray,
                   ) -> float:
     """
     The effective number of nonzero coefficients per asset that a given tau
-    implies -- the Horseshoe's counterpart to baseline_gaussian.prior_implied_r2
+    implies, the Horseshoe's counterpart to baseline_gaussian.prior_implied_r2
     and bayesian_lasso.lasso_prior_implied_r2.
 
         E[m_eff | tau, sigma] = sum_j a_j / (1 + a_j),
         a_j = tau * sigma^-1 * sqrt(n) * s_j                (P&V Eqs. 3.8, 3.5)
 
-    with s_j the ROOT MEAN SQUARE of predictor j -- P&V write it as that
+    with s_j the ROOT MEAN SQUARE of predictor j; P&V write it as that
     predictor's standard deviation, which is the same thing only under their
-    zero-mean assumption; the body comment below says why this project
-    computes the mean square instead. This is the quantity Piironen & Vehtari
-    recommend inspecting directly when the model is more complicated than the
-    linear regression Eq. (3.12) was derived for, which is the case here.
+    zero-mean assumption. This project's expanding-window z-scores do not
+    have exactly zero mean (median |mean| 0.116, max 0.74), and the intercept
+    column has mean 1 and standard deviation exactly 0, so F.std would give
+    the intercept a scale of zero and assign it no information at all.
+    This is the quantity Piironen & Vehtari recommend inspecting directly
+    when the model is more complicated than the linear regression Eq. (3.12)
+    was derived for, which is the case here.
 
     WHY n IS ALWAYS T, EVEN WHEN tau_0 WAS BUILT WITH n = NT
     --------------------------------------------------------
@@ -275,13 +274,13 @@ def implied_m_eff(hp: HorseshoeHyperparams, F: np.ndarray,
     return p_0 by construction whatever n_choice was, and the n = NT
     robustness setting would look identical to the primary. Fixing n = T makes
     the diagnostic evaluate the CONSEQUENCE of the construction rather than
-    adopt its assumption, and T is the honest per-coefficient sample size --
+    adopt its assumption, and T is the honest per-coefficient sample size:
     each theta_ij is informed by asset i's T months. The n = NT setting then
     shows up as what it is, a fourfold tightening: 7.26 rather than 30.04.
 
     unit_variance : if True, sets every s_j = 1, reproducing P&V's
                     idealisation. At tau = tau_0 and n_choice = "T" this must
-                    return EXACTLY p_0 -- the round-trip that proves the
+                    return EXACTLY p_0, the round-trip that proves the
                     construction was implemented as specified. With the real
                     s_j it returns 30.0 at p_0 = 23, the disclosed overshoot.
     tau           : defaults to hp.tau_0; pass a posterior mean to express a
@@ -297,26 +296,10 @@ def implied_m_eff(hp: HorseshoeHyperparams, F: np.ndarray,
         raise ValueError(f"F has K={K} but hyperparameters have K={hp.K}")
 
     tau = hp.tau_0 if tau is None else float(tau)
-    # s_j is the ROOT MEAN SQUARE of column j, not its standard deviation.
-    # P&V's a_j = tau sigma^-1 sqrt(n) s_j comes from X'X ~ n diag(s_j^2), so
-    # s_j^2 is the mean square; they assume zero-mean predictors, under which
-    # mean square and variance coincide, and write it as a variance. This
-    # project's expanding-window z-scores do not have exactly zero mean
-    # (median |mean| 0.116, max 0.74), and the intercept column has mean 1 and
-    # standard deviation exactly 0 -- so F.std would hand the intercept a
-    # scale of zero and assign it no information at all.
     s = np.ones((N, K)) if unit_variance else np.sqrt((F ** 2).mean(axis=1))
 
     a = tau / hp.sigma_pooled * np.sqrt(T) * s
     return float((a / (1.0 + a)).sum(axis=1).mean())
-
-# =========================================================================
-# CHUNK 2 -- append to src/nuts/horseshoe.py, below horseshoe_hyperparameters
-# and implied_m_eff. The imports below go at the top of the file with the
-# others; pymc and pytensor are imported INSIDE build_model so that
-# horseshoe_hyperparameters and implied_m_eff stay importable without them
-# (the backtest adapter and the diagnostics both need the cheap half).
-# =========================================================================
 
 
 def _sigma_reference(R: np.ndarray, F: np.ndarray):
@@ -329,7 +312,7 @@ def _sigma_reference(R: np.ndarray, F: np.ndarray):
     SAMPLER's coordinates and neither changing the target:
 
     1. The vector is centred at the OLS residual covariance rather than at
-       zero. pm.Flat's support point is 0, which means L = I and Sigma = I --
+       zero. pm.Flat's support point is 0, which means L = I and Sigma = I:
        residual variance 1 against an actual 0.003, an enormous distance for
        warmup to travel for no reason.
 
@@ -340,11 +323,9 @@ def _sigma_reference(R: np.ndarray, F: np.ndarray):
        metric across a 2,000-fold spread of scales is what a diagonal mass
        matrix has to undo before it can start; supplying it costs nothing.
 
-    Why this matters, concretely: the first attempt at this model left the
-    coordinates unscaled and used PyMC's default init="jitter+adapt_diag",
-    whose U(-1,1) jitter is 1,300 prior standard deviations on b_bar. The
-    logp stayed finite, nothing raised, and dual averaging drove the step size
-    to 9.1e-22 -- a sampler that never moved, reporting a 12-second "fit".
+    Without this scaling, PyMC's default jitter of U(-1,1) in unconstrained
+    space is about 1,300 prior standard deviations on b_bar; the log density
+    stays finite and dual averaging drives the step size to ~1e-21.
 
     The scaling is a linear map with a constant Jacobian, so it shifts the log
     density by a constant and leaves the posterior identical.
@@ -377,7 +358,7 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: HorseshoeHyperparams):
     Returns (model, initvals) as a PAIR deliberately. Sigma's coordinate is
     DEFINED as packed0 + packed_scale * packed_z, so a starting point that
     does not agree with that definition is not merely suboptimal, it is
-    wrong -- and the failure is silent, since any finite logp will sample.
+    wrong, and the failure is silent, since any finite logp will sample.
     Keeping the two in separate functions invites exactly that mismatch.
 
     Parameterisation
@@ -388,9 +369,9 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: HorseshoeHyperparams):
 
     This is Piironen & Vehtari's Appendix C.1. Their Appendix C.2, which
     decomposes each half-Cauchy into a half-normal times the square root of an
-    inverse-gamma, was built and tested against it on 13 August and REJECTED:
-    13 divergences against 16 (inside binomial noise -- two runs of the
-    identical C.1 model gave 10 and 16) for 1.90x the wall clock. The two
+    inverse-gamma, was tested against it and gave no reduction in divergences:
+    13 against 16 (within binomial noise: two runs of the identical C.1
+    model gave 10 and 16) at 1.9x the wall clock. The two
     parameterisations agreed on the posterior (b_bar median |z| 0.71, 99.3%
     within 3 SE; tau |z| 0.54), which is retained as evidence that C.1 is
     sampling correctly and that tau's position is not a coordinate artefact.
@@ -410,9 +391,21 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: HorseshoeHyperparams):
 
     Note the intercept column has predictor sd exactly 0 but mean square 1.
     The shrinkage diagnostics use the mean square for exactly this reason;
-    an earlier version used the standard deviation and assigned the intercept
-    no information at all, giving every asset's alpha deviation a shrinkage
-    factor of exactly 1. See implied_m_eff.
+    the standard deviation would assign the intercept no information at all,
+    giving every asset's alpha deviation a shrinkage factor of exactly 1. See
+    implied_m_eff.
+
+    Sigma's coordinate
+    ------------------
+    Sigma_packed_z is pm.Flat, never a proper prior. pm.Potential ADDS to the
+    model's total logp; it does not replace the declared variable's own prior.
+    A pm.Normal(0,1) there silently stacks an extra density on Sigma and
+    biased E[Sigma] by 8-11 Monte Carlo standard errors; pm.Flat brought it to
+    under 1.3.
+
+    pymc and pytensor are imported inside this function so that
+    horseshoe_hyperparameters and implied_m_eff stay importable without them
+    (the backtest adapter and the diagnostics both need the cheap half).
     """
     import pymc as pm
 
@@ -441,13 +434,6 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: HorseshoeHyperparams):
 
         b = pm.Deterministic("b", b_bar[None, :] + z * lam * tau)
 
-        # pm.Flat, NEVER a proper prior. pm.Potential ADDS to the model's total
-        # logp; it does not replace the declared variable's own prior. A
-        # pm.Normal(0,1) here silently stacked an extra density on Sigma and
-        # biased E[Sigma] by 8-11 Monte Carlo standard errors; pm.Flat brought
-        # it to under 1.3. This was tested directly against an independent
-        # NumPy reference during development, rather than trusted to the
-        # comment.
         packed_z = pm.Flat("Sigma_packed_z", shape=packed0.size)
         Sigma, sigma_logp = inverse_wishart_cholesky_logp(
             packed0 + packed_scale * packed_z, hp.nu_Sigma, hp.V_Sigma)
@@ -457,11 +443,11 @@ def build_model(R: np.ndarray, F: np.ndarray, hp: HorseshoeHyperparams):
         pm.Potential("likelihood", sur_log_likelihood_pytensor(R, F, b, Sigma))
 
     initvals = {
-        "b_bar_z": B_ols.mean(axis=0) / sd_bbar,   # b_bar at the average OLS fit
-        "z": np.zeros((N, K)),                     # theta exactly 0
-        "lam": np.ones((N, K)),                    # the half-Cauchy median
-        "tau_z": 1.0,                              # tau at tau_0
-        "Sigma_packed_z": np.zeros(packed0.size),  # Sigma at the OLS residual cov
+        "b_bar_z": B_ols.mean(axis=0) / sd_bbar,
+        "z": np.zeros((N, K)),
+        "lam": np.ones((N, K)),
+        "tau_z": 1.0,
+        "Sigma_packed_z": np.zeros(packed0.size),
     }
     return model, initvals
 
@@ -474,12 +460,12 @@ def transformed_point(model, initvals: dict) -> dict:
     lam and tau_z are positive, so PyMC samples their logs and names them
     lam_log__ and tau_z_log__. Doing that conversion explicitly, and asserting
     the key set, is more robust across PyMC versions than calling the transform
-    objects -- and it fails loudly if a variable is renamed, rather than
+    objects, and it fails loudly if a variable is renamed, rather than
     silently evaluating at the default point.
 
     pm.sample() takes the UNTRANSFORMED initvals; this is only for evaluating
-    logp and gradients directly, as the development log-density checks and the
-    timing tests do.
+    logp and gradients directly, as the log-density checks and the timing
+    tests do.
     """
     point = model.initial_point()
     expected = {"b_bar_z", "z", "lam_log__", "tau_z_log__", "Sigma_packed_z"}
@@ -492,12 +478,6 @@ def transformed_point(model, initvals: dict) -> dict:
     point["tau_z_log__"] = np.log(np.asarray(initvals["tau_z"], dtype=float))
     point["Sigma_packed_z"] = np.asarray(initvals["Sigma_packed_z"], dtype=float)
     return point
-
-# =========================================================================
-# CHUNK 3 -- append to src/nuts/horseshoe.py, below build_model and
-# transformed_point. Needs `from dataclasses import dataclass, field` and
-# `from time import time` at the top of the file.
-# =========================================================================
 
 
 @dataclass
@@ -515,7 +495,7 @@ class HorseshoeDraws:
     Sigma      : (n, N, N)  residual covariance
 
     NOT `lam`. LassoDraws.lam is that model's GLOBAL scale, so reusing the
-    name here -- for the local scales, the opposite level of the hierarchy --
+    name here (for the local scales, the opposite level of the hierarchy)
     would invite exactly the confusion Delta_b and Delta_b_bar already cause.
     The horseshoe's global scale is `tau`.
 
@@ -545,7 +525,7 @@ class HorseshoeDraws:
     State this in the write-up: the horseshoe is held to a STRICTER
     diagnostic than the LASSO. It is a difference in how the models are
     checked, not in how they are specified, so it does not confound the
-    comparison -- but a reader will notice one model reporting 3,600 R-hats
+    comparison, but a reader will notice one model reporting 3,600 R-hats
     and the other 200.
 
     At 1,500 retained draws a chain is about 91 MB, comparable to the
@@ -569,7 +549,7 @@ def ebfmi(energy: np.ndarray) -> float:
     """
     E-BFMI = sum (E_t - E_{t-1})^2 / sum (E_t - Ebar)^2, per Betancourt (2017).
     Below about 0.3 indicates the sampler is struggling to move between energy
-    levels -- a failure distinct from divergences, and one a divergence count
+    levels: a failure distinct from divergences, and one a divergence count
     will not reveal. Three lines of arithmetic, computed here rather than
     through arviz, whose az.bfmi raises a TypeError on version 1.2.0.
     """
@@ -586,13 +566,15 @@ def shrinkage_factors(draws: HorseshoeDraws, F: np.ndarray,
 
     with s_j the ROOT MEAN SQUARE of predictor j, not its standard deviation:
     the intercept column has mean 1 and sd exactly 0 and would otherwise be
-    assigned no information at all. See implied_m_eff.
+    assigned no information at all: with F.std the intercept column gets
+    s = 0, hence kappa = 1 exactly, whereas the mean square gives a = 0.190
+    and kappa = 0.965. See implied_m_eff.
 
     kappa near 1 is complete shrinkage toward the common b_bar; near 0 is a
     coefficient left free. This is THE quantity in which the four models are
-    comparable. tau and the LASSO's lambda are not commensurable -- one is a
+    comparable. tau and the LASSO's lambda are not commensurable (one is a
     global scale multiplying heavy-tailed local scales, the other the rate of
-    an exponential on per-coefficient variances -- but every model in the
+    an exponential on per-coefficient variances), but every model in the
     design implies a kappa, including the Gaussian baseline, whose kappa is
     the same for every coefficient because it has no local layer at all.
 
@@ -604,11 +586,7 @@ def shrinkage_factors(draws: HorseshoeDraws, F: np.ndarray,
     that are. Returns (n_draws, N, K).
     """
     N, T, K = F.shape
-    # root mean square, not standard deviation -- see implied_m_eff. With
-    # F.std the intercept column gets s = 0, hence a = 0, hence kappa = 1
-    # exactly: complete shrinkage of every asset's alpha deviation. With the
-    # mean square, a = 0.190 and kappa = 0.965.
-    s = np.sqrt((F ** 2).mean(axis=1))                   # (N, K)
+    s = np.sqrt((F ** 2).mean(axis=1))
     a = (np.sqrt(T) / hp.sigma_pooled) * draws.tau[:, None, None] * draws.lam_local * s
     return 1.0 / (1.0 + a ** 2)
 
@@ -621,8 +599,8 @@ def run_nuts(R: np.ndarray, F: np.ndarray, hp: HorseshoeHyperparams,
     Sample the horseshoe and return ONE HorseshoeDraws PER CHAIN.
 
     All chains are drawn in a single pm.sample call so PyMC can run them in
-    parallel across cores -- roughly 41 minutes rather than 164 for a
-    four-chain production run -- and the result is split afterwards. The
+    parallel across cores (roughly 41 minutes rather than 164 for a
+    four-chain production run), and the result is split afterwards. The
     per-chain files that convergence.load_chains globs are identical either
     way; what the runner does internally is not something any other module
     sees. Chain k is seeded seed0 + k, and the RUNNER must use seed0 + k in
@@ -640,13 +618,13 @@ def run_nuts(R: np.ndarray, F: np.ndarray, hp: HorseshoeHyperparams,
 
     On init: NEVER "jitter+adapt_diag", PyMC's default. Its U(-1,1) jitter is
     applied in unconstrained space, which is 1,300 prior standard deviations
-    on b_bar -- displacing b by 1.0 gives predicted returns with sd 27.5
+    on b_bar: displacing b by 1.0 gives predicted returns with sd 27.5
     against an actual 0.058. The logp stays finite, nothing raises, and dual
-    averaging drives the step size to 9.1e-22: a sampler that never moves,
-    reporting a fast "fit". This is why the coordinates are non-dimensionalised
-    in build_model and why init is pinned here.
+    averaging drives the step size to 9.1e-22: a sampler that never moves
+    while appearing to fit quickly. This is why the coordinates are
+    non-dimensionalised in build_model and why init is pinned here.
 
-    n_draws is RETAINED draws per chain, excluding n_tune -- the opposite of
+    n_draws is RETAINED draws per chain, excluding n_tune, the opposite of
     the Gibbs runners' convention, where n_draws includes burn-in. PyMC's
     argument means retained, and silently redefining it would be worse than
     the inconsistency. Budget: tau is the slowest parameter, ESS ~14 per 200

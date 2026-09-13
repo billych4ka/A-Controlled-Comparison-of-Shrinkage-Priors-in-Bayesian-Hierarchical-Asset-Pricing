@@ -63,8 +63,6 @@ def clean_universe(
     excess, factors_only, macro = align_sample_start(excess, factors_only, macro)
     excess = handle_missing(excess, drop_columns=drop_columns)
 
-    # handle_missing may have dropped further rows (listwise deletion) --
-    # re-align factors_only and macro to whatever dates survived.
     factors_only = factors_only.loc[excess.index]
     macro = macro.loc[excess.index]
 
@@ -76,14 +74,4 @@ if __name__ == "__main__":
         print(f"{uni}: excess={excess.shape}, factors={factors_only.shape}, "
               f"macro={macro.shape}, range={excess.index.min()} -> {excess.index.max()}, "
               f"NaNs={int(excess.isna().sum().sum())}")
-
-    # size_bm_100 was NOT pursued, so the Option A/B/C missing-data choice was
-    # never made and no size_bm_100 dataset exists in data/processed. The call
-    # below is exploratory only -- it prints the raw shape with no column drops
-    # and feeds nothing downstream. The three universes above, which are the
-    # ones the dissertation uses, build with drop_columns=None and keep all
-    # 719 months.
-    excess, factors_only, macro = clean_universe("size_bm_100")
-    print(f"size_bm_100 (no drop): excess={excess.shape}, "
-          f"range={excess.index.min()} -> {excess.index.max()}")
 

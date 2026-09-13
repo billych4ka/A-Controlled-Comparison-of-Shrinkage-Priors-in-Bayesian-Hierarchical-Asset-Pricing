@@ -22,7 +22,7 @@ check_reg_backtest_budget.py against the full four-chain, 1,500-draw posterior:
     1000/1000     0.55    3.16  0.9994     0.978  1.024  12.0%      8.5
 
 500/500 is the smallest budget clearing every pre-declared criterion. THE
-PLAIN HORSESHOE REQUIRED 750/500 UNDER THE IDENTICAL PROCEDURE -- each budget
+PLAIN HORSESHOE REQUIRED 750/500 UNDER THE IDENTICAL PROCEDURE: each budget
 was validated against its own posterior rather than inherited, and this
 model's better-conditioned geometry needs fewer draws for the same precision.
 That difference is worth a sentence in the write-up: it is the check doing its
@@ -32,12 +32,12 @@ TWO global parameters had to have travelled, not one: tau from tau_0 to
 0.091 tau_0, and c from slab_scale to 0.69 of prior E[c]. Both land within 3%
 of their production values at this budget. The binding fraction at 12.0%
 against production's 12.6% confirms the backtest fits the same model the
-production run described -- a short budget binding at a materially different
+production run described; a short budget binding at a materially different
 rate would not.
 
 Cost: ~4.9 min at the longest window, and tree depth is FLAT at 7.00 across
-both window lengths, so unlike the plain horseshoe -- whose cost grew faster
-than linearly in T as depth climbed from 8 to 9 -- this should stay near 3
+both window lengths, so unlike the plain horseshoe (whose cost grew faster
+than linearly in T as depth climbed from 8 to 9), this should stay near 3
 hours rather than drifting upward.
 
 THE GUARDRAIL: a monthly OOS R^2 above ~0.05 should be assumed an alignment
@@ -50,7 +50,17 @@ plain horseshoe is below one standard error (0.158 over 479 months), the
 primary universe is reported alone, with the binding diagnostic and the b_bar
 agreement (correlation +0.9991, top-20 overlap 1.00 against a within-model
 Monte Carlo ceiling of +0.999 and 0.95) as the explanation. Above it, OP and
-Inv are run.
+Inv are run. Below it, a predicted null repeated across three sorts adds
+little; the informative quantity is the binding fraction, measured directly.
+A gap below the threshold means no difference was detected at the available
+power, not that the two models are equivalent: a genuine difference of
+moderate size could fall below 0.158 by chance.
+
+Predicted in advance: R^2 indistinguishable from the plain horseshoe: the
+slab touches only theta, and theta carries ~1% of out-of-sample loss. Any
+difference appears in Sharpe or CE, where demeaned portfolio weights let one
+outsized coefficient dominate a month's cross-sectional ranking, and where the
+slab caps exactly that.
 
 Usage:
     caffeinate -i python3 -u run_backtest_regularised_horseshoe.py 2>&1 \\
@@ -76,7 +86,7 @@ MODEL = "regularised_horseshoe"
 COMPARISONS = (("horseshoe", "horseshoe", "p0_23_r2_0p05"),
                ("baseline", "baseline_gaussian", "rescaled_r2_0p05"),
                ("LASSO", "bayesian_lasso", "rescaled_r2_0p05"))
-SHARPE_SE = 0.158       # annualised, over 479 months
+SHARPE_SE = 0.158
 
 
 def load_universe(universe: str):
@@ -137,11 +147,6 @@ def main() -> None:
                                   n_draws=args.draws, n_tune=args.tune,
                                   seed=args.seed)
 
-    # ---- look-ahead verification --------------------------------------------
-    # Runs TWO full backtests, hence a reduced budget and a coarse refit grid.
-    # Not optional: the alignment convention is the single most dangerous thing
-    # in the evaluation code, and getting it backwards produces spectacular,
-    # meaningless results rather than an error.
     if not args.skip_lookahead:
         print("\n--- look-ahead verification (reduced settings) ---")
         t0 = time()
@@ -159,9 +164,8 @@ def main() -> None:
               f"proves nothing)")
         print(f"    PASSES: {la['passes']}   ({time()-t0:.0f}s)")
         if not la["passes"]:
-            raise SystemExit("look-ahead check FAILED -- do not run the backtest")
+            raise SystemExit("look-ahead check FAILED; do not run the backtest")
 
-    # ---- the backtest --------------------------------------------------------
     print()
     t0 = time()
     bt = expanding_window(fit_fn, R, F, start=args.start,
@@ -178,7 +182,6 @@ def main() -> None:
     with open(outdir / f"{MODEL}_{tag}_backtest_meta.json", "w") as fh:
         json.dump(meta, fh, indent=2, default=str)
 
-    # ---- metrics -------------------------------------------------------------
     pr = portfolio_returns(bt.realised, bt.predicted)
     cw = clark_west(bt.realised, bt.predicted, bt.benchmark)
     by_asset = r2_by_asset(bt.realised, bt.predicted, bt.benchmark)
@@ -207,10 +210,9 @@ def main() -> None:
 
     if result["r2"] > 0.05:
         print("\n   *** OOS R^2 above 0.05. Assume an ALIGNMENT BUG until proven")
-        print("   otherwise -- realistic monthly values are 0.005-0.01 and often")
+        print("   otherwise; realistic monthly values are 0.005-0.01 and often")
         print("   negative. Check the look-ahead result and the F/R alignment. ***")
 
-    # ---- against the other three models --------------------------------------
     hs_sharpe = None
     for label, model, setting in COMPARISONS:
         z = load_comparison(args.universe, model, setting)
@@ -238,42 +240,23 @@ def main() -> None:
               f"{z['predicted'].std()/z['realised'].std():>11.3f}")
         print(f"\n   Diebold-Mariano: {dm['statistic']:+.2f} "
               f"(p {dm['p_value']:.4f}, two-sided)")
-        print("   [NEGATIVE favours the regularised horseshoe. Non-nested, so DM")
-        print("    is correct; NEVER use DM against the historical mean.]")
+        print("   [negative favours the regularised horseshoe; non-nested, so DM]")
 
-    # ---- THE STOPPING RULE ---------------------------------------------------
     if hs_sharpe is not None:
         gap = abs(result["sharpe"] - hs_sharpe)
         print("\n" + "=" * 78)
-        print("THE PRE-REGISTERED STOPPING RULE")
+        print("STOPPING RULE")
         print("=" * 78)
         print(f"   Sharpe: reg. HS {result['sharpe']:+.3f}, horseshoe "
               f"{hs_sharpe:+.3f}, gap {gap:.3f}")
         print(f"   threshold: one Sharpe SE over 479 months = {SHARPE_SE:.3f}")
         if gap < SHARPE_SE:
-            print("   -> BELOW THRESHOLD. Report the primary universe alone, with")
-            print("      the binding diagnostic (12.4% of local scales) and the")
-            print("      b_bar agreement (correlation +0.9991, top-20 overlap 1.00")
-            print("      against a within-model ceiling of +0.999 and 0.95) as the")
-            print("      explanation. Replicating a PREDICTED null across three")
-            print("      sorts adds little; the informative quantity is the")
-            print("      binding fraction, which is measured directly.")
+            print("   -> BELOW THRESHOLD: no difference detected at the available power")
         else:
-            print("   -> ABOVE THRESHOLD. Run size_op_25 and size_inv_25 to")
-            print("      establish whether the direction is consistent across")
-            print("      sorts. ~3 hours each.")
-        print("\n   NOTE: a gap below threshold is 'no difference detected at the")
-        print("   available power', NOT 'the two models are equivalent'. A genuine")
-        print("   difference of moderate size could fall below 0.158 by chance.")
+            print("   -> ABOVE THRESHOLD: gap exceeds one Sharpe SE")
 
     with open(outdir / f"{MODEL}_{tag}_backtest_result.json", "w") as fh:
         json.dump(result, fh, indent=2, default=str)
-
-    print("\n   PRE-REGISTERED: R^2 indistinguishable from the plain horseshoe --")
-    print("   the slab touches only theta, and theta carries ~1% of out-of-sample")
-    print("   loss. Any difference appears in Sharpe or CE, where demeaned")
-    print("   portfolio weights let one outsized coefficient dominate a month's")
-    print("   cross-sectional ranking, and where the slab caps exactly that.")
 
 
 if __name__ == "__main__":

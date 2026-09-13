@@ -11,7 +11,7 @@ others behave similarly. The same approach is taken here, with two additions.
 First, the element is selected with a FIXED seed and its index is printed, so
 the choice is reproducible and cannot be suspected of having been made after
 inspecting the chains. Second, all chains are overplotted rather than one, so
-between-chain agreement is visible alongside within-chain stationarity -- the
+between-chain agreement is visible alongside within-chain stationarity, the
 property that rank-normalised split-R-hat quantifies and that a single-chain
 trace cannot show.
 
@@ -59,18 +59,6 @@ from src.nuts.horseshoe import HorseshoeDraws
 from src.nuts.regularised_horseshoe import RegHorseshoeDraws
 
 
-# ---------------------------------------------------------------------------
-# Model definitions
-# ---------------------------------------------------------------------------
-
-# (
-#     row label,
-#     directory,
-#     setting tag,
-#     dataclass,
-#     global-parameter field,
-#     global-parameter label,
-# )
 MODELS = (
     (
         "Gaussian baseline",
@@ -107,13 +95,6 @@ MODELS = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Chain colours
-# ---------------------------------------------------------------------------
-
-# These colours are deliberately restrained. They distinguish chains without
-# competing with the substantive four-model palette used in the main results
-# figures.
 CHAIN_COLOURS = (
     "#4A4A4A",
     "#3B75AF",
@@ -126,12 +107,7 @@ CHAIN_COLOURS = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Dissertation house style
-# ---------------------------------------------------------------------------
-
 STYLE = {
-    # Typography
     "font.family": "sans-serif",
     "font.sans-serif": [
         "Arial",
@@ -142,7 +118,6 @@ STYLE = {
     "mathtext.fontset": "stixsans",
     "font.size": 7.6,
 
-    # Axes
     "axes.labelsize": 7.8,
     "axes.labelweight": "normal",
     "axes.linewidth": 0.55,
@@ -151,7 +126,6 @@ STYLE = {
     "axes.spines.right": False,
     "axes.facecolor": "white",
 
-    # Ticks
     "xtick.labelsize": 6.8,
     "ytick.labelsize": 6.8,
     "xtick.direction": "out",
@@ -163,28 +137,20 @@ STYLE = {
     "xtick.major.pad": 2.0,
     "ytick.major.pad": 2.0,
 
-    # Lines
     "lines.solid_capstyle": "round",
     "lines.solid_joinstyle": "round",
 
-    # Figure
     "figure.facecolor": "white",
 
-    # Vector export
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
 
-    # Figure export
     "savefig.facecolor": "white",
     "savefig.transparent": False,
 }
 
 
 def main() -> None:
-
-    # -----------------------------------------------------------------------
-    # Arguments
-    # -----------------------------------------------------------------------
 
     ap = argparse.ArgumentParser()
 
@@ -215,10 +181,6 @@ def main() -> None:
     )
 
     args = ap.parse_args()
-
-    # -----------------------------------------------------------------------
-    # Load chains
-    # -----------------------------------------------------------------------
 
     rng = np.random.default_rng(
         args.seed
@@ -259,12 +221,6 @@ def main() -> None:
             "no chains found"
         )
 
-    # -----------------------------------------------------------------------
-    # Select representative elements
-    # -----------------------------------------------------------------------
-
-    # Element indices are drawn once and then shared across models, so the
-    # same coefficient and covariance entry are displayed in every row.
     first = (
         next(
             iter(
@@ -303,10 +259,6 @@ def main() -> None:
         f"Sigma[{i_s},{j_s}]"
     )
 
-    # -----------------------------------------------------------------------
-    # Figure setup
-    # -----------------------------------------------------------------------
-
     plt.rcParams.update(
         STYLE
     )
@@ -332,17 +284,12 @@ def main() -> None:
         "white"
     )
 
-    # Shared column headings.
     col_titles = (
         rf"$b_{{{i_a},{j_a}}}$",
         rf"$\bar b_{{{j_b}}}$",
         rf"$\Sigma_{{{i_s},{j_s}}}$",
         "Global parameter",
     )
-
-    # -----------------------------------------------------------------------
-    # Trace panels
-    # -----------------------------------------------------------------------
 
     for r, (
         label,
@@ -371,9 +318,6 @@ def main() -> None:
             None,
         ]
 
-        # The global parameter is scalar for the three shrinkage models and
-        # vector-valued for the Gaussian baseline, whose deviation covariance
-        # has one entry per predictor.
         g = [
             getattr(
                 c,
@@ -393,10 +337,6 @@ def main() -> None:
 
             series[3] = g
 
-        # -------------------------------------------------------------------
-        # Columns
-        # -------------------------------------------------------------------
-
         for col in range(4):
 
             ax = axes[
@@ -404,7 +344,6 @@ def main() -> None:
                 col,
             ]
 
-            # Overplot every chain.
             n_chains = len(
                 series[col]
             )
@@ -435,8 +374,6 @@ def main() -> None:
                 ),
             )
 
-            # Scientific notation only where Matplotlib judges it necessary
-            # under the stated limits.
             ax.ticklabel_format(
                 axis="y",
                 style="sci",
@@ -448,7 +385,6 @@ def main() -> None:
                 5.8
             )
 
-            # Column titles appear only once, on the first row.
             if r == 0:
 
                 ax.set_title(
@@ -458,9 +394,6 @@ def main() -> None:
                     pad=5,
                 )
 
-            # The final column has a different parameter by model. Keep the
-            # shared column heading and place the model-specific notation
-            # quietly inside each panel.
             if col == 3:
 
                 ax.text(
@@ -474,7 +407,6 @@ def main() -> None:
                     va="top",
                 )
 
-            # Only the final row needs draw labels and x tick labels.
             if r == n_rows - 1:
 
                 ax.set_xlabel(
@@ -489,7 +421,6 @@ def main() -> None:
                     labelbottom=False,
                 )
 
-            # Model names identify rows.
             if col == 0:
 
                 ax.set_ylabel(
@@ -498,8 +429,6 @@ def main() -> None:
                     labelpad=5,
                 )
 
-            # Trace plots are already visually dense. Grids add little and
-            # would create a distracting 4 x 4 lattice.
             ax.grid(
                 False
             )
@@ -510,10 +439,6 @@ def main() -> None:
                 pad=2,
             )
 
-    # -----------------------------------------------------------------------
-    # Layout
-    # -----------------------------------------------------------------------
-
     fig.subplots_adjust(
         left=0.105,
         right=0.99,
@@ -522,10 +447,6 @@ def main() -> None:
         wspace=0.28,
         hspace=0.30,
     )
-
-    # -----------------------------------------------------------------------
-    # Save
-    # -----------------------------------------------------------------------
 
     outdir = Path(
         args.outdir

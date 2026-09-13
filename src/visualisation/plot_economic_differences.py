@@ -64,10 +64,6 @@ from src.evaluation.metrics import (
 )
 
 
-# ---------------------------------------------------------------------------
-# Portfolio universes
-# ---------------------------------------------------------------------------
-
 UNIVERSES = (
     ("Size$\\times$BM", "size_bm_25"),
     ("Size$\\times$OP", "size_op_25"),
@@ -75,23 +71,12 @@ UNIVERSES = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Experimental control
-# ---------------------------------------------------------------------------
-
 BASELINE = (
     "baseline_gaussian",
     "rescaled_r2_0p05",
 )
 
 
-# ---------------------------------------------------------------------------
-# Alternative deviation priors
-# ---------------------------------------------------------------------------
-
-# Colours are identical to the dissertation house palette.
-#
-# (label, directory, setting tag, colour, marker)
 MODELS = (
     (
         "Bayesian LASSO",
@@ -117,12 +102,7 @@ MODELS = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Publication-style plotting defaults
-# ---------------------------------------------------------------------------
-
 STYLE = {
-    # Typography
     "font.family": "sans-serif",
     "font.sans-serif": [
         "Arial",
@@ -133,7 +113,6 @@ STYLE = {
     "mathtext.fontset": "stixsans",
     "font.size": 8.0,
 
-    # Axes
     "axes.labelsize": 8.2,
     "axes.labelweight": "normal",
     "axes.linewidth": 0.65,
@@ -143,7 +122,6 @@ STYLE = {
     "axes.spines.left": False,
     "axes.facecolor": "white",
 
-    # Ticks
     "xtick.labelsize": 7.4,
     "ytick.labelsize": 7.4,
     "xtick.direction": "out",
@@ -159,18 +137,14 @@ STYLE = {
     "xtick.major.pad": 2.5,
     "ytick.major.pad": 4.0,
 
-    # Legend
     "legend.frameon": False,
     "legend.fontsize": 7.0,
 
-    # Figure
     "figure.facecolor": "white",
 
-    # Vector export
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
 
-    # Figure export
     "savefig.facecolor": "white",
     "savefig.transparent": False,
 }
@@ -256,10 +230,6 @@ def padded_limits(
 
 def main() -> None:
 
-    # -----------------------------------------------------------------------
-    # Arguments
-    # -----------------------------------------------------------------------
-
     ap = argparse.ArgumentParser()
 
     ap.add_argument(
@@ -275,10 +245,6 @@ def main() -> None:
 
     args = ap.parse_args()
 
-    # -----------------------------------------------------------------------
-    # Gaussian-baseline performance
-    # -----------------------------------------------------------------------
-
     base_s = {}
     base_c = {}
 
@@ -291,10 +257,6 @@ def main() -> None:
 
         base_s[universe] = s
         base_c[universe] = c
-
-    # -----------------------------------------------------------------------
-    # Differences relative to Gaussian baseline
-    # -----------------------------------------------------------------------
 
     d_sharpe = {}
     d_ce = {}
@@ -354,10 +316,6 @@ def main() -> None:
             )
         )
 
-    # -----------------------------------------------------------------------
-    # Figure setup
-    # -----------------------------------------------------------------------
-
     plt.rcParams.update(STYLE)
 
     fig, (a1, a2) = plt.subplots(
@@ -368,7 +326,6 @@ def main() -> None:
 
     fig.patch.set_facecolor("white")
 
-    # First universe at the top.
     rows = np.arange(
         len(UNIVERSES)
     )[::-1]
@@ -377,16 +334,6 @@ def main() -> None:
         label
         for label, _ in UNIVERSES
     ]
-
-    # Small symmetric vertical dodge within each universe.
-    #
-    # This is large enough to distinguish the three markers but small enough
-    # that they continue to read as one universe-level comparison.
-
-
-    # -----------------------------------------------------------------------
-    # Shared plotting function
-    # -----------------------------------------------------------------------
 
     panels = (
         (
@@ -403,8 +350,6 @@ def main() -> None:
 
     for ax, data, xlabel in panels:
 
-        # One very light horizontal guide through each universe. This groups
-        # the three vertically dodged points without creating heavy banding.
         for r in rows:
 
             ax.axhline(
@@ -414,9 +359,6 @@ def main() -> None:
                 zorder=0,
             )
 
-        # Zero has a substantive interpretation: no change relative to the
-        # Gaussian experimental control. It is therefore darker than the
-        # ordinary reference grid.
         ax.axvline(
             0.0,
             color="#555555",
@@ -424,7 +366,6 @@ def main() -> None:
             zorder=1,
         )
 
-        # Subtle vertical major grid behind the data.
         ax.grid(
             which="major",
             axis="x",
@@ -481,10 +422,6 @@ def main() -> None:
             pad=2,
         )
 
-    # -----------------------------------------------------------------------
-    # Panel (a): Sharpe differences
-    # -----------------------------------------------------------------------
-
     a1.set_yticklabels(
         ticks
     )
@@ -500,19 +437,10 @@ def main() -> None:
         va="top",
     )
 
-    # -----------------------------------------------------------------------
-    # Panel (b): certainty-equivalent differences
-    # -----------------------------------------------------------------------
-
-    # Universe labels are shown once, on the left panel only. The horizontal
-    # guides make correspondence across the two panels immediate.
     a2.set_yticklabels(
         []
     )
 
-    # Prevent Matplotlib from introducing an offset such as 1e-3 above the
-    # axis. The differences are small enough that direct decimal labels are
-    # easier to read.
     a2.xaxis.set_major_formatter(
         FuncFormatter(
             lambda v, _: f"{v:.3f}"
@@ -529,10 +457,6 @@ def main() -> None:
         ha="left",
         va="top",
     )
-
-    # -----------------------------------------------------------------------
-    # Shared legend
-    # -----------------------------------------------------------------------
 
     handles, labels = (
         a1.get_legend_handles_labels()
@@ -556,10 +480,6 @@ def main() -> None:
         scatterpoints=1,
     )
 
-    # -----------------------------------------------------------------------
-    # Layout
-    # -----------------------------------------------------------------------
-
     fig.subplots_adjust(
         left=0.105,
         right=0.985,
@@ -567,10 +487,6 @@ def main() -> None:
         bottom=0.275,
         wspace=0.25,
     )
-
-    # -----------------------------------------------------------------------
-    # Save
-    # -----------------------------------------------------------------------
 
     outdir = Path(
         args.outdir

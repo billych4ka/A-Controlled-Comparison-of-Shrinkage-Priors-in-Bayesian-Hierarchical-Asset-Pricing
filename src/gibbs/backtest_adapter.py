@@ -5,8 +5,8 @@ Adapters that turn a Gibbs model into the `fit_fn` callable that
 src/evaluation/backtest.py's expanding_window expects.
 
 This file exists so that the evaluation code stays model-agnostic. Everything
-model-specific -- which sampler, which prior, how hyperparameters are chosen
--- lives here, and expanding_window sees only
+model-specific (which sampler, which prior, how hyperparameters are chosen)
+lives here, and expanding_window sees only
 
     fit_fn(R_train, F_train) -> b_hat  of shape (N, K)
 
@@ -15,7 +15,7 @@ Point-in-time hyperparameters
 The hyperparameters are recomputed inside every window from training data
 only. Three quantities depend on data: V_Sigma = S_hat (the sample covariance
 of excess returns), and, for the rescaled prior, Var(r) and trace(C), which
-set the calibration scale. Using full-sample values would be look-ahead --
+set the calibration scale. Using full-sample values would be look-ahead:
 mild, since second moments move slowly, but real, and free to avoid.
 
 A consequence worth stating in the write-up: under the rescaled prior the
@@ -27,7 +27,7 @@ therefore differ in how much of the prior is data-dependent.
 Sampling budget
 ---------------
 Backtest fits use far fewer sweeps than the full-sample production runs,
-because the backtest uses only the POSTERIOR MEAN of b -- it never reports a
+because the backtest uses only the POSTERIOR MEAN of b; it never reports a
 credible interval. An interval endpoint needs roughly 7x the draws of a mean
 for equal precision (MCSE of the 2.5% quantile is 2.675/sqrt(ESS) against
 1/sqrt(ESS) for the mean), so the production budget is sized for intervals
@@ -57,7 +57,7 @@ def gaussian_fit_fn(prior: str = "rescaled", target_r2: float = 0.05,
     target_r2 : used only when prior == "rescaled"
     n_draws   : total sweeps per window fit, INCLUDING burn-in
     seed      : fixed, so the returned callable is deterministic given its
-                inputs -- required by assert_no_lookahead, which would
+                inputs, required by assert_no_lookahead, which would
                 otherwise report sampling noise as look-ahead
 
     Returns a closure suitable for expanding_window's fit_fn argument.
@@ -75,7 +75,6 @@ def gaussian_fit_fn(prior: str = "rescaled", target_r2: float = 0.05,
         draws = run_gibbs(R_train, F_train, hp, n_draws=n_draws, n_burn=n_burn,
                           seed=seed, blocked=blocked, n_track_offdiag=0,
                           progress_every=None)
-        # posterior mean of the asset-specific coefficients, (N, K)
         return draws.B.mean(axis=0)
 
     fit.settings = {"prior": prior, "target_r2": target_r2 if prior == "rescaled" else None,
@@ -113,7 +112,6 @@ def validate_budget(R: np.ndarray, F: np.ndarray, reference_B: np.ndarray,
     B_small = draws.B.mean(axis=0)
     n_kept = n_draws - n_burn
 
-    # combined standard error of the two independent estimates
     sd = draws.B.std(axis=0)
     se = sd * np.sqrt(1.0 / n_kept + 1.0 / reference_ess)
     z = np.abs(B_small - reference_B) / np.where(se > 0, se, np.nan)
@@ -133,12 +131,12 @@ def lasso_fit_fn(target_r2: float = 0.05, lambda_multiplier: float = 1.0,
     target_r2         : 0.05, fixed a priori. The LASSO runs ONE setting; the
                         four the baseline ran existed to test whether the
                         target_r2 arbitrariness reached performance, and this
-                        model has no equivalent knob -- lambda is learned.
+                        model has no equivalent knob: lambda is learned.
     lambda_multiplier : scales the Gamma hyperprior's centre. In-sample
                         sensitivity only; the backtest runs at 1.0.
     n_draws           : total sweeps per window fit, INCLUDING burn-in
     seed              : fixed, so the returned callable is deterministic given
-                        its inputs -- required by assert_no_lookahead, which
+                        its inputs, required by assert_no_lookahead, which
                         would otherwise report sampling noise as look-ahead
 
     Budget
@@ -149,7 +147,7 @@ def lasso_fit_fn(target_r2: float = 0.05, lambda_multiplier: float = 1.0,
     lambda starts at its hyperprior centre and has to travel to wherever the
     data puts it, which on the full sample took roughly 200 sweeps. Retaining
     draws before lambda has settled would sample B under the wrong shrinkage
-    level -- not a Monte Carlo error but a systematic one, repeated in every
+    level: not a Monte Carlo error but a systematic one, repeated in every
     window.
 
     Early windows are the risk: at t=240 there are 96 residual degrees of
@@ -163,15 +161,11 @@ def lasso_fit_fn(target_r2: float = 0.05, lambda_multiplier: float = 1.0,
         K = F_train.shape[2]
         hp = lasso_hyperparameters(R_train, F_train, K, target_r2=target_r2,
                                    lambda_prior_multiplier=lambda_multiplier)
-        # pooled_residual_scale already solved the N least-squares problems
-        # inside lasso_hyperparameters; hand the result to initialise_state
-        # rather than solving them again in every one of the 40 windows
         _, B_ols = pooled_residual_scale(R_train, F_train)
 
         draws = lasso_run_gibbs(R_train, F_train, hp, n_draws=n_draws,
                                 n_burn=n_burn, seed=seed, n_track_tau2=0,
                                 B0=B_ols, progress_every=None)
-        # posterior mean of the asset-specific coefficients, (N, K)
         return draws.B.mean(axis=0)
 
     fit.settings = {"model": "bayesian_lasso", "target_r2": target_r2,
@@ -198,7 +192,7 @@ def validate_budget_lasso(R: np.ndarray, F: np.ndarray, reference_B: np.ndarray,
 
     Note this validates B only. lambda's own ESS is far lower and is what sets
     the PRODUCTION budget, but the backtest never reports an interval on
-    lambda -- it uses only the posterior mean of B.
+    lambda; it uses only the posterior mean of B.
     """
     K = F.shape[2]
     hp = lasso_hyperparameters(R, F, K, target_r2=target_r2)

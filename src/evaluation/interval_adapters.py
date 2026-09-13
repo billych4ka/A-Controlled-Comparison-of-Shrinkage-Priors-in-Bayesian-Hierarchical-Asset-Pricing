@@ -4,9 +4,9 @@ src/evaluation/interval_adapters.py
 fit_fn variants that return posterior DRAWS rather than a posterior mean, for
 use with expanding_window_intervals.
 
-These deliberately mirror the four production adapters -- same priors, same
-point-in-time hyperparameter recomputation, same seeds, same sampling budgets
--- so that the intervals describe exactly the fits that produced the Chapter 5
+These deliberately mirror the four production adapters (same priors, same
+point-in-time hyperparameter recomputation, same seeds, same sampling budgets)
+so that the intervals describe exactly the fits that produced the Chapter 5
 point forecasts. The budgets are NOT enlarged; see the module docstring of
 predictive_intervals.py for why the Section 4.4 argument about interval
 endpoints does not bind on an aggregate coverage rate.
@@ -40,10 +40,6 @@ def _diag(Sigma_draws: np.ndarray) -> np.ndarray:
     enter."""
     return np.einsum("sii->si", np.asarray(Sigma_draws))
 
-
-# --------------------------------------------------------------------------
-# Gibbs models
-# --------------------------------------------------------------------------
 
 def gaussian_interval_fit_fn(prior: str = "rescaled", target_r2: float = 0.05,
                              n_draws: int = 500, n_burn: int = 100,
@@ -82,11 +78,6 @@ def lasso_interval_fit_fn(target_r2: float = 0.05, n_draws: int = 1200,
                     "n_draws": n_draws, "n_burn": n_burn, "seed": seed}
     return fit
 
-
-# --------------------------------------------------------------------------
-# NUTS models. n_draws is RETAINED draws, excluding tuning -- the opposite of
-# the Gibbs convention above, matching the production adapters.
-# --------------------------------------------------------------------------
 
 def horseshoe_interval_fit_fn(p0: int = 23, target_r2: float = 0.05,
                               n_choice: str = "T", n_draws: int = 750,

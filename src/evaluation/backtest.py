@@ -5,8 +5,8 @@ Expanding-window out-of-sample evaluation, shared by all four models.
 
 The loop is model-agnostic: it takes a `fit_fn` callable that maps training
 data to a coefficient matrix, so the Gibbs models pass an adapter around
-run_gibbs and the NUTS models pass one around pm.sample. Everything else --
-the windowing, the alignment, the point-in-time discipline -- is identical
+run_gibbs and the NUTS models pass one around pm.sample. Everything else
+(the windowing, the alignment, the point-in-time discipline) is identical
 across models, which is what makes the resulting metrics comparable.
 
 Alignment convention
@@ -20,7 +20,7 @@ coefficient matrix fitted without ever seeing R[:,t] or later.
 This is the single most dangerous thing in the module: getting it backwards
 would use next month's predictors to forecast this month's return and produce
 spectacular, meaningless results. `assert_no_lookahead` below checks it
-directly rather than by inspection -- it corrupts the future and confirms the
+directly rather than by inspection: it corrupts the future and confirms the
 forecasts do not move.
 """
 
@@ -32,7 +32,6 @@ from typing import Callable
 
 import numpy as np
 
-# fit_fn(R_train, F_train) -> b_hat of shape (N, K)
 FitFunction = Callable[[np.ndarray, np.ndarray], np.ndarray]
 
 
@@ -78,7 +77,7 @@ def expanding_window(fit_fn: FitFunction, R: np.ndarray, F: np.ndarray,
                   Monthly refitting is the ideal but costs 479 fits per model;
                   annual is the standard compromise. Kept a parameter rather
                   than hard-coded because the schedule must ultimately be set
-                  by the SLOWEST model -- if NUTS forces a coarser grid, the
+                  by the SLOWEST model: if NUTS forces a coarser grid, the
                   Gibbs backtests have to be re-run to match, or the models
                   are being given different information sets.
 
@@ -98,7 +97,6 @@ def expanding_window(fit_fn: FitFunction, R: np.ndarray, F: np.ndarray,
 
     t0 = time()
     for k, t_refit in enumerate(refit_points):
-        # train on everything strictly before the refit date
         b_hat = fit_fn(R[:, :t_refit], F[:, :t_refit, :])
         coefficients[k] = b_hat
 
@@ -144,15 +142,14 @@ def assert_no_lookahead(fit_fn: FitFunction, R: np.ndarray, F: np.ndarray,
 
     The restriction to months before corrupt_from is the whole subtlety. A
     refit dated after corrupt_from is fully entitled to use returns that lie
-    between corrupt_from and its own date -- those are history by then, not
+    between corrupt_from and its own date; those are history by then, not
     the future. A test demanding that ALL forecasts be unchanged would fail a
-    correctly aligned backtest, which is precisely the mistake made when this
-    check was first written.
+    correctly aligned backtest.
 
     corrupt_from defaults to the midpoint of the evaluation period, so both
     the "must not change" and "may change" regions are non-trivial.
 
-    Requires fit_fn to be deterministic given its inputs -- seed any sampler
+    Requires fit_fn to be deterministic given its inputs: seed any sampler
     inside it, or this reports sampling noise as look-ahead.
     """
     T = R.shape[1]
@@ -166,17 +163,14 @@ def assert_no_lookahead(fit_fn: FitFunction, R: np.ndarray, F: np.ndarray,
     R_corrupt[:, corrupt_from:] = rng.standard_normal(R[:, corrupt_from:].shape) * R.std() * 10
     corrupt = expanding_window(fit_fn, R_corrupt, F, start, refit_every, progress=False)
 
-    protected = slice(0, corrupt_from - start)     # forecasts dated before the corruption
+    protected = slice(0, corrupt_from - start)
     diff = float(np.abs(clean.predicted[:, protected]
                         - corrupt.predicted[:, protected]).max())
 
-    # coefficients from refits dated at or before corrupt_from must also match
     safe_fits = clean.refit_index <= corrupt_from
     coef_diff = float(np.abs(clean.coefficients[safe_fits]
                              - corrupt.coefficients[safe_fits]).max())
 
-    # and the later forecasts SHOULD change -- otherwise the corruption did
-    # nothing and the test proves nothing
     after = slice(corrupt_from - start, None)
     changed = float(np.abs(clean.predicted[:, after] - corrupt.predicted[:, after]).max())
 

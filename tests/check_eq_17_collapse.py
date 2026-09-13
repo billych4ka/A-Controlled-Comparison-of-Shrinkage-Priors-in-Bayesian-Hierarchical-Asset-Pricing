@@ -1,5 +1,5 @@
 """
-check_eq17_collapse.py
+check_eq_17_collapse.py
 
 Evidence for the disclosed correction to Feng & He's eq. (17). As printed,
 the posterior scale matrix carries an inverse:
@@ -12,7 +12,7 @@ is untenable and the un-inverted form is correct, by three independent routes.
 Note the failure is SILENT: the inverted form runs without error and returns
 valid symmetric positive-definite matrices. Only the values are wrong.
 
-Recorded results (chat of 9-10 August):
+Recorded results:
     un-inverted recovers a known Delta_b; inverted collapses it to zero
     MC mean vs analytic posterior mean, un-inverted: 1.08 MCSE
     off-diagonal sd ratio between the two readings: 9.0x, at every K and N
@@ -23,7 +23,6 @@ from src.gibbs.baseline_gaussian import sample_Delta_b
 
 rng = np.random.default_rng(0)
 
-# --- 1. recovery of a known Delta_b, weak prior so the data dominates -----
 K, N = 5, 500
 nu_b, V_b = K + 2.0, np.eye(K)
 Delta_true = np.diag([2., 1.5, 1., .8, .5]); Delta_true[0, 1] = Delta_true[1, 0] = 0.6
@@ -51,10 +50,6 @@ print("   (V_b + S)/(nu_b + N - K - 1), worst element in MCSE : %.2f   [want < 4
 print("   (being near the truth is weaker evidence: a sampler can be near the")
 print("    truth for the wrong reason, but not 1 MCSE from the analytic mean)")
 
-# --- 3. their own Appendix C trace plot discriminates between the readings -
-# With deviations of order 0.05, S is negligible against V_b = 3I, so the two
-# readings differ only by inverting the scale matrix. The sd of an off-diagonal
-# element differs by a fixed factor, independent of K and N.
 print("\n3. magnitude test against Feng & He's own Appendix C trace plot")
 print("   (one off-diagonal element, published range about +/- 2e-4)")
 print("   %4s %4s | %12s %12s | ratio" % ("K", "N", "un-inverted", "as printed"))

@@ -4,11 +4,11 @@ diagnose_bayesian_lasso.py
 Reads every saved Bayesian LASSO run for one universe and prints the
 diagnostics the write-up needs:
 
-  1. convergence     -- R-hat and ESS per parameter block
-  2. lambda          -- the learned global shrinkage level, and what it implies
-  3. tau^2           -- where the local shrinkage actually lands
-  4. comparison      -- LASSO vs the Gaussian baseline's rescaled_r2_0p05
-  5. top predictors  -- with credible intervals, and the caveat about them
+  1. convergence: R-hat and ESS per parameter block
+  2. lambda: the learned global shrinkage level, and what it implies
+  3. tau^2: where the local shrinkage actually lands
+  4. comparison: LASSO vs the Gaussian baseline's rescaled_r2_0p05
+  5. top predictors: with credible intervals, and the caveat about them
 
 Mirrors diagnose_baseline_gaussian.py, with three differences that follow from
 the model: there is no Delta_b (its Gibbs step is replaced by the tau^2
@@ -20,7 +20,7 @@ The baseline's section 2 (blocked vs sequential agreement) has no counterpart:
 no sequential sampler is built for this model, and the blocked draw is instead
 validated against a brute-force NT x NK stacked system. Its section 4
 (between-setting rank stability) is reduced to the within-setting control,
-since the LASSO runs one setting -- lambda being learned rather than chosen is
+since the LASSO runs one setting: lambda being learned rather than chosen is
 the point of the model.
 
 Usage:
@@ -45,8 +45,6 @@ from src.gibbs.bayesian_lasso import LassoDraws
 MODEL = "bayesian_lasso"
 BASELINE = "baseline_gaussian"
 SETTING = "rescaled_r2_0p05"
-# lambda values that reproduce each baseline setting's deviation prior sd,
-# computed as sqrt(2)*s/sd_target at the full-sample s = 0.0557
 LAMBDA_EQUIVALENTS = [(425, "target_r2 0.10"), (601, "target_r2 0.05"),
                       (1345, "target_r2 0.01")]
 
@@ -92,7 +90,6 @@ def main() -> None:
           f"   lambda hyperprior r={meta.get('lambda_r')}, "
           f"delta={float(meta.get('lambda_delta', np.nan)):.4e}")
 
-    # ---- 1. convergence ---------------------------------------------------
     print("\n" + "=" * 78)
     print("1. CONVERGENCE   (threshold R-hat < 1.01, Vehtari et al. 2021)")
     print("=" * 78)
@@ -112,9 +109,8 @@ def main() -> None:
     print("    reading of Vehtari et al. checks every sampled parameter; this is a")
     print("    subsample and should be described as one.]")
 
-    # ---- 2. lambda --------------------------------------------------------
     print("\n" + "=" * 78)
-    print("2. LAMBDA -- THE LEARNED SHRINKAGE LEVEL")
+    print("2. LAMBDA: THE LEARNED SHRINKAGE LEVEL")
     print("=" * 78)
     lam = np.concatenate([c.lam for c in chains])
     lo, hi = np.percentile(lam, [2.5, 97.5])
@@ -135,11 +131,10 @@ def main() -> None:
     print("    whether the data, choosing for itself, asks for more or less")
     print("    shrinkage than target_r2 = 0.05 imposes.]")
 
-    # ---- 3. tau^2 ---------------------------------------------------------
     print("\n" + "=" * 78)
-    print("3. TAU^2 -- WHERE THE LOCAL SHRINKAGE LANDS")
+    print("3. TAU^2: WHERE THE LOCAL SHRINKAGE LANDS")
     print("=" * 78)
-    prec = np.mean([c.tau2_inv_mean for c in chains], axis=0)      # (N,K)
+    prec = np.mean([c.tau2_inv_mean for c in chains], axis=0)
     print("   E[1/tau_ij^2] is the prior PRECISION, so larger = shrunk harder.")
     q = np.percentile(prec.ravel(), [1, 25, 50, 75, 99])
     print(f"   across all {prec.size} coefficients: p1 {q[0]:.3e}  p25 {q[1]:.3e}  "
@@ -164,13 +159,12 @@ def main() -> None:
     print("   [pre-registered prediction: the macro block would be shrunk HARDER")
     print("    than the characteristic block, since the baseline's anti-predictive")
     print("    content was 91-112% in the common component. Note the prediction is")
-    print("    about b_bar, which has no tau^2 -- so a null here is coherent, not a")
+    print("    about b_bar, which has no tau^2, so a null here is coherent, not a")
     print("    failure. Compare the group spread against the 1-99 percentile spread")
     print("    above: if groups differ by ~1.3x while coefficients differ by 1000x,")
     print("    the adaptivity is real but not along this split.]")
 
-    # least and most shrunk individual coefficients
-    flat = prec.mean(axis=0)              # average across assets, per predictor
+    flat = prec.mean(axis=0)
     print(f"\n   {'least-shrunk predictors':<28s} {'E[1/tau2]':>12s}     "
           f"{'most-shrunk predictors':<28s} {'E[1/tau2]':>12s}")
     lo_j, hi_j = np.argsort(flat)[:10], np.argsort(-flat)[:10]
@@ -179,10 +173,9 @@ def main() -> None:
               f"{names[b]:<28s} {flat[b]:>12.3e}")
     print("   [averaged over the 25 assets, so this is per-PREDICTOR shrinkage.")
     print("    tau^2 is per (asset, predictor), so a predictor can be free for one")
-    print("    asset and shrunk for another -- that is the point of the local layer,")
+    print("    asset and shrunk for another; that is the point of the local layer,")
     print("    and it is invisible in this table.]")
 
-    # ---- 4. versus the baseline ------------------------------------------
     print("\n" + "=" * 78)
     print("4. VERSUS THE GAUSSIAN BASELINE (rescaled_r2_0p05)")
     print("=" * 78)
@@ -194,8 +187,6 @@ def main() -> None:
     if base is not None:
         mb_l = posterior_mean(chains, "b_bar")
         mb_b = posterior_mean(base, "b_bar")
-        # same helper the baseline's diagnose script uses, so the three numbers
-        # are computed identically across models rather than reimplemented here
         sr = shrinkage_ratio(chains, base, "b_bar")
         print(f"   norm ratio ||lasso|| / ||baseline||: {sr['norm_ratio']:.4f}")
         print(f"   median |b_bar| ratio:                {sr['median_abs_ratio']:.4f}")
@@ -216,11 +207,10 @@ def main() -> None:
         for j in shared:
             print(f"      {names[j]:<24s} lasso {mb_l[j]:+.5f}   baseline {mb_b[j]:+.5f}")
         print("   [the baseline's prior-robust core was SMB_x_lag1,")
-        print("    RMW_x_roll_mean12, RMW_x_mom_12_1 -- all interactions. Two models")
+        print("    RMW_x_roll_mean12, RMW_x_mom_12_1: all interactions. Two models")
         print("    with different priors agreeing is stronger evidence than either")
         print("    alone, and bears directly on the p_0 = 23 rewrite.]")
 
-    # ---- 5. top predictors -----------------------------------------------
     print("\n" + "=" * 78)
     print(f"5. TOP {args.top} PREDICTORS BY |posterior mean b_bar|")
     print("=" * 78)
@@ -243,7 +233,7 @@ def main() -> None:
     print("\n   NOTE: intervals are not significance tests. A tighter prior produces")
     print("   narrower intervals AND smaller point estimates, so counting stars")
     print("   across models compares priors, not evidence. The baseline gave 0, 11,")
-    print("   8 and 17 across four settings -- non-monotonic in prior strength.")
+    print("   8 and 17 across four settings, non-monotonic in prior strength.")
     print("   Predictor selection comes from out-of-sample performance.")
 
 

@@ -1,13 +1,13 @@
 """
-check_sparsity_recovery_horseshoe.py -- validation step 6.
+check_sparsity_recovery_horseshoe.py: validation step 6.
 
 Does the horseshoe shrink coefficients that are GENUINELY ZERO harder than
 coefficients that are merely small? This is the test the Gaussian baseline
-cannot be run through at all -- not that it would fail, but that it has no
+cannot be run through at all: not that it would fail, but that it has no
 per-coefficient quantity to measure.
 
-Reproduces Section 5.6's sparse-recovery comparison and Table 5.10, the
-simulation design in Appendix A.9, and Appendix A.6.5's third example, the
+Reproduces Section 5.6's sparse-recovery comparison and Table 5.11, the
+simulation design in Appendix A.10, and Appendix A.7.5's third example, the
 sparsity-separation statistic that scored 0.98 sparse and 0.94 dense.
 
 THE METRIC, and why the obvious alternatives are rejected.
@@ -29,22 +29,21 @@ test; separation is not.
 
 LASSO benchmark: 0.084 sparse against 0.214 dense.
 
-n_null IS COUNTED, NOT ASSUMED -- this was a bug in the first version and it
-mattered. draw_deviations_sparse's sparsity fraction is APPROXIMATE: asked for
+n_null IS COUNTED, NOT ASSUMED, and this matters. draw_deviations_sparse's sparsity fraction is APPROXIMATE: asked for
 0.7 it produced 196 exact zeros of 300 (0.653), and its own verification
 recorded 0.695 against a 0.7 target. Scoring a hardcoded round(0.7*N*K) = 210
-positions as null therefore fed 14 genuinely active coefficients, of true
-magnitude ~0.30, into the null rmse -- enough on their own to exceed the whole
-reported figure, and biased UPWARD, which is the direction that would have
-made the horseshoe look worse than the LASSO. The sparse case now counts exact
+positions as null would feed 14 genuinely active coefficients, of true
+magnitude ~0.30, into the null rmse, enough on their own to exceed the whole
+reported figure, and biased UPWARD, which is the direction that would
+make the horseshoe look worse than the LASSO. The sparse case therefore counts exact
 zeros per dataset; the dense control uses the mean of those counts so the two
 are compared at matched position counts.
 
 FOUR DESIGN CHOICES, each deliberate.
 
  1. DIMENSIONS N=10, K=30, T=300, matching calibration run 2. NOTE: the
-    LASSO's benchmark was produced at dimensions not recorded in the coding
-    notes, so 0.084 and the figure produced here may not be directly
+    LASSO's benchmark was produced at dimensions that were not recorded,
+    so 0.084 and the figure produced here may not be directly
     comparable. Re-running the LASSO's test at these dimensions is minutes of
     Gibbs compute and is the clean fix.
 
@@ -55,16 +54,16 @@ FOUR DESIGN CHOICES, each deliberate.
     matches, leaving CONCENTRATION as the only difference.
 
  3. p_0 FOR THE FITTED MODEL is set from the PRODUCTION RATIO, p_0/K =
-    23/144, giving p_0 = 5 of 30 -- deliberately understating the true 9
+    23/144, giving p_0 = 5 of 30, deliberately understating the true 9
     active. Setting p_0 to the truth would tell the model the answer;
     understating is the conservative direction and mirrors how the real prior
     relates to reality.
 
  4. draw_deviations_sparse USES ONLY THE DIAGONAL of Delta_b. The horseshoe
-    has no mechanism to represent correlation between theta_ij -- each has its
-    own independent local scale -- so correlated sparse truth would test
+    has no mechanism to represent correlation between theta_ij (each has its
+    own independent local scale), so correlated sparse truth would test
     recovery of structure the model cannot represent even in principle. This
-    is recorded as a methodological choice in the notes and carries over.
+    is a deliberate methodological choice.
 
 The dense control uses draw_deviations_gaussian, which is the BASELINE's
 generative process. That is correct here: the control's job is to be a
@@ -74,13 +73,13 @@ PRE-REGISTERED, before running: the horseshoe will achieve a LOWER
 rmse-where-zero than the LASSO's 0.084, because heavy-tailed local scales
 shrink genuinely null coefficients harder than an exponential tail while
 leaving active ones free. A comparable or worse figure would say the LASSO's
-single global scale is sufficient for this problem -- a substantive finding
+single global scale is sufficient for this problem, a substantive finding
 about the design, not a null result.
 
 Run from the project root. About 5.3 minutes per fit measured, so ~1.8 hours
 for the default 10 sparse + 10 dense:
 
-    python3 check_sparsity_recovery_horseshoe.py --datasets 2        # time it first
+    python3 check_sparsity_recovery_horseshoe.py --datasets 2        (time it first)
     caffeinate -i python3 check_sparsity_recovery_horseshoe.py
 """
 from __future__ import annotations
@@ -94,9 +93,9 @@ from src.nuts.horseshoe import HorseshoeHyperparams, run_nuts
 from src.simulate.generate import (draw_deviations_gaussian,
                                    draw_deviations_sparse, simulate_sur_data)
 
-SPARSITY = 0.7          # requested fraction of theta_ij exactly zero (approximate)
-ACTIVE_SE = 5.0         # active coefficients, in standard errors
-P0_RATIO = 23.0 / 144.0  # the production ratio, applied to K
+SPARSITY = 0.7
+ACTIVE_SE = 5.0
+P0_RATIO = 23.0 / 144.0
 
 
 def fit_hyperparameters(N, K, T, sd_bbar=2.0) -> HorseshoeHyperparams:
@@ -177,7 +176,7 @@ def main() -> None:
     print(f"{'='*76}")
     print(f"SPARSITY RECOVERY  N={N} K={K} T={T} | {args.datasets} sparse + "
           f"{args.datasets} dense")
-    print(f"requested sparsity {SPARSITY:.0%} (APPROXIMATE -- exact zeros are "
+    print(f"requested sparsity {SPARSITY:.0%} (APPROXIMATE: exact zeros are "
           f"counted per dataset)")
     print(f"active coefficients at {ACTIVE_SE:.0f} SE; dense control rescaled "
           f"to matched total signal")
@@ -230,7 +229,7 @@ def main() -> None:
                                             + dch.var(ddof=1)/len(dch))
     print(f"\n  separation: dense - sparse = {dch.mean()-s.mean():+.4f}, "
           f"{gap:+.1f} SE")
-    print(f"  LASSO benchmark: 0.084 sparse, 0.214 dense -- dimensions NOT "
+    print(f"  LASSO benchmark: 0.084 sparse, 0.214 dense; dimensions NOT "
           f"recorded in the\n  coding notes, so NOT necessarily comparable. "
           f"Re-run the LASSO's test at\n  N={N} K={K} T={T} before placing the "
           f"two side by side.")

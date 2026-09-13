@@ -9,7 +9,7 @@ rather than one row per portfolio. Seventy-five rows would be unreadable, and
 the cross-sectional spread is the thing Section 3.1 actually claims: the
 min-to-max range IS the evidence for "substantial cross-sectional variation in
 return behaviour". If that range turns out to be narrow, the claim in the text
-needs softening -- the script prints the ratios so this can be checked.
+needs softening; the script prints the ratios so this can be checked.
 
 Statistics reported, all computed on excess returns over the modelling sample
 (January 1966 to November 2025, T = 719):
@@ -24,7 +24,7 @@ Run from the project root:
 
     python3 make_portfolio_summary.py
     python3 make_portfolio_summary.py --outfile tables/portfolio_summary.tex
-    python3 make_portfolio_summary.py --no-ar1     # drop the AR(1) row
+    python3 make_portfolio_summary.py --no-ar1     (drop the AR(1) row)
 """
 from __future__ import annotations
 
@@ -103,7 +103,6 @@ def main() -> None:
         spans.append((universe, N, T, start, end))
         print(f"{universe}: N={N} T={T} sample {start} to {end}")
 
-    # ---- the claim being checked -----------------------------------------
     print("\nCross-sectional spread across the 25 portfolios "
           "(max/min, for the 'substantial variation' claim in 3.1):")
     for universe, label in UNIVERSES:
@@ -115,7 +114,6 @@ def main() -> None:
               f"({sd.max() / sd.min():4.1f}x)")
     print("  If these ratios are close to one, soften the sentence in 3.1.\n")
 
-    # ---- build the table --------------------------------------------------
     d = args.decimals
     lines = [
         r"\begin{table}[htbp]",

@@ -8,7 +8,7 @@ results/<universe>/bayesian_lasso/.
 Multiple chains are the point: R-hat compares within-chain to between-chain
 variance and is undefined for a single chain. They also address the one risk
 accepted when the plug-in scale was chosen over Park & Casella's sampled
-sigma^2 -- the loss of their formal unimodality guarantee. Multimodality would
+sigma^2, the loss of their formal unimodality guarantee. Multimodality would
 show up as chains disagreeing, which is exactly what R-hat measures.
 
 Sweep budget
@@ -28,9 +28,9 @@ stays coupled to theta through sum|theta_ij|. Four chains x 3,000 kept draws
 gives lambda an ESS near 390. Everything else is far past its target by then.
 
 Usage:
-    python run_bayesian_lasso.py                          # defaults
+    python run_bayesian_lasso.py                          (defaults)
     python run_bayesian_lasso.py --chains 4 --draws 4000 --burn 1000
-    python run_bayesian_lasso.py --lambda-multiplier 0.1  # hyperprior sensitivity
+    python run_bayesian_lasso.py --lambda-multiplier 0.1  (hyperprior sensitivity)
     python run_bayesian_lasso.py --universe size_bm_100
 """
 
@@ -54,7 +54,7 @@ def load_predictor_names(universe: str, K: int) -> list[str]:
     """
     Predictor column names from the data pipeline's metadata sidecar, so
     output reads "DY_x_lag3" rather than "predictor 27". Falls back to
-    indices if the file isn't where we expect -- a missing sidecar should
+    indices if the file isn't where we expect: a missing sidecar should
     make the report less readable, not stop an hour-long run.
     """
     for name in (f"{universe}_metadata.json", f"{universe}.json"):
@@ -108,9 +108,6 @@ def main() -> None:
 
     tag = f"rescaled_r2_{args.target_r2:g}".replace(".", "p")
     if args.lambda_multiplier != 1.0:
-        # the setting tag must never contain a dot: Path.with_suffix("") once
-        # parsed "..._r2_0.05_chain0" as stem "..._r2_0" + suffix ".05_chain0",
-        # which would have silently overwritten three of four chains
         tag += f"_lam{args.lambda_multiplier:g}".replace(".", "p")
 
     outdir = Path(args.outdir or f"results/{args.universe}/{MODEL}")
@@ -137,8 +134,6 @@ def main() -> None:
         draws.meta["target_r2"] = args.target_r2
         draws.meta["lambda_multiplier"] = args.lambda_multiplier
         draws.meta["universe"] = args.universe
-        # seed0 + k in the FILENAME, not k, so --seed0 4 cannot overwrite
-        # chains 0-3. With the default seed0 = 0 the names are unchanged.
         out = save_draws(draws, outdir / f"{MODEL}_{tag}_chain{seed}")
         print(f"  chain {seed} (seed {seed}): {time()-t0:.0f}s, "
               f"lambda mean {draws.lam.mean():.1f}, "
@@ -146,7 +141,6 @@ def main() -> None:
 
     print(f"\ntotal {time()-t_all:.0f}s")
 
-    # ---- a first look, so an hour-long run is not opaque until diagnose runs --
     d0 = load_draws(outdir / f"{MODEL}_{tag}_chain{args.seed0}", LassoDraws)
     names = load_predictor_names(args.universe, K)
 
@@ -163,7 +157,7 @@ def main() -> None:
         lo, hi = np.percentile(d0.b_bar[:, j], [2.5, 97.5])
         star = "*" if lo * hi > 0 else " "
         print(f"   {star} {names[j]:<22s} {m[j]:+.5f}  [{lo:+.5f}, {hi:+.5f}]")
-    print("   (* = 95% credible interval excludes zero; NOT a significance test --")
+    print("   (* = 95% credible interval excludes zero; NOT a significance test:")
     print("    a tighter prior narrows intervals and shrinks point estimates at the")
     print("    same time, so counting stars compares priors, not evidence)")
 

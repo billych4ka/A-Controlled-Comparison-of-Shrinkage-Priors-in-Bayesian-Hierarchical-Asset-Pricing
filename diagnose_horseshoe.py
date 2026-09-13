@@ -4,11 +4,11 @@ diagnose_horseshoe.py
 Reads every saved Horseshoe run for one universe and prints what the write-up
 needs:
 
-  1. convergence      -- R-hat and ESS, including ALL 3,600 local scales
-  2. NUTS diagnostics -- divergences, tree-depth saturation, E-BFMI, step size,
-                         per chain
-  3. tau against tau_0 -- the headline: how far the data moves the global scale
-  4. shrinkage factors kappa -- the ONE axis on which all four models compare
+  1. convergence: R-hat and ESS, including ALL 3,600 local scales
+  2. NUTS diagnostics: divergences, tree-depth saturation, E-BFMI, step size,
+     per chain
+  3. tau against tau_0: the headline, how far the data moves the global scale
+  4. shrinkage factors kappa: the ONE axis on which all four models compare
   5. cross-model agreement on b_bar, against the baseline and the LASSO
   6. top predictors with credible intervals
 
@@ -16,12 +16,12 @@ Section 1 differs from the LASSO's in an important way. The LASSO had to
 summarise tau^2 to running means plus 200 tracked traces, so its convergence
 diagnostics cover a SUBSAMPLE. The horseshoe stores all 3,600 local scales in
 full, so R-hat and ESS are reported for every one. That is a stricter standard
-than the LASSO is held to -- a difference in how the models are CHECKED, not in
+than the LASSO is held to: a difference in how the models are CHECKED, not in
 how they are specified, and it should be stated rather than left for a reader
 to notice that one model reports 3,600 R-hats and the other 200.
 
 Section 4 is the section the whole design has been pointing at. tau and the
-LASSO's lambda are not commensurable -- one is a global scale multiplying
+LASSO's lambda are not commensurable: one is a global scale multiplying
 heavy-tailed local scales, the other the rate of an exponential on
 per-coefficient variances. But every model in the design implies a shrinkage
 factor
@@ -82,7 +82,7 @@ def load_universe(universe: str):
 
 def kappa_from_variance(v: np.ndarray, F: np.ndarray, sigma: float) -> np.ndarray:
     """kappa = 1/(1 + n sigma^-2 v s_j^2), with s_j the root MEAN SQUARE of
-    predictor j (not its standard deviation -- the intercept column has mean 1
+    predictor j (not its standard deviation: the intercept column has mean 1
     and sd exactly 0, and would otherwise be assigned no information)."""
     N, T, K = F.shape
     s = np.sqrt((F ** 2).mean(axis=1))
@@ -108,7 +108,7 @@ def main() -> None:
     if missing:
         print(f"(not found, skipping: {', '.join(missing)})\n")
     if not loaded:
-        raise SystemExit("no runs found -- check --universe and the results layout")
+        raise SystemExit("no runs found; check --universe and the results layout")
 
     primary = args.settings[0] if args.settings[0] in loaded else next(iter(loaded))
     chains = loaded[primary]
@@ -131,7 +131,6 @@ def main() -> None:
     print(f"   target_accept={meta.get('target_accept')}  "
           f"init={meta.get('init')}  max_treedepth={meta.get('max_treedepth')}")
 
-    # ---- 1. convergence ---------------------------------------------------
     print("\n" + "=" * 78)
     print("1. CONVERGENCE   (R-hat < 1.01, Vehtari et al. 2021 rank-normalised")
     print("   folded split-R-hat; ESS target 400 for posterior means)")
@@ -145,9 +144,8 @@ def main() -> None:
     print("   The LASSO's tau^2 diagnostics cover 200 tracked traces, because")
     print("   Gibbs needed far more draws for the same ESS and the full array")
     print("   could not be stored. The horseshoe is therefore held to a")
-    print("   STRICTER diagnostic -- a difference in checking, not in design.")
+    print("   STRICTER diagnostic, a difference in checking, not in design.")
 
-    # ---- 2. NUTS diagnostics ----------------------------------------------
     print("\n" + "=" * 78)
     print("2. NUTS DIAGNOSTICS, per chain")
     print("=" * 78)
@@ -168,15 +166,14 @@ def main() -> None:
         print(f"\n   *** a chain saturates tree depth on {worst:.0%} of draws.")
         print("   Trajectories are being truncated, which is a bias risk, not just")
         print("   a cost. Check that chain's b_bar and tau against the others")
-        print("   before reporting -- if they agree, report the saturation with")
+        print("   before reporting; if they agree, report the saturation with")
         print("   the evidence that it did not matter. ***")
     print("\n   [P&V report 1-30% divergences for the ORIGINAL horseshoe across")
     print("    four real datasets, calling it a lot and warning that biased")
     print("    inference is a concern. This rate is citable behaviour, not a")
-    print("    fault -- and their recommended remedy is the regularised")
+    print("    fault, and their recommended remedy is the regularised")
     print("    horseshoe, which is model 4.]")
 
-    # ---- 3. tau ------------------------------------------------------------
     print("\n" + "=" * 78)
     print("3. THE GLOBAL SCALE   tau against its calibrated tau_0")
     print("=" * 78)
@@ -197,14 +194,13 @@ def main() -> None:
     print(f"      across the 95% interval            "
           f"{implied_m_eff(hp, F, tau=lo):.2f} to {implied_m_eff(hp, F, tau=hi):.2f}")
     print("\n   [The LASSO's lambda moved ~30% from its calibrated value. tau moves")
-    print("    by a factor of ~20, in the opposite direction -- and that is NOT a")
+    print("    by a factor of ~20, in the opposite direction, and that is NOT a")
     print("    contradiction: the LASSO's single scale sets one Laplace width for")
     print("    every coefficient, while the horseshoe buys sparsity by shrinking")
     print("    the bulk and letting the Cauchy tails carry the exceptions.]")
 
-    # ---- 4. shrinkage factors ---------------------------------------------
     print("\n" + "=" * 78)
-    print("4. SHRINKAGE FACTORS kappa   -- the axis on which all models compare")
+    print("4. SHRINKAGE FACTORS kappa: the axis on which all models compare")
     print("=" * 78)
     kap = np.concatenate([shrinkage_factors(c, F, hp) for c in chains], axis=0)
     kap_mean = kap.mean(axis=0)
@@ -245,7 +241,6 @@ def main() -> None:
     print("    This is the sharper claim the design isolates: the baseline has")
     print("    no local adaptivity at all.]")
 
-    # ---- 5. cross-model agreement on b_bar --------------------------------
     print("\n" + "=" * 78)
     print(f"5. CROSS-MODEL AGREEMENT ON b_bar   (top-{args.top})")
     print("=" * 78)
@@ -276,11 +271,10 @@ def main() -> None:
                   f"overlap {v[f'top{args.top}_overlap']:.2f}")
         print("\n   [Compare the between-model overlap against the within-horseshoe")
         print("    ceiling above. An overlap close to it means the models agree as")
-        print("    well as one model agrees with itself -- three prior families")
+        print("    well as one model agrees with itself; three prior families")
         print("    across two sampling paradigms is far stronger evidence about")
         print("    the data than any one of them alone.]")
 
-    # ---- 6. top predictors -------------------------------------------------
     print("\n" + "=" * 78)
     print(f"6. TOP {args.top} PREDICTORS BY |posterior mean b_bar|")
     print("=" * 78)
@@ -294,7 +288,7 @@ def main() -> None:
 
     print("\n   NOTE: intervals are not significance tests. A tighter prior gives")
     print("   narrower intervals AND smaller point estimates, so counting stars")
-    print("   across models compares priors, not evidence -- the baseline gave")
+    print("   across models compares priors, not evidence: the baseline gave")
     print("   0, 11, 8 and 17 across four settings, non-monotonic in prior")
     print("   strength. Predictor selection comes from out-of-sample performance.")
 

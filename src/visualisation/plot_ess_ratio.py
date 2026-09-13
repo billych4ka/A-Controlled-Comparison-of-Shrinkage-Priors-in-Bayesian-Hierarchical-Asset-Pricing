@@ -69,10 +69,6 @@ from src.nuts.horseshoe import HorseshoeDraws
 from src.nuts.regularised_horseshoe import RegHorseshoeDraws
 
 
-# ---------------------------------------------------------------------------
-# Model definitions
-# ---------------------------------------------------------------------------
-
 MODELS = (
     (
         "Gaussian baseline",
@@ -101,16 +97,6 @@ MODELS = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Parameter blocks
-# ---------------------------------------------------------------------------
-
-# (
-#     field,
-#     display label,
-#     colour,
-#     linestyle,
-# )
 BLOCKS = (
     (
         "B",
@@ -136,12 +122,7 @@ BLOCKS = (
 FENG_HE_THRESHOLD = 0.6
 
 
-# ---------------------------------------------------------------------------
-# Dissertation house style
-# ---------------------------------------------------------------------------
-
 STYLE = {
-    # Typography
     "font.family": "sans-serif",
     "font.sans-serif": [
         "Arial",
@@ -152,7 +133,6 @@ STYLE = {
     "mathtext.fontset": "stixsans",
     "font.size": 8.0,
 
-    # Axes
     "axes.labelsize": 8.0,
     "axes.labelweight": "normal",
     "axes.linewidth": 0.60,
@@ -161,7 +141,6 @@ STYLE = {
     "axes.spines.right": False,
     "axes.facecolor": "white",
 
-    # Ticks
     "xtick.labelsize": 7.0,
     "ytick.labelsize": 7.0,
     "xtick.direction": "out",
@@ -173,20 +152,16 @@ STYLE = {
     "xtick.major.pad": 2.0,
     "ytick.major.pad": 2.0,
 
-    # Lines
     "lines.linewidth": 1.20,
     "lines.solid_capstyle": "round",
     "lines.dash_capstyle": "round",
     "lines.solid_joinstyle": "round",
 
-    # Legend
     "legend.frameon": False,
     "legend.fontsize": 7.0,
 
-    # Figure
     "figure.facecolor": "white",
 
-    # Export
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
     "savefig.facecolor": "white",
@@ -195,10 +170,6 @@ STYLE = {
 
 
 def main() -> None:
-
-    # -----------------------------------------------------------------------
-    # Arguments
-    # -----------------------------------------------------------------------
 
     ap = argparse.ArgumentParser()
 
@@ -219,10 +190,6 @@ def main() -> None:
     )
 
     args = ap.parse_args()
-
-    # -----------------------------------------------------------------------
-    # Compute ESS ratios
-    # -----------------------------------------------------------------------
 
     ratios = {}
 
@@ -314,10 +281,6 @@ def main() -> None:
             "no chains found"
         )
 
-    # -----------------------------------------------------------------------
-    # Figure setup
-    # -----------------------------------------------------------------------
-
     plt.rcParams.update(
         STYLE
     )
@@ -341,12 +304,7 @@ def main() -> None:
         "white"
     )
 
-    # Common horizontal range.
     x_max = 1.25
-
-    # -----------------------------------------------------------------------
-    # Panels
-    # -----------------------------------------------------------------------
 
     for panel_index, (
         ax,
@@ -360,10 +318,6 @@ def main() -> None:
             ratios.items(),
         )
     ):
-
-        # -------------------------------------------------------------------
-        # Empirical CDFs
-        # -------------------------------------------------------------------
 
         for (
             flabel,
@@ -397,11 +351,6 @@ def main() -> None:
                 zorder=3,
             )
 
-        # -------------------------------------------------------------------
-        # Reference lines
-        # -------------------------------------------------------------------
-
-        # Feng and He (2020) comparison threshold.
         ax.axvline(
             FENG_HE_THRESHOLD,
             color="#777777",
@@ -410,8 +359,6 @@ def main() -> None:
             zorder=2,
         )
 
-        # ESS ratio of one: approximately the information content of an equal
-        # number of independent draws.
         ax.axvline(
             1.0,
             color="#D5D5D5",
@@ -419,10 +366,6 @@ def main() -> None:
             linestyle="-",
             zorder=1,
         )
-
-        # -------------------------------------------------------------------
-        # Axes
-        # -------------------------------------------------------------------
 
         ax.set_xlim(
             0,
@@ -441,8 +384,6 @@ def main() -> None:
             pad=5,
         )
 
-        # Horizontal guides make cumulative proportions easy to read while
-        # keeping the panels visually quiet.
         ax.grid(
             which="major",
             axis="y",
@@ -468,10 +409,6 @@ def main() -> None:
                 labelleft=False,
             )
 
-    # -----------------------------------------------------------------------
-    # Shared axis labels
-    # -----------------------------------------------------------------------
-
     axes[0].set_ylabel(
         "Cumulative proportion",
         labelpad=5,
@@ -482,10 +419,6 @@ def main() -> None:
         fontsize=8.0,
         y=0.105,
     )
-
-    # -----------------------------------------------------------------------
-    # Shared legend
-    # -----------------------------------------------------------------------
 
     handles, legend_labels = (
         axes[0].get_legend_handles_labels()
@@ -508,10 +441,6 @@ def main() -> None:
         borderaxespad=0.0,
     )
 
-    # -----------------------------------------------------------------------
-    # Layout
-    # -----------------------------------------------------------------------
-
     fig.subplots_adjust(
         left=0.075,
         right=0.99,
@@ -519,10 +448,6 @@ def main() -> None:
         bottom=0.27,
         wspace=0.20,
     )
-
-    # -----------------------------------------------------------------------
-    # Save
-    # -----------------------------------------------------------------------
 
     outdir = Path(
         args.outdir

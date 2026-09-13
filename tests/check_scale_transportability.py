@@ -4,7 +4,7 @@ check_scale_transportability.py
 Regenerates every number in the Section 4.3 scale table from the data, so that
 no figure in it rests on a hand calculation.
 
-Reproduces Section 4.3, Tables 4.3 and 4.4, and Appendix A.7 on
+Reproduces Section 4.3, Tables 4.3 and 4.4, and Appendix A.8 on
 scale-calibration reproducibility.
 
 This script exists because the earlier "three independent calibration routes
@@ -55,7 +55,7 @@ Run from the project root:
 
     python3 check_scale_transportability.py
     python3 check_scale_transportability.py --universe size_op_25
-    python3 check_scale_transportability.py --skip-eigen      # fast
+    python3 check_scale_transportability.py --skip-eigen      (fast)
 
 The eigendecomposition is of an NK x NK matrix (3,600 x 3,600 at production
 size) and takes on the order of a minute.
@@ -72,20 +72,11 @@ from src.gibbs.baseline_gaussian import (default_hyperparameters,
                                          rescaled_hyperparameters)
 from src.gibbs.bayesian_lasso import pooled_residual_scale
 
-# Feng & He's disclosed prior variances, on their own predictor scale.
-#   common     Delta_b_bar = 0.1 I_K                        (their Eq. 9)
-#   deviation  E[Delta_b]  = V_b / (nu_b - K - 1) = 3/1000  (derived; Sec 4.2.1)
 FH_COMMON = 0.1
 FH_DEVIATION = 0.003
 
-# Feng & He's effective regressor scale. Their macroeconomic predictors are in
-# raw units (dividend yield ~0.03, T-bill ~0.05), giving a typical standard
-# deviation near 0.015; this project's expanding-window z-scores give ~1.
 FH_REGRESSOR_SD = 0.015
 
-# Recorded value for the eigenvalue route, for regression-testing the
-# reconstruction. Reported, not asserted: this is the figure whose provenance
-# was in question.
 RECORDED_EIGEN_SD = 7.64e-04
 
 
@@ -99,14 +90,9 @@ def data_precision(F: np.ndarray, Sigma: np.ndarray) -> np.ndarray:
     """
     N, T, K = F.shape
     Sinv = np.linalg.inv(Sigma)
-    # Axis order (i,k,j,l), NOT (i,j,k,l): the stacked vector is asset-major,
-    # so row i*K+k must pair with column j*K+l and the reshape below only does
-    # that if the asset and predictor axes already alternate. optimize=True
-    # routes the contraction over t through BLAS; without it this is a
-    # Python-level loop over 9.3e9 products.
-    G = np.einsum("itk,jtl->ikjl", F, F, optimize=True)      # (N,K,N,K)
+    G = np.einsum("itk,jtl->ikjl", F, F, optimize=True)
     P = (Sinv[:, None, :, None] * G).reshape(N * K, N * K)
-    return 0.5 * (P + P.T)                        # symmetrise against fp drift
+    return 0.5 * (P + P.T)
 
 
 def eigen_route(F: np.ndarray, Sigma: np.ndarray) -> tuple[float, float]:
@@ -137,7 +123,6 @@ def main() -> None:
     F, R = d["F"], d["R"]
     N, T, K = F.shape
 
-    # The design-dependent constant. Every V_prior below is s^2 times this.
     C = np.cov(F.reshape(-1, K).T)
     var_r = float(R.var())
     design = float(np.trace(C) / var_r)
@@ -156,7 +141,6 @@ def main() -> None:
     print(f"adopted total sd      {np.sqrt(s2_total):.4e}   "
           f"(ratio {ratio:.3f})\n")
 
-    # ---- transportability table -------------------------------------------
     s2_fh = FH_COMMON + FH_DEVIATION
     s2_fh_conv = s2_fh * FH_REGRESSOR_SD ** 2
 
@@ -172,9 +156,8 @@ def main() -> None:
     print(f"\nconverted prior remains {s2_fh_conv / s2_total:,.0f}x looser "
           f"than the adopted calibration")
     print(f"(the conversion divides V_prior by (1/{FH_REGRESSOR_SD})^2 = "
-          f"{1 / FH_REGRESSOR_SD ** 2:,.0f} exactly -- definitional)")
+          f"{1 / FH_REGRESSOR_SD ** 2:,.0f} exactly, definitional)")
 
-    # ---- eigenvalue route, both covariances and both readings -------------
     if not args.skip_eigen:
         print("\nEIGENVALUE ROUTE: prior precision = median data precision")
         print("  P = F'(Sigma^-1 (x) I_T)F; 1/sqrt(median eig) is the scale at")
@@ -185,12 +168,6 @@ def main() -> None:
         E = R - np.einsum("itk,ik->it", F, B_ols)
         S_resid = np.cov(E, ddof=1)
 
-        # The isotropic comparator holds the RAW RETURN covariance's average
-        # magnitude fixed and removes only its cross-asset structure, because
-        # that matrix is the one the check itself uses. Three plausible
-        # scalings give three different answers -- unscaled I_N (62x), the
-        # residual covariance's mean diagonal (3.1x) and this one (3.6x) --
-        # so the choice is stated here rather than left implicit.
         ISO = "isotropic, mean diag of return cov"
         S_iso = float(np.mean(np.diag(S_return))) * np.eye(N)
 
@@ -214,11 +191,6 @@ def main() -> None:
         print("  A ratio near 1.00 in either column is agreement on that")
         print("  reading. State in the write-up which reading is intended.")
 
-        # How much of the agreement is Sigma's cross-asset structure?
-        # The isotropic row is NOT a calibration route -- it exists only to
-        # show that the agreement is a property of THIS return covariance
-        # (25 portfolios sharing a dominant market factor) rather than
-        # something that would hold in any SUR design.
         ratio_iso = results[ISO] / np.sqrt(s2_total)
         inflation = medians["raw return covariance"] / medians[ISO]
         print(f"\n  Removing the cross-asset structure but holding the mean")
@@ -237,7 +209,6 @@ def main() -> None:
               f"the raw return covariance gives {got:.4e} "
               f"({'MATCH' if ok else 'NO MATCH'})")
 
-        # Is the prior-side covariance choice consistent with V_Sigma?
         base_hp = default_hyperparameters(R, K)
         for label, S in (("raw return covariance", S_return),
                          ("OLS residual covariance", S_resid)):
@@ -250,7 +221,6 @@ def main() -> None:
                   "prior-side choice is consistent with the prior "
                   "specification")
 
-    # ---- assertions -------------------------------------------------------
     got = s2_total * design
     assert abs(got - args.target_r2) < 1e-9, (
         f"adopted calibration implies V_prior={got}, expected {args.target_r2}"

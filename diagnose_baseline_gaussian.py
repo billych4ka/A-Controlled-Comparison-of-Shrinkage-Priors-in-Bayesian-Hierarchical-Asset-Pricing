@@ -4,10 +4,10 @@ diagnose_baseline_gaussian.py
 Reads every saved Gaussian-baseline run for one universe and prints the
 diagnostics the write-up needs:
 
-  1. convergence  -- R-hat and ESS per setting, per parameter block
-  2. sampler check-- blocked vs sequential agreement at the feng_he prior
-  3. shrinkage    -- how far each rescaled setting moves from feng_he
-  4. rank stability - do the settings agree on WHICH predictors matter
+  1. convergence: R-hat and ESS per setting, per parameter block
+  2. sampler check: blocked vs sequential agreement at the feng_he prior
+  3. shrinkage: how far each rescaled setting moves from feng_he
+  4. rank stability: do the settings agree on WHICH predictors matter
   5. top predictors per setting, with credible intervals
 
 Usage:
@@ -65,12 +65,11 @@ def main() -> None:
     if missing:
         print(f"(not found, skipping: {', '.join(missing)})\n")
     if not loaded:
-        raise SystemExit("no runs found -- check --universe and the results layout")
+        raise SystemExit("no runs found; check --universe and the results layout")
 
     K = loaded[next(iter(loaded))][0].b_bar.shape[1]
     names = predictor_names(args.universe, K)
 
-    # ---- 1. convergence -----------------------------------------------------
     print("=" * 78)
     print("1. CONVERGENCE   (threshold R-hat < 1.01, Vehtari et al. 2021)")
     print("=" * 78)
@@ -84,7 +83,6 @@ def main() -> None:
             except (ValueError, AttributeError) as e:
                 print(f"   {f:<14s} skipped ({e})")
 
-    # ---- 2. blocked vs sequential ------------------------------------------
     if "feng_he" in loaded and SEQUENTIAL in loaded:
         print("\n" + "=" * 78)
         print("2. SAMPLER CHECK  blocked vs sequential, same prior, same data")
@@ -95,7 +93,6 @@ def main() -> None:
                   f"{100*r['frac_within_3']:.1f}% within 3 SE   ({r['n_params']} params)")
         print("   [both samplers target the same posterior; max under ~4 SE is agreement]")
 
-    # ---- 3. shrinkage vs feng_he -------------------------------------------
     if "feng_he" in loaded:
         print("\n" + "=" * 78)
         print("3. SHRINKAGE relative to feng_he")
@@ -108,29 +105,27 @@ def main() -> None:
                       f"{r['median_abs_ratio']:>16.4f} {r['correlation']:>12.3f}")
         print("   [correlation near 1 = proportional shrinkage; well below 1 = reordering]")
 
-        # ---- 4. rank stability across R^2 targets ------------------------------
         rescaled = {s: loaded[s] for s in SETTINGS[1:] if s in loaded}
         if len(rescaled) > 1:
             print("\n" + "=" * 78)
             print(f"4. RANK STABILITY across R^2 targets   (top-{args.top})")
             print("=" * 78)
-            print("   (a) WITHIN each setting -- the ceiling set by Monte Carlo error alone")
+            print("   (a) WITHIN each setting: the ceiling set by Monte Carlo error alone")
             for s, ch in rescaled.items():
                 w = within_setting_rank_stability(ch, top=args.top, n_reps=40)
                 print(f"       {s:<18s} spearman {w['spearman_median']:+.3f} "
                       f"(p10 {w['spearman_p10']:+.3f})   "
                       f"overlap {w[f'top{args.top}_overlap_median']:.2f}")
-            print("   (b) BETWEEN settings -- only meaningful relative to (a)")
+            print("   (b) BETWEEN settings: only meaningful relative to (a)")
             for (a, b), v in rank_stability(rescaled, top=args.top).items():
                 print(f"       {a:<18s} vs {b:<18s} spearman {v['spearman']:+.3f}   "
                       f"overlap {v[f'top{args.top}_overlap']:.2f}")
             sc = stable_core(rescaled, top=args.top)
-            print(f"   (c) STABLE CORE -- in the top-{args.top} of all {sc['n_settings']} settings:")
+            print(f"   (c) STABLE CORE: in the top-{args.top} of all {sc['n_settings']} settings:")
             for j in sc["core"]:
                 print(f"       {names[j]}")
             print("   [if (b) is close to (a), the R^2 choice is within Monte Carlo noise]")
 
-    # ---- 5. top predictors --------------------------------------------------
     print("\n" + "=" * 78)
     print(f"5. TOP {args.top} PREDICTORS BY |posterior mean b_bar|")
     print("=" * 78)

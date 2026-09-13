@@ -6,11 +6,10 @@ the model's OWN log joint density, evaluated on a grid. A conditional is
 correct only if (log joint - claimed kernel) is CONSTANT in the parameter
 being varied; the spread of that difference is the reported agreement.
 
-Reproduces Appendix A.6.1, first paragraph, and Table 4.5, row "Analytic
+Reproduces Appendix A.7.1, first paragraph, and Table 4.5, row "Analytic
 conditionals". Supports Section 4.4's statement that the Gibbs samplers were
-implemented from their analytic conditional distributions. Was check_chunk2.py
-(local scale) and check_chunk3.py (both global-scale updates) during
-development; merged here because they test the same layer.
+implemented from their analytic conditional distributions. Merged from two
+earlier scripts because they test the same layer.
 
 Recorded results:
     tau^2, GIG(p=1/2)                   1.7e-13 over 500 points
@@ -42,12 +41,7 @@ NK = N * K
 print(f"N={N} K={K} T={T}   s={s:.4f}   lambda_cal={lam_cal:.1f}   "
       f"r={hp.lambda_r:g}   delta={hp.lambda_delta:.4e}\n")
 
-# ---- 1. tau^2: GIG(p=1/2), i.e. 1/tau^2 inverse Gaussian -----------------
-# theta_ij ~ N(0, s^2 tau^2) and tau^2 ~ Exp(lambda^2/2), so as a function of
-# tau^2 the joint is (tau^2)^(-1/2) exp(-theta^2/(2 s^2 tau^2) - lam^2 tau^2/2).
 th0 = 1.7e-4
-# the grid must cover tau^2's tail: truncating at 4e-5 reports a spurious
-# 8-sigma disagreement in the moment check below
 grid = np.linspace(1e-9, 4e-3, 200_000)
 joint = (-0.5 * np.log(s ** 2 * grid) - th0 ** 2 / (2 * s ** 2 * grid)
          - lam_cal ** 2 * grid / 2)
@@ -61,11 +55,8 @@ mcse = draws.std() / np.sqrt(2e6)
 print(f"   E[tau^2]: sampler {draws.mean():.6e}   numerical integration "
       f"{(w*grid).sum():.6e}   z = {(draws.mean()-(w*grid).sum())/mcse:+.2f}")
 
-# ---- 2. lambda | tau^2: Gamma(r + NK, delta + sum(tau^2)/2) --------------
-# NOT used by the sampler; retained as an independent confirmation that the
-# collapsed update below targets the same distribution.
 tau2 = rng.exponential(scale=2 / lam_cal ** 2, size=(N, K))
-g2 = np.linspace(1e5, 8e5, 500)                       # values of lambda^2
+g2 = np.linspace(1e5, 8e5, 500)
 joint2 = (NK * np.log(g2 / 2) - g2 * tau2.sum() / 2
           + (hp.lambda_r - 1) * np.log(g2) - hp.lambda_delta * g2)
 shape = hp.lambda_r + NK
@@ -76,10 +67,6 @@ print(f"   log joint - kernel, spread: {(joint2 - claimed2).ptp():.3e}")
 print(f"   shape = r + NK = {shape:.0f}; relative sd of lambda = "
       f"{1/(2*np.sqrt(shape)):.4f}")
 
-# ---- 3. lambda | theta, collapsed over tau^2  ---------------------------
-# The scale mixture integrates to Laplace exactly, so tau^2 can be
-# marginalised out: p(lambda|theta) prop lambda^(NK+2r-1) exp(-lambda S1/s
-# - delta lambda^2), with S1 = sum|theta_ij|.
 Nc, Kc = 4, 3
 theta = rng.standard_normal((Nc, Kc)) * 1e-3
 S1 = np.abs(theta).sum()
@@ -92,7 +79,6 @@ claimed3 = ((theta.size + 2 * hp.lambda_r - 1) * np.log(g3)
 print("\n3. lambda | theta, collapsed  |  THE UPDATE THE SAMPLER USES")
 print(f"   log joint - kernel, spread: {(joint3 - claimed3).ptp():.3e}")
 
-# the scale mixture really is Laplace: integrate tau^2 out numerically
 print("\n   scale mixture check: int N(theta;0,s^2 t) Exp(t; lam^2/2) dt = Laplace")
 lg = np.linspace(-22, 5, 400_000)
 t2 = np.exp(lg)
@@ -104,12 +90,11 @@ for th in (1e-4, 5e-4, 2e-3):
     lap = (lam_cal / (2 * s)) * np.exp(-lam_cal * abs(th) / s)
     print(f"      theta={th:.0e}:  marginal/Laplace = {num/lap:.8f}")
 
-# ---- 4. recovery across the reachable range of lambda -------------------
 print("\n4. COLLAPSED DRAW vs NUMERICAL INTEGRATION OF ITS TARGET")
 print(f"   {'lambda true':>12s} {'sampled':>10s} {'exact':>10s} {'z':>7s}")
 for lt in (200.0, 417.0, 601.4, 1345.0, 4000.0):
     u = rng.random((N, K)) - 0.5
-    th = -(s / lt) * np.sign(u) * np.log(1 - 2 * np.abs(u))   # Laplace
+    th = -(s / lt) * np.sign(u) * np.log(1 - 2 * np.abs(u))
     dr = np.array([sample_lambda_collapsed(th, s, hp, rng) for _ in range(3000)])
     a = th.size + 2 * hp.lambda_r - 1
     rt = np.abs(th).sum() / s

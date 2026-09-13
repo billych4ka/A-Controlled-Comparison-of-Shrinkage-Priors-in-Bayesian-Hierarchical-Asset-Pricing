@@ -1,26 +1,26 @@
 """
-check_calibration_horseshoe.py -- validation step 5.
+check_calibration_horseshoe.py: validation step 5.
 
 Simulate a parameter set from the horseshoe's OWN prior, generate returns from
 it, fit, and ask whether the truth falls inside the 95% credible intervals.
 About 95% should. This is the only end-to-end test in the sequence:
-an independent NumPy reference proved the log-density correct at one point
-during development; this proves the whole machine correct on average.
+an independent NumPy reference proves the log-density correct at one point;
+this proves the whole machine correct on average.
 
 Reproduces Table 4.6, the horseshoe column and the note on the three excluded
-datasets, and Appendix A.6.4, the reduced dimensions N=6, K=5, T=200 at
-TAU0_MULT=0.01. With --full-scale it reproduces Appendix A.6.7, the abandoned
+datasets, and Appendix A.7.4, the reduced dimensions N=6, K=5, T=200 at
+TAU0_MULT=0.01. With --full-scale it reproduces Appendix A.7.7, the abandoned
 production-dimension runs. Supports Section 4.5 on prior-generative
 calibration.
 
-EVERY quantity is drawn from the prior the sampler conditions on -- b_bar from
+EVERY quantity is drawn from the prior the sampler conditions on: b_bar from
 N(0, Delta_b_bar), tau from C+(0, tau_0), lambda from C+(0,1), z from N(0,1),
 Sigma from IW(nu_Sigma, V_Sigma). simulate_sur_data is deliberately NOT used:
 it generates Delta_b and Sigma from _random_pd_matrix and b_bar from a
 standard normal, none of which match the priors being fitted. Bayesian
 coverage is nominal only when the truth comes from the prior you condition on,
 and the baseline's first calibration measured prior/truth mismatch rather than
-sampler error because of exactly this -- reporting Delta_b_diag at +6.1 SE,
+sampler error because of exactly this, reporting Delta_b_diag at +6.1 SE,
 which vanished to +1.3 once the truth was drawn correctly. That is the
 strongest instance yet of verification code failing the way the code under
 test does: it ran, produced plausible numbers, and answered a subtly different
@@ -28,8 +28,8 @@ question from the one asked.
 
 REPORTED AS PER-DATASET COVERAGE, mean +/- SE ACROSS DATASETS. The pooled
 binomial p-value is NOT reported. Intervals within a dataset are not
-independent -- 30 theta intervals from one chain are not 30 independent trials
--- and the LASSO's re-run demonstrated the consequence: its pooled p for theta
+independent (30 theta intervals from one chain are not 30 independent trials),
+and the LASSO's re-run demonstrated the consequence: its pooled p for theta
 swung from 0.002 to 0.048 between two runs differing by less than their own
 Monte Carlo error, while the per-dataset test barely moved. A statistic that
 unstable under a change that should not matter is not measuring what it
@@ -50,7 +50,7 @@ TWO MODES, for two different purposes.
                  tau is barely identified, so the matched-dimension run is
                  comparable but not by itself meaningful for this model.
 
-  --full-scale   3 datasets at N=25, K=144, T=719. NOT a coverage rate --
+  --full-scale   3 datasets at N=25, K=144, T=719. NOT a coverage rate:
                  three datasets is far too few. Checks that tau's intervals
                  and the divergence rate behave the same way where the
                  b_bar/theta ridge and tau's identification bite.
@@ -58,10 +58,10 @@ TWO MODES, for two different purposes.
 WHY THE SIMULATION REGIME IS MILDER THAN PRODUCTION. The first design set the
 simulation's tau_0 = sigma/sqrt(T), intending deviations of about one standard
 error. But tau ~ C+(0, tau_0) and lambda ~ C+(0,1) compound: seed 0 drew
-tau = 0.28 with max lambda = 613, giving a true deviation of 144 -- roughly
+tau = 0.28 with max lambda = 613, giving a true deviation of 144, roughly
 2,500 standard errors. Coverage came out b 0.960 but b_bar 0.400, theta 0.533,
 Sigma 0.510, with tree depth pinned at max on every draw: the b_bar/theta
-ridge, with trajectories truncated before they could traverse it. Not a bug --
+ridge, with trajectories truncated before they could traverse it. Not a bug:
 every field moved monotonically toward 0.95 when the budget went up tenfold,
 which a wrong log-density does not do. TAU0_MULT = 0.01 standard errors gives
 a median largest deviation of 2.4 SE instead. Simulation and fit use identical
@@ -71,7 +71,7 @@ that belongs in the write-up: it is the same fact the prior predictive reports
 from the other direction, that the Cauchy tails put 60% of prior mass at
 implausible R^2 values.
 
-The tail does not disappear -- the Cauchy's shape is scale-invariant, so about
+The tail does not disappear: the Cauchy's shape is scale-invariant, so about
 7% of datasets still draw a deviation past 50 SE. Those hit the CONVERGENCE
 GATE and are excluded with their tau and R-hat printed. Excluding on
 convergence biases the rate toward easy datasets, so the exclusions belong in
@@ -81,7 +81,7 @@ cores = 1 BY DEFAULT: PyMC's multiprocessing killed a worker at these
 dimensions (EOFError, child dead with no traceback). A workaround, not a
 diagnosis.
 
-USAGE -- time one dataset before committing to a hundred:
+USAGE: time one dataset before committing to a hundred:
 
     python3 check_calibration_horseshoe.py --match-dims --datasets 2
     caffeinate -i python3 check_calibration_horseshoe.py --match-dims
@@ -98,7 +98,7 @@ from scipy.stats import invwishart
 
 from src.nuts.horseshoe import HorseshoeHyperparams, run_nuts
 
-TAU0_MULT = 0.01        # simulation tau_0, in standard errors. See docstring.
+TAU0_MULT = 0.01
 RHAT_MAX = 1.05
 DEPTH_SATURATION = 0.5
 FIELDS = ("b_bar", "theta", "b", "Sigma", "tau")
@@ -114,7 +114,7 @@ def simulation_hyperparameters(N, K, T, sd_bbar=2.0, tau0_mult=TAU0_MULT
 
     p0 is set to -1 and is UNUSED: tau_0 is set directly from TAU0_MULT rather
     than derived through P&V Eq. (3.12), so any p0 recorded here would be
-    inconsistent with it. (Solving p0/(K-p0) = 0.01 would give p0 ~ 0.3 -- the
+    inconsistent with it. (Solving p0/(K-p0) = 0.01 would give p0 ~ 0.3; the
     fittable regime is a sparser world than production assumes.) Nothing in
     this script reads p0; it is carried only so the dataclass is complete.
     """
@@ -123,12 +123,6 @@ def simulation_hyperparameters(N, K, T, sd_bbar=2.0, tau0_mult=TAU0_MULT
         Delta_b_bar=sd_bbar ** 2 * np.eye(K),
         nu_Sigma=float(N + 2),
         V_Sigma=np.eye(N),
-        # tau0_mult must SHRINK as N*K grows. The largest of n half-Cauchy
-        # draws grows roughly linearly in n, so at full scale (3,600 local
-        # scales) the same multiplier that gives a median largest deviation of
-        # 2.1 SE at N=10 K=30 gives 29.9 SE, with a 90th percentile of 330 --
-        # datasets no achievable budget can fit. 0.0008 = 0.01 * 300/3600
-        # restores the reduced-scale difficulty profile exactly.
         tau_0=tau0_mult / np.sqrt(T),
         p0=-1, n_choice="T",
         sigma_pooled=1.0, sd_target=1.0 / np.sqrt(T),
@@ -173,7 +167,7 @@ def run_stage(label, N, K, T, n_datasets, n_draws, n_tune, chains, cores, seed0,
           f"truth drawn from the model's own prior\n{'='*76}")
 
     pooled = {f: [0, 0] for f in FIELDS}
-    per_dataset = {f: [] for f in FIELDS}        # THE column of record
+    per_dataset = {f: [] for f in FIELDS}
     ranks = {f: [] for f in ("b_bar", "theta")}
     taus, excluded = [], []
     t_all = time()
@@ -214,7 +208,7 @@ def run_stage(label, N, K, T, n_datasets, n_draws, n_tune, chains, cores, seed0,
         for f, (dr, tr) in pairs.items():
             c = covered(dr, tr)
             pooled[f][0] += int(np.sum(c)); pooled[f][1] += int(np.size(c))
-            per_dataset[f].append(float(np.mean(c)))     # cannot be recovered later
+            per_dataset[f].append(float(np.mean(c)))
         for f in ranks:
             dr, tr = pairs[f]
             ranks[f].append(float((dr < tr).mean(axis=0).mean()))
@@ -228,12 +222,12 @@ def run_stage(label, N, K, T, n_datasets, n_draws, n_tune, chains, cores, seed0,
     print(f"\n  {(time()-t_all)/60:.1f} min | {n_used} of {n_datasets} datasets used, "
           f"{len(excluded)} excluded by the convergence gate")
     if excluded:
-        print("  EXCLUDED -- these bias the rate toward easy datasets; report them:")
+        print("  EXCLUDED: these bias the rate toward easy datasets; report them:")
         for s, tr, m, r, ds in excluded:
             print(f"    seed {s}: tau {tr:.1f}x tau_0, max|theta| {m:.0f} SE, "
                   f"R-hat {r:.3f}, depth saturating {ds:.0%}")
     if n_used == 0:
-        print("\n  no datasets passed the gate -- nothing to report")
+        print("\n  no datasets passed the gate; nothing to report")
         return
 
     print(f"\n  {'field':<8s} {'pooled':>14s} {'per-dataset mean':>18s} {'z vs 0.95':>10s}")
@@ -252,7 +246,7 @@ def run_stage(label, N, K, T, n_datasets, n_draws, n_tune, chains, cores, seed0,
             print(f"  {f:<8s} {k:>6d} /{n:<7d} {r.mean():>10.3f}        - "
                   f"{'-':>10s}")
     print("\n  No binomial p-value: intervals within a dataset are not independent,")
-    print("  and pooling them is unstable -- the LASSO's pooled p for theta swung")
+    print("  and pooling them is unstable: the LASSO's pooled p for theta swung")
     print("  from 0.002 to 0.048 between runs differing by less than Monte Carlo")
     print("  error, while its per-dataset test barely moved.")
 
@@ -283,16 +277,16 @@ def main() -> None:
         print("WARNING: cores > 1 killed a worker at these dimensions (EOFError).")
 
     if args.full_scale:
-        run_stage("FULL SCALE -- confirmation only, NOT a coverage rate",
+        run_stage("FULL SCALE: confirmation only, NOT a coverage rate",
                   25, 144, 719, args.datasets or 3, args.draws or 500,
                   args.tune or 1000, args.chains, args.cores, seed0=500,
                   tau0_mult=0.0008)
     elif args.match_dims:
-        run_stage("MATCHED DIMENSIONS -- for the harmonised Chapter 4 table",
+        run_stage("MATCHED DIMENSIONS: for the harmonised Chapter 4 table",
                   6, 5, 200, args.datasets or 100, args.draws or 750,
                   args.tune or 1000, args.chains, args.cores, seed0=1000)
     else:
-        run_stage("REDUCED SCALE -- coverage where the geometry exists",
+        run_stage("REDUCED SCALE: coverage where the geometry exists",
                   10, 30, 300, args.datasets or 20, args.draws or 400,
                   args.tune or 800, args.chains, args.cores, seed0=0)
 

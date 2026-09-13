@@ -5,10 +5,15 @@ Expanding-window out-of-sample backtest for the Gaussian baseline, across all
 four prior settings. Saves predictions and per-window coefficients so the
 metrics can be recomputed later without re-running seven hours of sampling.
 
+Before the backtest, assert_no_lookahead corrupts every return from the
+midpoint of the evaluation period onward and confirms that no forecast dated
+before the corruption moves, exactly as in the other three backtest runners.
+
 Usage:
     python run_backtest_gaussian.py
     python run_backtest_gaussian.py --settings rescaled_r2_0p05
     python run_backtest_gaussian.py --refit-every 60 --draws 300
+    python run_backtest_gaussian.py --skip-lookahead     (if already verified)
 """
 
 from __future__ import annotations
@@ -20,14 +25,13 @@ from time import time
 
 import numpy as np
 
-from src.evaluation.backtest import expanding_window
+from src.evaluation.backtest import assert_no_lookahead, expanding_window
 from src.evaluation.metrics import (certainty_equivalent, clark_west, out_of_sample_r2,
                                     portfolio_returns, r2_by_asset, sharpe_ratio)
 from src.gibbs.backtest_adapter import gaussian_fit_fn
 
 MODEL = "baseline_gaussian"
 
-# label -> (prior, target_r2)
 SETTINGS = {
     "feng_he": ("feng_he", None),
     "rescaled_r2_0p05": ("rescaled", 0.05),
@@ -56,6 +60,9 @@ def main() -> None:
                     help="sweeps per window fit, including burn-in")
     ap.add_argument("--burn", type=int, default=100)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--skip-lookahead", action="store_true",
+                    help="skip the look-ahead verification (it costs two extra "
+                         "backtests at reduced settings)")
     args = ap.parse_args()
 
     F, R = load_universe(args.universe)
@@ -70,6 +77,24 @@ def main() -> None:
     print(f"  refit every {args.refit_every} months -> {n_fits} fits per setting")
     print(f"  {args.draws} sweeps per fit ({args.burn} burn-in), 1 chain")
     print(f"  settings: {', '.join(args.settings)}\n")
+
+    if not args.skip_lookahead:
+        print("--- look-ahead verification (reduced settings) ---", flush=True)
+        t0 = time()
+        quick = gaussian_fit_fn(prior="rescaled", target_r2=0.05, n_draws=200,
+                                n_burn=100, seed=args.seed)
+        la = assert_no_lookahead(quick, R, F, start=args.start,
+                                 refit_every=args.refit_every * 5)
+        print(f"    forecasts before corruption: max diff {la['max_forecast_diff_before']:.3e}"
+              f"   (must be exactly 0)")
+        print(f"    coefficients before:         max diff {la['max_coefficient_diff_before']:.3e}"
+              f"   (must be exactly 0)")
+        print(f"    forecasts after corruption:  max change {la['forecast_change_after']:.3e}"
+              f"   (must be > 0, or the test proves nothing)")
+        print(f"    PASSES: {la['passes']}   ({time()-t0:.0f}s)\n", flush=True)
+        if not la["passes"]:
+            raise SystemExit("look-ahead test FAILED; do not trust any results "
+                             "from this configuration")
 
     results = {}
     t_all = time()

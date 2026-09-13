@@ -8,13 +8,13 @@ is enforced in code, not just in the write-up.
 
 Two implementations are provided:
 - NumPy versions (sur_predicted_returns, sur_residuals,
-  sur_log_likelihood_numpy) -- used for diagnostics/evaluation across all
+  sur_log_likelihood_numpy): used for diagnostics/evaluation across all
   four fitted models. The Gibbs models (Gaussian baseline, Bayesian LASSO)
-  never call a log-likelihood function directly during sampling -- Feng &
-  He's Gibbs updates are closed-form conjugate formulas (eq. 14-18) -- so
+  never call a log-likelihood function directly during sampling: Feng &
+  He's Gibbs updates are closed-form conjugate formulas (eq. 14-18), so
   these functions exist for post-hoc evaluation, not for the Gibbs update
   step itself.
-- A PyTensor version (sur_log_likelihood_pytensor) -- used inside the
+- A PyTensor version (sur_log_likelihood_pytensor): used inside the
   Horseshoe / Regularised Horseshoe PyMC model definitions, since NUTS needs
   a differentiable log-density it can build a gradient through.
 
@@ -39,7 +39,7 @@ def sur_predicted_returns(F: np.ndarray, b: np.ndarray) -> np.ndarray:
     predictors F (N,T,K) and coefficients b (N,K).
 
     This is the same signal-construction step as generate.py's
-    compute_returns(), minus the residual term -- here b is a fitted or
+    compute_returns(), minus the residual term; here b is a fitted or
     hypothesised estimate (e.g. a posterior mean or a single MCMC draw),
     not a known ground truth.
     """
@@ -64,7 +64,7 @@ def sur_log_likelihood_numpy(R: np.ndarray, F: np.ndarray, b: np.ndarray,
     R : (N,T), F : (N,T,K), b : (N,K), Sigma : (N,N) -> scalar log-likelihood
     """
     N, T = R.shape
-    E = sur_residuals(R, F, b)  # (N, T)
+    E = sur_residuals(R, F, b)
 
     sign, logdet_Sigma = np.linalg.slogdet(Sigma)
     if sign <= 0:
@@ -73,7 +73,6 @@ def sur_log_likelihood_numpy(R: np.ndarray, F: np.ndarray, b: np.ndarray,
         )
 
     Sigma_inv = np.linalg.inv(Sigma)
-    # quadratic form summed over all T periods: sum_t e_t' Sigma^{-1} e_t
     quad_form = np.einsum("it,ij,jt->", E, Sigma_inv, E)
 
     log_lik = (
@@ -88,35 +87,27 @@ def sur_log_likelihood_pytensor(R, F, b, Sigma):
     PyTensor version of sur_log_likelihood_numpy, for use inside NUTS models
     via pm.Potential. Same block-factorised math as the NumPy version, but
     built entirely from pytensor.tensor operations so PyMC/NUTS can
-    differentiate through it -- e.g. w.r.t. Sigma (from its Inverse-Wishart
+    differentiate through it, e.g. w.r.t. Sigma (from its Inverse-Wishart
     prior) or b (from Horseshoe's local/global shrinkage scales).
 
-    R : (N,T), F : (N,T,K), b : (N,K), Sigma : (N,N) -- pytensor tensors
+    R : (N,T), F : (N,T,K), b : (N,K), Sigma : (N,N), pytensor tensors
     (numpy arrays / PyMC random variables are automatically wrapped)
-    -> scalar pytensor expression (a graph node, not a number -- gets
+    -> scalar pytensor expression (a graph node, not a number; gets
     evaluated as part of the model's log-probability).
     """
-    # predicted returns and residuals, via broadcasting instead of einsum
-    # (avoids depending on pytensor's einsum support, which is newer/less
-    # universally available across pytensor versions than basic ops):
-    #   b[:, None, :] reshapes b from (N,K) to (N,1,K) so it broadcasts
-    #   against F's (N,T,K) -- elementwise multiply, then sum over K.
 
     import pytensor.tensor as pt
     import pytensor.tensor.nlinalg as ptnla
 
 
-    signal = (F * b[:, None, :]).sum(axis=-1)   # (N, T)
-    E = R - signal                               # (N, T)
+    signal = (F * b[:, None, :]).sum(axis=-1)
+    E = R - signal
 
     N, T = R.shape
 
     Sigma_inv = ptnla.matrix_inverse(Sigma)
     logdet_Sigma = pt.log(ptnla.det(Sigma))
 
-    # quad_form = sum_t e_t' Sigma_inv e_t, computed without ever forming a
-    # (T,T) matrix: (Sigma_inv @ E) is (N,T); multiplying elementwise by E
-    # and summing everything gives exactly sum_{i,j,t} E[i,t]*Sigma_inv[i,j]*E[j,t]
     quad_form = (E * pt.dot(Sigma_inv, E)).sum()
 
     log_lik = (

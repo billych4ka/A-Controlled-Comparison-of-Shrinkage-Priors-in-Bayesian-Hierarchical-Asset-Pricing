@@ -21,7 +21,7 @@ same distribution. Under the first reading R-hat plateaus while ESS grows.
 
 The check therefore establishes what a single diagnostic value cannot: that
 the covariance chains are short rather than disagreeing. It is a
-disclosure-supporting calculation, not a remedy -- Sigma's mixing remains
+disclosure-supporting calculation, not a remedy: Sigma's mixing remains
 the weakest convergence result in the dissertation, and Section 5.5 reports
 it as such.
 
@@ -115,8 +115,6 @@ def main() -> None:
         rhat = float(np.nanmax(d.rhat))
         ess_min = float(np.nanmin(d.ess_bulk))
         ess_med = float(np.nanmedian(d.ess_bulk))
-        # evaluated at the WORST entry, since that is the one the threshold
-        # comparison in Section 5.5 concerns
         i = int(np.nanargmax(d.rhat))
         prod = (rhat - 1.0) * float(d.ess_bulk[i])
         print(f"{n:>12}{rhat:>12.4f}{ess_min:>10.0f}{ess_med:>12.0f}"

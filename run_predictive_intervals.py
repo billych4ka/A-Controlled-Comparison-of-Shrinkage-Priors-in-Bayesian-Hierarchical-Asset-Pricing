@@ -22,7 +22,7 @@ Usage, one model at a time so the runs can be sequenced overnight:
     python3 run_predictive_intervals.py --model baseline_gaussian
     python3 run_predictive_intervals.py --model bayesian_lasso
     python3 run_predictive_intervals.py --model regularised_horseshoe
-    python3 run_predictive_intervals.py --model horseshoe        # ~20 h
+    python3 run_predictive_intervals.py --model horseshoe        (~20 h)
 
 Expect roughly 4, 4, 6 and 20 hours respectively.
 """
@@ -75,7 +75,6 @@ def main() -> None:
     res = expanding_window_intervals(fit_fn, R, F, start=args.start,
                                      refit_every=args.refit_every)
 
-    # ---- agreement with the Chapter 5 backtest -----------------------------
     ref = (Path("results") / args.universe / args.model / "backtest"
            / f"{args.model}_{setting}_backtest.npz")
     if ref.exists():
@@ -92,7 +91,6 @@ def main() -> None:
         diff = rel = float("nan")
         print(f"\n(no saved backtest at {ref}, skipping the agreement check)")
 
-    # ---- coverage ----------------------------------------------------------
     c = res.coverage()
     print("\n" + "=" * 74)
     print(f"PREDICTIVE INTERVAL COVERAGE | {args.model}")

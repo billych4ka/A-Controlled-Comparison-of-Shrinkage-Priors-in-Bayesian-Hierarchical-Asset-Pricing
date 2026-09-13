@@ -25,20 +25,32 @@ reference). 300/300 and 500/500 sit at 0.9985, just under the correlation
 line, and 300/300 additionally saturates tree depth at 9.98, which would
 truncate trajectories in all 40 windows. 1000/1000 buys 0.0003 of correlation
 for 65% more time. Do not switch to a cheaper budget after seeing that it also
-passes -- that is selection on outcomes, the same genre as revising target_r2.
+passes: that is selection on outcomes, the same genre as revising target_r2.
 
 tau reaching 1.019x its production value at this budget matters more than the
 z statistics: tau starts at tau_0 and the data moves it to about 0.05 tau_0,
 so draws retained before it has travelled would sample B under the wrong
-shrinkage level -- a systematic error repeated in every window.
+shrinkage level, a systematic error repeated in every window.
 
 THE GUARDRAIL: a monthly OOS R^2 above ~0.05 should be assumed an alignment
 bug until proven otherwise. Realistic values are 0.005-0.01, often negative;
 the baseline and the LASSO both came in near -0.049 on this universe.
 
+The SE of an annualised Sharpe over 479 months is 0.158, so a difference of a
+few hundredths is a direction, not a detected effect.
+
+Predicted in advance: R^2 differences smaller than the baseline's own
+between-setting spread, because b_bar carries 98.8% of the loss and its prior
+is fixed across all four models; larger differences in Sharpe and CE, which
+see only the cross-sectional component where theta acts.
+
+Diebold-Mariano is used against the other models because those comparisons are
+non-nested. Against the historical mean (nested) it gives a mean statistic of
++5.38 under the null and declares the benchmark the winner 99.7% of the time.
+
 Usage:
     caffeinate -i python3 run_backtest_horseshoe.py
-    python3 run_backtest_horseshoe.py --skip-lookahead     # only if already verified
+    python3 run_backtest_horseshoe.py --skip-lookahead     (only if already verified)
     python3 run_backtest_horseshoe.py --universe size_op_25
 """
 
@@ -59,7 +71,7 @@ from src.nuts.backtest_adapter import horseshoe_fit_fn
 
 MODEL = "horseshoe"
 BASELINE, LASSO = "baseline_gaussian", "bayesian_lasso"
-COMPARISON_SETTING = "rescaled_r2_0p05"      # the comparison of record
+COMPARISON_SETTING = "rescaled_r2_0p05"
 
 
 def load_universe(universe: str):
@@ -117,12 +129,6 @@ def main() -> None:
                               n_draws=args.draws, n_tune=args.tune,
                               seed=args.seed)
 
-    # ---- look-ahead verification -------------------------------------------
-    # Runs TWO full backtests, so it uses a reduced budget and a coarse refit
-    # grid. It is not optional: the alignment convention (F[:,t,:] forecasts
-    # R[:,t], no further lagging) is the single most dangerous thing in the
-    # evaluation code, and getting it backwards would produce spectacular,
-    # meaningless results rather than an error.
     if not args.skip_lookahead:
         print("\n--- look-ahead verification (reduced settings) ---")
         t0 = time()
@@ -140,9 +146,8 @@ def main() -> None:
               f"proves nothing)")
         print(f"    PASSES: {la['passes']}   ({time()-t0:.0f}s)")
         if not la["passes"]:
-            raise SystemExit("look-ahead check FAILED -- do not run the backtest")
+            raise SystemExit("look-ahead check FAILED; do not run the backtest")
 
-    # ---- the backtest -------------------------------------------------------
     print()
     t0 = time()
     bt = expanding_window(fit_fn, R, F, start=args.start,
@@ -159,7 +164,6 @@ def main() -> None:
     with open(outdir / f"{MODEL}_{tag}_backtest_meta.json", "w") as fh:
         json.dump(meta, fh, indent=2, default=str)
 
-    # ---- metrics ------------------------------------------------------------
     pr = portfolio_returns(bt.realised, bt.predicted)
     cw = clark_west(bt.realised, bt.predicted, bt.benchmark)
     by_asset = r2_by_asset(bt.realised, bt.predicted, bt.benchmark)
@@ -188,11 +192,10 @@ def main() -> None:
 
     if result["r2"] > 0.05:
         print("\n   *** OOS R^2 above 0.05. Assume an ALIGNMENT BUG until proven")
-        print("   otherwise -- realistic monthly values are 0.005-0.01 and often")
+        print("   otherwise; realistic monthly values are 0.005-0.01 and often")
         print("   negative. Check the look-ahead result and the F/R alignment")
         print("   before reporting anything. ***")
 
-    # ---- against the other two models ---------------------------------------
     for label, model in (("baseline", BASELINE), ("LASSO", LASSO)):
         z = load_comparison(args.universe, model)
         if z is None:
@@ -217,24 +220,13 @@ def main() -> None:
               f"{z['predicted'].std()/z['realised'].std():>11.3f}")
         print(f"\n   Diebold-Mariano: {dm['statistic']:+.2f} "
               f"(p {dm['p_value']:.4f}, two-sided)")
-        print(f"   [NEGATIVE favours the horseshoe. Non-nested comparison, so DM")
-        print(f"    is correct here; NEVER use DM against the historical mean --")
-        print(f"    under the nested null it gives a mean statistic of +5.38 and")
-        print(f"    declares the benchmark the winner 99.7% of the time.]")
+        print("   [negative favours the horseshoe; non-nested, so DM]")
 
     with open(outdir / f"{MODEL}_{tag}_backtest_result.json", "w") as fh:
         json.dump(result, fh, indent=2, default=str)
 
     print("\n" + "=" * 78)
-    print("   The SE of an annualised Sharpe over 479 months is 0.158, so a")
-    print("   difference of a few hundredths is a DIRECTION, not a detected")
-    print("   effect. Report it as consistent across universes if it is, not as")
-    print("   significance.")
-    print("\n   PRE-REGISTERED: R^2 differences smaller than the baseline's own")
-    print("   between-setting spread, because b_bar carries 98.8% of the loss and")
-    print("   its prior is fixed across all four models. Larger differences")
-    print("   predicted in Sharpe and CE, which see only the cross-sectional")
-    print("   component where theta acts.")
+    print("   SE of an annualised Sharpe over 479 months: 0.158")
 
 
 if __name__ == "__main__":

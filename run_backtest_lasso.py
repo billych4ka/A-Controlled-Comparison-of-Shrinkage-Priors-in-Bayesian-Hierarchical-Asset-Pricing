@@ -6,7 +6,7 @@ predictions and per-window coefficients so the metrics can be recomputed later
 without re-running the sampling.
 
 ONE SETTING, where the Gaussian baseline ran four. The baseline's four existed
-to test whether the arbitrariness of target_r2 reached performance -- which it
+to test whether the arbitrariness of target_r2 reached performance, which it
 did not, though it did move which predictors looked important in sample. The
 LASSO has no equivalent knob: lambda is learned from the data in every window.
 Its only comparable choice is the Gamma hyperprior's centre, and that washes
@@ -35,13 +35,24 @@ standard deviation.
 
 Worth reporting: lambda settles near 553 in the first window against 419 on the
 full sample. The LASSO learns a tighter shrinkage level when it has less data
-and loosens as history accumulates. The baseline cannot do this -- its prior
+and loosens as history accumulates. The baseline cannot do this: its prior
 scale is fixed by target_r2 regardless of window length.
+
+Against the baseline, Diebold-Mariano is used because the two models are
+non-nested; Clark-West is for the nested comparison against the historical
+mean, where DM gives a mean statistic of +5.38 under the null and declares the
+benchmark the winner 99.7% of the time.
+
+The loss decomposition is reported because the baseline's out-of-sample loss
+was 98.8% attributable to b_bar, whose prior is shared by all four models. The
+LASSO acts on theta, which carried 1.2%, so similar totals are what the design
+predicts; the decomposition shows whether the composition of the loss changed
+even when the total did not.
 
 Usage:
     python3 run_backtest_lasso.py
     python3 run_backtest_lasso.py --refit-every 60 --draws 800
-    python3 run_backtest_lasso.py --skip-lookahead     # if already verified
+    python3 run_backtest_lasso.py --skip-lookahead     (if already verified)
 """
 
 from __future__ import annotations
@@ -78,7 +89,7 @@ def main() -> None:
     ap.add_argument("--start", type=int, default=240,
                     help="first month forecast; 240 = 20-year initial training window")
     ap.add_argument("--refit-every", type=int, default=12,
-                    help="MUST match every other model -- it defines the information "
+                    help="MUST match every other model; it defines the information "
                          "set, not just the cost")
     ap.add_argument("--draws", type=int, default=1200,
                     help="sweeps per window fit, including burn-in")
@@ -106,12 +117,6 @@ def main() -> None:
     fit_fn = lasso_fit_fn(target_r2=args.target_r2, n_draws=args.draws,
                           n_burn=args.burn, seed=args.seed)
 
-    # ---- look-ahead verification ------------------------------------------
-    # Corrupt every return from the midpoint onward and confirm that no forecast
-    # dated BEFORE the corruption moves. This is the one bug class that would
-    # produce spectacular, meaningless results, and it cannot be checked by
-    # inspection -- the alignment convention (F[i,t,:] forecasts R[i,t], so
-    # F[:,t,:] is dated t-1) is easy to get backwards and looks fine either way.
     if not args.skip_lookahead:
         print("--- look-ahead verification (reduced settings) ---", flush=True)
         t0 = time()
@@ -127,10 +132,9 @@ def main() -> None:
               f"   (must be > 0, or the test proves nothing)")
         print(f"    PASSES: {la['passes']}   ({time()-t0:.0f}s)\n", flush=True)
         if not la["passes"]:
-            raise SystemExit("look-ahead test FAILED -- do not trust any results "
+            raise SystemExit("look-ahead test FAILED; do not trust any results "
                              "from this configuration")
 
-    # ---- the backtest -----------------------------------------------------
     t0 = time()
     bt = expanding_window(fit_fn, R, F, start=args.start,
                           refit_every=args.refit_every, progress=True)
@@ -146,7 +150,6 @@ def main() -> None:
     with open(outdir / f"{MODEL}_{SETTING}_backtest_meta.json", "w") as fh:
         json.dump(meta, fh, indent=2, default=str)
 
-    # ---- metrics ----------------------------------------------------------
     pr = portfolio_returns(bt.realised, bt.predicted)
     cw = clark_west(bt.realised, bt.predicted, bt.benchmark)
     by_asset = r2_by_asset(bt.realised, bt.predicted, bt.benchmark)
@@ -173,7 +176,6 @@ def main() -> None:
           f"one-sided)")
     print(f"   prediction volatility  {result['pred_vol_ratio']:.3f} of realised")
 
-    # ---- against the baseline --------------------------------------------
     base_path = (Path("results") / args.universe / BASELINE / "backtest"
                  / f"{BASELINE}_{SETTING}_backtest.npz")
     if base_path.exists():
@@ -197,13 +199,8 @@ def main() -> None:
         result["dm_p"] = dm["p_value"]
         print(f"\n   Diebold-Mariano: {dm['statistic']:+.2f} (p {dm['p_value']:.4f}, "
               f"two-sided)")
-        print("   [NEGATIVE favours the LASSO. DM is the right test here because the")
-        print("    two models are NON-NESTED. Clark-West above is for the nested")
-        print("    comparison against the historical mean -- applying DM there gives")
-        print("    a mean statistic of +5.38 under the null and declares the")
-        print("    benchmark the winner 99.7% of the time.]")
+        print("   [negative favours the LASSO; non-nested, so DM]")
 
-        # where the loss sits: common (market-wide) vs cross-sectional
         print("\n   LOSS DECOMPOSITION   (share of benchmark squared error)")
         print(f"   {'':<14s} {'var common':>11s} {'var cross':>10s} "
               f"{'cov common':>11s} {'cov cross':>10s}")
@@ -217,11 +214,6 @@ def main() -> None:
             print(f"   {lbl:<14s} {N*(dc**2).sum()/sse:>+11.4f} "
                   f"{(dx**2).sum()/sse:>+10.4f} {-2*N*(ec*dc).sum()/sse:>+11.4f} "
                   f"{-2*(ex*dx).sum()/sse:>+10.4f}")
-        print("   [the baseline's out-of-sample loss was 98.8% attributable to b_bar,")
-        print("    whose prior is shared by all four models. The LASSO acts on theta,")
-        print("    which carried 1.2%. Similar totals are therefore what the DESIGN")
-        print("    predicts, not a null result -- but the decomposition shows whether")
-        print("    the composition of the loss changed even when the total did not.]")
 
     print("\n   OOS R^2 is against the expanding historical mean. Realistic monthly")
     print("   values are 0.005-0.01 and often negative; anything above ~0.05 should")

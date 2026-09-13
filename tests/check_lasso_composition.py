@@ -7,8 +7,7 @@ conditional separately; that does not establish that the assembled sweep is
 right, because a mis-ordered update or a stale iterate leaves every individual
 conditional correct and the composition wrong.
 
-Reproduces Appendix A.6.2, second paragraph. Was check_chunk6.py during
-development.
+Reproduces Appendix A.7.2, second paragraph.
 
 Three parts, and the order matters:
 
@@ -16,7 +15,7 @@ Three parts, and the order matters:
      A validation that cannot detect a deliberate error is not a validation.
      Two corruptions are tried. One changes the MODEL and is detected at
      188-205 SE. The other is a merely STALE dependency and is correctly NOT
-     detected -- one sweep of staleness in a chain with lag-one autocorrelation
+     detected: one sweep of staleness in a chain with lag-one autocorrelation
      0.977 is almost a null intervention. The second result is the more
      informative: it bounds what this kind of test can establish, and an
      earlier version of this script used only that corruption and therefore
@@ -26,7 +25,7 @@ Three parts, and the order matters:
      through.
   3. RECOVERY of known ground truth, judged against the POSTERIOR SD, not the
      Monte Carlo error of the posterior mean. An earlier version divided by
-     MCSE and reported |z| up to 47 on a correct sampler (Appendix A.6.5).
+     MCSE and reported |z| up to 47 on a correct sampler (Appendix A.7.5).
 
 Recorded results (N=6, K=5, T=150, seed 3):
     theta_is_B corruption detected at -188 to -206 SE (varies with seed)
@@ -49,11 +48,6 @@ N, K, T = 6, 5, 150
 sim = simulate_sur_data(N=N, K=K, T=T, seed=3)
 R, F = sim.R, sim.F
 
-# WEAK hyperparameters. The production prior is informative enough that a
-# recovery test would confirm the prior rather than the code: at
-# Delta_b_bar = 5.7e-07 the posterior for b_bar is pinned near zero whatever
-# the data says, so "recovered the truth" would mean "the truth was near the
-# prior mean".
 weak = LassoHyperparams(
     b_bar_bar=np.zeros(K), Delta_b_bar=np.eye(K) * 100.0,
     nu_Sigma=N + 2.0, V_Sigma=np.eye(N) * 1.0,
@@ -78,7 +72,6 @@ def ess_1d(x):
     return float(n / max(tau, 1.0))
 
 
-# ---- 1. is this test sensitive? ----------------------------------------
 print("\n1. SENSITIVITY: would a broken composition be detected?")
 
 
@@ -93,12 +86,8 @@ def run_broken(mode, n_draws=6000, n_burn=1500, seed=0):
             rng, G, Fr, st["Sigma"], st["tau2"], weak.s,
             weak.b_bar_bar, weak.Delta_b_bar)
         theta = st["B"] - st["b_bar"][None, :]
-        # shrink B itself rather than the deviation from b_bar: a plausible
-        # slip, and it changes the MODEL rather than just the scan
         use = st["B"] if mode == "theta_is_B" else theta
         st["lam"] = sample_lambda_collapsed(use, weak.s, weak, rng)
-        # use the previous sweep's lambda for tau^2: a stale dependency that
-        # leaves every conditional individually valid
         lam_use = lam_prev if mode == "tau2_prev_lambda" else st["lam"]
         st["tau2"] = sample_tau2(use, weak.s, lam_use, rng)
         lam_prev = st["lam"]
@@ -128,7 +117,6 @@ print("    tau2_prev_lambda is a STALE dependency, leaves the target unchanged")
 print("    in the limit, and is correctly NOT detected. So this test catches")
 print("    wrong models, not wrong scan order; the latter needs section 2.]")
 
-# ---- 2. composition vs an analytic joint --------------------------------
 print("\n2. COMPOSITION vs THE EXACT (B, b_bar) POSTERIOR")
 print("   Sigma and tau^2 held FIXED, so (B, b_bar) is exactly Gaussian with")
 print("   mean P^-1 rhs. The sweep must reproduce it despite autocorrelation.")
@@ -164,7 +152,7 @@ for it in range(n_draws):
 
 emp = draws.mean(axis=0)
 ess = np.array([ess_1d(draws[:, j]) for j in range(M)])
-z = (emp - exact) / np.sqrt(np.diag(Pinv) / ess)     # ESS-adjusted, NOT sqrt(n)
+z = (emp - exact) / np.sqrt(np.diag(Pinv) / ess)
 z_naive = (emp - exact) / np.sqrt(np.diag(Pinv) / (n_draws - n_burn))
 print(f"   ESS-adjusted:  max |z| {np.abs(z).max():.2f}   median |z| "
       f"{np.median(np.abs(z)):.2f}   ({M} parameters)")
@@ -173,7 +161,6 @@ print(f"   naive sqrt(n): max |z| {np.abs(z_naive).max():.2f}"
 print(f"   ESS: min {ess.min():.0f} median {np.median(ess):.0f} of "
       f"{n_draws-n_burn} draws")
 
-# ---- 3. recovery of ground truth ---------------------------------------
 print("\n3. RECOVERY OF KNOWN GROUND TRUTH")
 print("   Judged against the POSTERIOR SD, not the MCSE of the posterior mean.")
 print("   With ESS in the thousands the MCSE is tiny, so dividing by it makes")
@@ -192,7 +179,7 @@ for j in range(K):
           f"{bb[:, j].std():>9.4f} "
           f"{(bb[:, j].mean()-sim.b_bar[j])/bb[:, j].std():>7.2f} {str(ok):>10s}")
 print(f"   {inside}/{K} true values inside their 95% credible interval")
-print("   [K=5 is far too few for a coverage claim -- that is")
+print("   [K=5 is far too few for a coverage claim; that is")
 print("    tests/test_calibration_lasso.py, over many independent datasets.")
 print("    Systematic failure here would show as every z having the same sign]")
 

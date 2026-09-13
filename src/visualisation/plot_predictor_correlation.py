@@ -4,7 +4,7 @@ src/visualisation/plot_predictor_correlation.py
 Figure for Section 3.2: correlation structure of the 144-column design matrix.
 
 WHAT THE TWO PANELS DO. Panel (a) is the correlation matrix, which shows the
-block structure -- common predictors, asset-level predictors, and the
+block structure: common predictors, asset-level predictors, and the
 interactions that inherit from both. Panel (b) is the point of the figure: the
 off-diagonal correlations sorted by magnitude, on a log axis. The design is
 nearly orthogonal, with a median absolute off-diagonal correlation of about
@@ -17,7 +17,7 @@ each common predictor is interacted with both of them.
 Panel (b) exists because the heatmap alone cannot carry the claim. Thirty-two
 affected columns out of 144 is 32 cells out of 20,736, which is invisible at
 print size. The sorted plot makes the count readable and shows that the
-redundancy is concentrated rather than diffuse -- which matters for the
+redundancy is concentrated rather than diffuse, which matters for the
 sparsity argument, since a sparse procedure here faces a small number of
 genuine near-ties rather than a general collinearity problem.
 
@@ -42,9 +42,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import TwoSlopeNorm
 
-# ---------------------------------------------------------------------------
-# Dissertation house style
-# ---------------------------------------------------------------------------
 
 STYLE = {
     "font.family": "sans-serif",
@@ -72,9 +69,6 @@ STYLE = {
     "savefig.transparent": False,
 }
 
-# The two return-history predictors whose eleven months of shared history
-# drive the redundancy. Matched case-insensitively against recorded column
-# names; adjust if the pipeline renames them.
 OVERLAP_PAIR = ("roll_mean12", "mom_12_1")
 
 ACCENT = "#D05A3A"
@@ -134,11 +128,10 @@ def main() -> None:
     print(f"{args.universe}: N={N} T={T} K={K}")
 
     X = F.reshape(-1, K)
-    keep = X.std(axis=0) > 0            # the intercept is constant
+    keep = X.std(axis=0) > 0
     C = np.full((K, K), np.nan)
     C[np.ix_(keep, keep)] = np.corrcoef(X[:, keep].T)
 
-    # ---- diagnostics quoted in the text and caption ----------------------
     lower = [c.lower() for c in cols]
     n_pairs = None
     try:
@@ -173,7 +166,6 @@ def main() -> None:
     print(f"  median |corr| off-diagonal: {np.median(r):.3f}")
     print(f"  99th percentile: {np.percentile(r, 99):.3f}\n")
 
-    # ---- figure ----------------------------------------------------------
     plt.rcParams.update(STYLE)
     fig, (a1, a2) = plt.subplots(
         1, 2, figsize=(6.5, 2.9),
@@ -181,7 +173,6 @@ def main() -> None:
     )
     fig.patch.set_facecolor("white")
 
-    # Panel (a): the correlation matrix.
     im = a1.imshow(
         C, cmap="RdBu_r",
         norm=TwoSlopeNorm(vmin=-1.0, vcenter=0.0, vmax=1.0),
@@ -192,12 +183,6 @@ def main() -> None:
         for pos in (start, stop):
             a1.axhline(pos - 0.5, color="#333333", linewidth=0.5)
             a1.axvline(pos - 0.5, color="#333333", linewidth=0.5)
-    # Block labels are omitted from both axes and named in the caption
-    # instead. The common and asset-level blocks span only 15 and 8 of the 144
-    # columns, so at this panel width their labels collide with each other;
-    # the boundary lines already show three regions, and the caption states
-    # their order. Panel (b) carries the claim, so panel (a) does not need to
-    # be self-labelling.
     a1.set_xticks([])
     a1.set_yticks([])
     a1.tick_params(length=0)
@@ -210,8 +195,6 @@ def main() -> None:
     cb.set_ticks([-1.0, -0.5, 0.0, 0.5, 1.0])
     cb.ax.tick_params(length=2.0, width=0.5)
 
-    # Panel (b): off-diagonal correlations, sorted, log rank axis. The
-    # near-duplicate pairs are the separated cluster at the right-hand end.
     s = np.sort(r)[::-1]
     rank = np.arange(1, s.size + 1)
     a2.plot(rank, s, color=GREY, linewidth=1.0, zorder=2)

@@ -1,5 +1,5 @@
 """
-scripts/run_sharpe_test.py
+run_sharpe_test.py
 
 Ledoit and Wolf (2008) test for the difference between two Sharpe ratios,
 applied to the horseshoe-family versus Gibbs-family comparisons of
@@ -7,7 +7,7 @@ Section 5.3. Reference:
 
     Ledoit, O. and Wolf, M. (2008). Robust performance hypothesis testing
     with the Sharpe ratio. Journal of Empirical Finance, 15(5), 850-859.
-    doi:10.1016/j.jfin.2008.03.002
+    doi:10.1016/j.jempfin.2008.03.002
 
 The test is a studentised circular block bootstrap of
 
@@ -37,8 +37,8 @@ those behind Table 5.4.
 
 Run from the project root:
 
-    python3 scripts/run_sharpe_test.py            # B = 4999, b = 5
-    python3 scripts/run_sharpe_test.py --sweep    # also b in {2, 10, 20}
+    python3 run_sharpe_test.py            (B = 4999, b = 5)
+    python3 run_sharpe_test.py --sweep    (also b in {2, 10, 20})
 
 Output: printed table, and logs/sharpe_test.csv
 """
@@ -63,7 +63,6 @@ MODELS = {
     "reg_horseshoe": ("regularised_horseshoe", "p0_23_r2_0p05"),
 }
 
-# (strategy 1, strategy 2): H0 is SR_1 = SR_2
 COMPARISONS = (
     ("horseshoe", "baseline"),
     ("reg_horseshoe", "baseline"),
@@ -73,10 +72,6 @@ COMPARISONS = (
     ("horseshoe", "reg_horseshoe"),
 )
 
-
-# ---------------------------------------------------------------------------
-# Ledoit-Wolf machinery
-# ---------------------------------------------------------------------------
 
 def _sharpe_from_moments(mu: float, gamma: float) -> float:
     return mu / np.sqrt(gamma - mu * mu)
@@ -120,7 +115,7 @@ def _block_psi(y: np.ndarray, b: int) -> np.ndarray:
     T = y.shape[0]
     l = T // b
     yc = (y - y.mean(axis=0))[: l * b]
-    zeta = yc.reshape(l, b, -1).sum(axis=1) / np.sqrt(b)     # l x k
+    zeta = yc.reshape(l, b, -1).sum(axis=1) / np.sqrt(b)
     return zeta.T @ zeta / l
 
 
@@ -148,7 +143,7 @@ def ledoit_wolf_test(r1: np.ndarray, r2: np.ndarray, *, b: int = 5,
         raise ValueError("r1 and r2 must be 1-D arrays of equal length")
     T = r1.shape[0]
     if hac_lag is None:
-        hac_lag = int(np.floor(4 * (T / 100) ** (2 / 9)))     # Newey-West rule
+        hac_lag = int(np.floor(4 * (T / 100) ** (2 / 9)))
 
     y = _moment_series(r1, r2)
     delta_hat, se_hat = _delta_and_se(y, _hac_bartlett(y, hac_lag))
@@ -180,10 +175,6 @@ def ledoit_wolf_test(r1: np.ndarray, r2: np.ndarray, *, b: int = 5,
     }
 
 
-# ---------------------------------------------------------------------------
-# Driver
-# ---------------------------------------------------------------------------
-
 def load_returns(results_dir: Path, universe: str, key: str) -> np.ndarray:
     model, setting = MODELS[key]
     p = results_dir / universe / model / "backtest" / f"{model}_{setting}_backtest.npz"
@@ -206,7 +197,6 @@ def main() -> None:
     blocks = [args.block] + ([2, 10, 20] if args.sweep else [])
     blocks = sorted(set(blocks))
 
-    # Load every series once
     rets: dict[str, dict[str, np.ndarray]] = {}
     for u in UNIVERSES:
         rets[u] = {k: load_returns(results_dir, u, k) for k in MODELS}

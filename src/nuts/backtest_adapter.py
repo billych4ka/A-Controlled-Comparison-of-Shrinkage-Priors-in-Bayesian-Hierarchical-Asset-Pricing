@@ -5,8 +5,8 @@ Adapters that turn the NUTS models into the `fit_fn` callable that
 src/evaluation/backtest.py's expanding_window expects.
 
 Mirrors src/gibbs/backtest_adapter.py exactly in role and interface. The
-evaluation code stays model-agnostic; everything model-specific -- which
-sampler, which prior, how hyperparameters are chosen -- lives here, and
+evaluation code stays model-agnostic; everything model-specific (which
+sampler, which prior, how hyperparameters are chosen) lives here, and
 expanding_window sees only
 
     fit_fn(R_train, F_train) -> b_hat  of shape (N, K)
@@ -20,11 +20,11 @@ Recomputed inside every window from training data only, as for the Gibbs
 models. For the horseshoe that is four quantities: V_Sigma = S_hat, Var(r)
 and trace(C) (which set Delta_b_bar through the shared rescaling), and
 sigma_pooled, which enters tau_0 directly. Using full-sample values would be
-look-ahead -- mild, since second moments move slowly, but real and free to
+look-ahead: mild, since second moments move slowly, but real and free to
 avoid.
 
 tau_0 therefore differs slightly window to window, so "the horseshoe" is a
-PROCEDURE rather than one fixed specification -- the same statement already
+PROCEDURE rather than one fixed specification, the same statement already
 required for the baseline's rescaled settings and the LASSO. p_0 = 23 and
 target_r2 = 0.05 are fixed; what moves is the data-dependent scale they are
 applied to.
@@ -32,25 +32,25 @@ applied to.
 Sampling budget
 ---------------
 Backtest fits use far fewer draws than the production runs because the
-backtest uses only the POSTERIOR MEAN of b -- it never reports a credible
+backtest uses only the POSTERIOR MEAN of b; it never reports a credible
 interval. An interval endpoint needs roughly 7x the draws of a mean for equal
 precision, so the production budget is sized for intervals and this one is
 not.
 
 The production run's own diagnostics say this can be aggressive. On the full
 sample, B reached bulk ESS with a median of 5,591 of 6,000 across all 3,600
-coefficients -- close to superefficient, as NUTS often is. B is the estimand
+coefficients, close to superefficient, as NUTS often is. B is the estimand
 here; tau's much lower ESS (1,012) and Sigma's (158) set the PRODUCTION
 budget and are irrelevant to a posterior mean of B.
 
 WHAT THE TUNING PHASE HAS TO ACHIEVE, and why it cannot be cut to nothing.
-tau starts at tau_0 and the data moves it to roughly 0.05 tau_0 -- a factor
+tau starts at tau_0 and the data moves it to roughly 0.05 tau_0, a factor
 of twenty. Retaining draws before tau has travelled would sample B under the
 wrong shrinkage level: a systematic error repeated in every window, not a
 Monte Carlo one. This is the same concern the LASSO's adapter records for
 lambda, and it is why n_tune is not simply set to a token value.
 Reassuringly, a 200-tune pilot on the full sample already had tau at
-2.06e-05, so the journey is fast -- but early windows are the risk, and
+2.06e-05, so the journey is fast, but early windows are the risk, and
 validate_budget_horseshoe checks a window rather than assuming.
 
 Early windows are thin: at t=240 with K=144 there are 96 residual degrees of
@@ -87,7 +87,7 @@ def horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
     p0        : 23, fixed a priori; NOT to be revised after seeing results
     target_r2 : 0.05, sets Delta_b_bar, shared with all four models
     n_choice  : "T" (adopted) or "NT" (disclosed robustness)
-    n_draws   : RETAINED draws per window fit, EXCLUDING tuning -- the
+    n_draws   : RETAINED draws per window fit, EXCLUDING tuning, the
                 opposite of the Gibbs adapters' convention, where n_draws
                 includes burn-in. PyMC's argument means retained, and
                 silently redefining it would be worse than the inconsistency
@@ -95,7 +95,7 @@ def horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
                 here: adapting the step size and mass matrix, AND letting tau
                 travel from tau_0 to wherever the data puts it
     seed      : FIXED, so the returned callable is deterministic given its
-                inputs -- required by assert_no_lookahead, which would
+                inputs: required by assert_no_lookahead, which would
                 otherwise report sampling noise as look-ahead. Every model's
                 adapter must do the same
 
@@ -105,8 +105,8 @@ def horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
     That is the uniform-setting decision enforced in code rather than by
     memory. target_accept = 0.99 was chosen by measurement: divergences fell
     16/200 -> 7/200 -> 3/200 across 0.90 / 0.95 / 0.99, and the posterior mean
-    of b at 0.90 and 0.99 correlated at 0.9944 -- the same agreement the
-    LASSO showed between random seeds -- so the uniform choice is
+    of b at 0.90 and 0.99 correlated at 0.9944, the same agreement the
+    LASSO showed between random seeds, so the uniform choice is
     conservative rather than necessary.
 
     Returns a closure suitable for expanding_window's fit_fn argument.
@@ -118,7 +118,6 @@ def horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
         chains = run_nuts(R_train, F_train, hp, n_draws=n_draws,
                           n_tune=n_tune, chains=1, cores=1, seed0=seed,
                           progressbar=False)
-        # posterior mean of the asset-specific coefficients, (N, K)
         return chains[0].B.mean(axis=0)
 
     fit.settings = {"model": "horseshoe", "p0": p0, "target_r2": target_r2,
@@ -147,14 +146,14 @@ def validate_budget_horseshoe(R: np.ndarray, F: np.ndarray,
 
     READ THE MEDIAN z, NOT THE MAX. With 3,600 parameters, two perfectly
     agreeing estimates give a max |z| whose own median is 3.73, with a
-    5th-95th range of 3.34-4.34 -- it is the maximum of 3,600 draws, so it is
+    5th-95th range of 3.34-4.34; it is the maximum of 3,600 draws, so it is
     large by construction. A median near 1 and a max under about 4 is
     agreement. The baseline's accepted budget gave median 0.72 with 100%
     within 3 SE and correlation 0.9989.
 
     Note this validates B ONLY. tau's and Sigma's own ESS are far lower and
     are what set the production budget, but the backtest never reports an
-    interval on either -- it uses only the posterior mean of B.
+    interval on either; it uses only the posterior mean of B.
     """
     K = F.shape[2]
     hp = horseshoe_hyperparameters(R, F, K, p0=p0, target_r2=target_r2)
@@ -163,8 +162,7 @@ def validate_budget_horseshoe(R: np.ndarray, F: np.ndarray,
     d = chains[0]
     B_hat = d.B.mean(axis=0)
 
-    # combined Monte Carlo standard error of the two estimates
-    ess_reduced = max(n_draws / 2.0, 1.0)      # conservative: assume ESS = n/2
+    ess_reduced = max(n_draws / 2.0, 1.0)
     se = np.sqrt(d.B.var(axis=0, ddof=1) / ess_reduced
                  + d.B.var(axis=0, ddof=1) / max(reference_ess, 1.0))
     z = np.abs(B_hat - reference_B) / np.where(se > 0, se, np.nan)
@@ -181,17 +179,6 @@ def validate_budget_horseshoe(R: np.ndarray, F: np.ndarray,
         "seconds": float(d.meta.get("sampling_seconds_all_chains", np.nan)),
     }
 
-# =========================================================================
-# APPEND to src/nuts/backtest_adapter.py, below horseshoe_fit_fn and
-# validate_budget_horseshoe. Add to the imports at the top of that file:
-#
-#     from src.nuts.regularised_horseshoe import (
-#         reg_horseshoe_hyperparameters, run_nuts as run_nuts_reg)
-#
-# One adapter module per SAMPLER FAMILY, not per model -- the regularised
-# horseshoe belongs here alongside the plain one, not in a third file.
-# =========================================================================
-
 
 def reg_horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
                          nu: float = 4.0, n_choice: str = "T",
@@ -202,7 +189,7 @@ def reg_horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
     Build a fit_fn for the Regularised Horseshoe.
 
     Identical in role to horseshoe_fit_fn. Everything in that docstring about
-    point-in-time hyperparameters applies unchanged -- Delta_b_bar, V_Sigma,
+    point-in-time hyperparameters applies unchanged: Delta_b_bar, V_Sigma,
     sigma and tau_0 are recomputed inside every window from training data
     only, so "the model" is a PROCEDURE rather than one fixed specification.
 
@@ -223,14 +210,14 @@ def reg_horseshoe_fit_fn(p0: int = 23, target_r2: float = 0.05,
     check_reg_backtest_budget.py settles it.
 
     WHAT THE TUNING PHASE HAS TO ACHIEVE HERE. tau starts at tau_0 and the
-    data moves it to about 0.09 tau_0 -- a factor of eleven, against the plain
+    data moves it to about 0.09 tau_0, a factor of eleven, against the plain
     horseshoe's twenty. c starts at slab_scale and the data pulls it to 0.69
     of prior E[c]. Retaining draws before either has travelled would sample B
     under the wrong shrinkage level: a systematic error repeated in all 40
     windows, not a Monte Carlo one.
 
     seed is FIXED so the returned callable is deterministic given its inputs,
-    which assert_no_lookahead requires -- otherwise sampling noise is reported
+    which assert_no_lookahead requires; otherwise sampling noise is reported
     as look-ahead.
 
     Sampler settings (target_accept = 0.99, init = "adapt_diag",
@@ -269,7 +256,7 @@ def validate_budget_reg_horseshoe(R: np.ndarray, F: np.ndarray,
     B under the right shrinkage.
 
     reference_ess : use B's MEDIAN bulk ESS from the production run, not its
-                    minimum -- the minimum comes from a handful of stragglers
+                    minimum; the minimum comes from a handful of stragglers
                     and would understate the reference's precision everywhere
                     else.
 
@@ -285,7 +272,7 @@ def validate_budget_reg_horseshoe(R: np.ndarray, F: np.ndarray,
     d = chains[0]
     B_hat = d.B.mean(axis=0)
 
-    ess_reduced = max(n_draws / 2.0, 1.0)      # conservative: assume ESS = n/2
+    ess_reduced = max(n_draws / 2.0, 1.0)
     se = np.sqrt(d.B.var(axis=0, ddof=1) / ess_reduced
                  + d.B.var(axis=0, ddof=1) / max(reference_ess, 1.0))
     z = np.abs(B_hat - reference_B) / np.where(se > 0, se, np.nan)

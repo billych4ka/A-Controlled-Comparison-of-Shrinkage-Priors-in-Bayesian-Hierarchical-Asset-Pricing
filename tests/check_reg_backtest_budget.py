@@ -1,5 +1,5 @@
 """
-check_reg_backtest_budget.py -- how many draws does a regularised horseshoe
+check_reg_backtest_budget.py: how many draws does a regularised horseshoe
 window fit need?
 
 The backtest runs 40 fits per universe and uses only the POSTERIOR MEAN of B.
@@ -10,13 +10,13 @@ The plain horseshoe's answer was 750/500, chosen by the same procedure. That
 figure CANNOT simply be inherited: this model's posterior is far better
 conditioned (tree depth 7 against 9, step size 0.028 against 0.008, zero
 divergences against 0.9%, 41 minutes against 3h12m), which argues for fewer
-draws -- but c is a NEW global parameter and tau mixes somewhat worse
+draws, but c is a NEW global parameter and tau mixes somewhat worse
 (ESS 709 against 1,012), which argues for more.
 
 TWO GLOBAL PARAMETERS MUST HAVE TRAVELLED, not one. tau starts at tau_0 and
 the data moves it to 0.091 tau_0; c starts at slab_scale and the data pulls it
 to 0.69 of prior E[c]. Retained draws taken before either has arrived sample B
-under the wrong shrinkage level -- a systematic error repeated in all 40
+under the wrong shrinkage level: a systematic error repeated in all 40
 windows, not a Monte Carlo one. Both ratios are reported per candidate, and a
 budget failing either is disqualified however good its z looks.
 
@@ -24,7 +24,7 @@ THE BINDING FRACTION IS ALSO REPORTED per candidate. If a short budget leaves
 the slab binding for a materially different fraction than production's 12.4%,
 the backtest is not fitting the same model the production run described.
 
-RULE, FIXED BEFORE THE NUMBERS ARE SEEN -- adopt the SMALLEST budget with
+RULE, FIXED BEFORE THE NUMBERS ARE SEEN: adopt the SMALLEST budget with
 median z below ~1, everything within 4 SE, correlation above 0.999, tau within
 20% of the reference, c within 20%, and binding within 3 percentage points of
 12.4%. Do not pick the cheapest that passes after the fact, and do not pick
@@ -49,7 +49,7 @@ from src.nuts.regularised_horseshoe import (RegHorseshoeDraws,
                                             reg_horseshoe_hyperparameters)
 
 DEFAULT_GRID = [(300, 300), (500, 500), (750, 500), (1000, 1000)]
-ESS_REF = 5591.0    # B's median bulk ESS; see the docstring of the validator
+ESS_REF = 5591.0
 
 
 def main() -> None:
@@ -124,7 +124,7 @@ def main() -> None:
     print("   horseshoe's accepted 750/500 gave median 0.60, 99.8% within 3 SE,")
     print("   correlation 0.9990, at 21.1 min per full-window fit.")
     print("\n   Multiply the chosen budget's time by 40 for one universe, and note")
-    print("   fits get SLOWER as the window expands -- the plain horseshoe's cost")
+    print("   fits get SLOWER as the window expands: the plain horseshoe's cost")
     print("   grew FASTER than linearly in T, because a longer window sharpens the")
     print("   posterior, lowers the step size and raises tree depth.")
 

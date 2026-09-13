@@ -5,8 +5,8 @@ Posterior distributions of the horseshoe global scale relative to the scale
 used for prior calibration.
 
 WHY THIS FIGURE. The results report the posterior mean of the global scale as
-a ratio to its calibrated prior scale -- roughly 0.035 to 0.053 for the plain
-horseshoe and 0.076 to 0.091 for the regularised horseshoe -- and note that
+a ratio to its calibrated prior scale (roughly 0.035 to 0.053 for the plain
+horseshoe and 0.076 to 0.091 for the regularised horseshoe) and note that
 every posterior interval excludes the calibrated value. Those numerical
 summaries do not show how concentrated the posterior is relative to the size
 of the revision.
@@ -64,10 +64,6 @@ from src.nuts.horseshoe import (
 from src.nuts.regularised_horseshoe import RegHorseshoeDraws
 
 
-# ---------------------------------------------------------------------------
-# Portfolio universes
-# ---------------------------------------------------------------------------
-
 UNIVERSES = (
     ("Size$\\times$BM", "size_bm_25"),
     ("Size$\\times$OP", "size_op_25"),
@@ -75,11 +71,6 @@ UNIVERSES = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Model definitions
-# ---------------------------------------------------------------------------
-
-# (label, directory, setting tag, dataclass, colour, linestyle)
 MODELS = (
     (
         "Horseshoe",
@@ -100,12 +91,7 @@ MODELS = (
 )
 
 
-# ---------------------------------------------------------------------------
-# Dissertation house style
-# ---------------------------------------------------------------------------
-
 STYLE = {
-    # Typography
     "font.family": "sans-serif",
     "font.sans-serif": [
         "Arial",
@@ -116,7 +102,6 @@ STYLE = {
     "mathtext.fontset": "stixsans",
     "font.size": 8.0,
 
-    # Axes
     "axes.labelsize": 8.2,
     "axes.labelweight": "normal",
     "axes.linewidth": 0.65,
@@ -126,7 +111,6 @@ STYLE = {
     "axes.spines.left": False,
     "axes.facecolor": "white",
 
-    # Ticks
     "xtick.labelsize": 7.4,
     "ytick.labelsize": 7.4,
     "xtick.direction": "out",
@@ -137,20 +121,16 @@ STYLE = {
     "xtick.major.width": 0.55,
     "xtick.minor.width": 0.40,
 
-    # Lines
     "lines.linewidth": 1.30,
     "lines.solid_capstyle": "round",
     "lines.dash_capstyle": "round",
     "lines.solid_joinstyle": "round",
 
-    # Legend
     "legend.frameon": False,
     "legend.fontsize": 7.0,
 
-    # Figure
     "figure.facecolor": "white",
 
-    # Export
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
     "savefig.facecolor": "white",
@@ -159,10 +139,6 @@ STYLE = {
 
 
 def main() -> None:
-
-    # -----------------------------------------------------------------------
-    # Arguments
-    # -----------------------------------------------------------------------
 
     ap = argparse.ArgumentParser()
 
@@ -185,10 +161,6 @@ def main() -> None:
     )
 
     args = ap.parse_args()
-
-    # -----------------------------------------------------------------------
-    # Load posterior draws and calibration scales
-    # -----------------------------------------------------------------------
 
     draws = {}
     prior_scale = {}
@@ -265,10 +237,6 @@ def main() -> None:
             "no chains found"
         )
 
-    # -----------------------------------------------------------------------
-    # Convert to ratios relative to calibration
-    # -----------------------------------------------------------------------
-
     ratios = {}
 
     for (universe, label), g in draws.items():
@@ -277,16 +245,10 @@ def main() -> None:
             g / prior_scale[universe]
         )
 
-    # -----------------------------------------------------------------------
-    # Common density grid
-    # -----------------------------------------------------------------------
-
     all_ratios = np.concatenate(
         list(ratios.values())
     )
 
-    # The KDE is evaluated in log10 space exactly as before, now applied to
-    # the dimensionless ratio rather than the raw scale.
     lo_x = (
         np.floor(
             np.log10(
@@ -296,7 +258,6 @@ def main() -> None:
         - 0.05
     )
 
-    # The calibrated value 1 must always be visible.
     hi_x = 0.08
 
     grid = np.linspace(
@@ -306,10 +267,6 @@ def main() -> None:
     )
 
     xgrid = 10 ** grid
-
-    # -----------------------------------------------------------------------
-    # Figure
-    # -----------------------------------------------------------------------
 
     plt.rcParams.update(
         STYLE
@@ -325,10 +282,6 @@ def main() -> None:
     axes = np.atleast_1d(
         axes
     )
-
-    # -----------------------------------------------------------------------
-    # Panels
-    # -----------------------------------------------------------------------
 
     for panel_index, (
         ax,
@@ -382,7 +335,6 @@ def main() -> None:
                 zorder=3,
             )
 
-        # Calibration is exactly one after normalisation.
         ax.axvline(
             1.0,
             color="#555555",
@@ -404,12 +356,10 @@ def main() -> None:
             bottom=0,
         )
 
-        # Density magnitude is not the substantive quantity.
         ax.set_yticks(
             []
         )
 
-        # Universe label in a consistent, quiet location.
         ax.text(
             0.018,
             0.86,
@@ -421,7 +371,6 @@ def main() -> None:
             va="top",
         )
 
-        # Major logarithmic guides only.
         ax.grid(
             which="major",
             axis="x",
@@ -440,10 +389,6 @@ def main() -> None:
             pad=2,
         )
 
-    # -----------------------------------------------------------------------
-    # Reference label
-    # -----------------------------------------------------------------------
-
     top = axes[0]
 
     top.annotate(
@@ -457,10 +402,6 @@ def main() -> None:
         va="center",
     )
 
-    # -----------------------------------------------------------------------
-    # Axis labels
-    # -----------------------------------------------------------------------
-
     axes[1].set_ylabel(
         "Density",
         labelpad=7,
@@ -470,9 +411,6 @@ def main() -> None:
         "Global shrinkage scale (relative to calibration)",
         labelpad=4,
     )
-    # -----------------------------------------------------------------------
-    # Legend
-    # -----------------------------------------------------------------------
 
     handles, labels = (
         top.get_legend_handles_labels()
@@ -495,10 +433,6 @@ def main() -> None:
         borderaxespad=0.0,
     )
 
-    # -----------------------------------------------------------------------
-    # Layout
-    # -----------------------------------------------------------------------
-
     fig.subplots_adjust(
         left=0.055,
         right=0.985,
@@ -506,10 +440,6 @@ def main() -> None:
         bottom=0.205,
         hspace=0.18,
     )
-
-    # -----------------------------------------------------------------------
-    # Save
-    # -----------------------------------------------------------------------
 
     outdir = Path(
         args.outdir

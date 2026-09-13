@@ -26,10 +26,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Table 5.7: setting -> (bbar_var, bbar_cov, theta_var, theta_cov,
-#                        bbar_share_pct, theta_share_pct, R2_OOS)
-# Shares are taken from the table's own columns (computed from unrounded
-# inputs) rather than recomputed from the rounded components.
 ROWS = [
     ("Feng–He",              0.1820, 0.0472, 0.1776, -0.0033, 56.8, 43.2, -0.3817),
     (r"$V_{\rm prior}=0.10$", 0.0228, 0.0370, 0.0006,  0.0004, 98.3,  1.7, -0.0611),
@@ -79,8 +75,6 @@ def main() -> None:
     share_theta = np.array([r[6] for r in ROWS])
     r2 = np.array([r[7] for r in ROWS])
 
-    # Components plus cross term reproduce -R2_OOS; the cross term is
-    # negligible except for Feng-He (-0.022), so check the rescaled rows only.
     for i in range(1, 4):
         assert abs((bbar[i] + theta[i]) - (-r2[i])) < 1.5e-3, labels[i]
 
@@ -90,7 +84,6 @@ def main() -> None:
     y = np.arange(len(ROWS))[::-1]
     h = 0.50
 
-    # ---- (a) shares -------------------------------------------------------
     ax_a.barh(y, share_bbar, height=h, color=COL_BBAR, label=r"Common component $\bar b$", zorder=3)
     ax_a.barh(y, share_theta, left=share_bbar, height=h, color=COL_THETA,
               label=r"Deviations $\theta$", zorder=3)
@@ -106,7 +99,6 @@ def main() -> None:
     ax_a.text(0.0, 1.03, "(a)", transform=ax_a.transAxes, fontsize=8.0, color="#333333")
     ax_a.grid(axis="x", color="#E6E6E6", linewidth=0.45, zorder=0)
 
-    # ---- (b) absolute -----------------------------------------------------
     ax_b.barh(y, bbar, height=h, color=COL_BBAR, zorder=3)
     ax_b.barh(y, theta, left=bbar, height=h, color=COL_THETA, zorder=3)
     for k, (yi, val) in enumerate(zip(y, r2)):

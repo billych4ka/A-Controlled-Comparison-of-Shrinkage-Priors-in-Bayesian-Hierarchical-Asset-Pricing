@@ -3,7 +3,7 @@ src/evaluation/metrics.py
 
 Out-of-sample evaluation metrics, shared identically by all four models.
 
-Every function here is a pure function of predicted and realised returns --
+Every function here is a pure function of predicted and realised returns:
 no model objects, no samplers, no priors. That is deliberate: the four models
 must be judged by exactly the same yardstick, and the cleanest way to
 guarantee that is for the yardstick not to know which model produced its
@@ -101,13 +101,6 @@ def proportional_weights(predicted: np.ndarray) -> np.ndarray:
     """
     demeaned = predicted - predicted.mean(axis=0, keepdims=True)
     gross = np.abs(demeaned).sum(axis=0, keepdims=True)
-    # The threshold must be RELATIVE to the size of the predictions, not a
-    # test against exact zero. Subtracting the mean of identical values
-    # leaves floating-point dust of order 1e-18 rather than 0, and dividing
-    # that dust by its own sum produces full-size O(1) weights out of pure
-    # round-off -- a model expressing no cross-sectional view would appear
-    # to trade aggressively. Heavily shrunk models produce nearly flat
-    # predictions, so this is a realistic input, not a contrived one.
     scale = np.abs(predicted).sum(axis=0, keepdims=True)
     return np.divide(demeaned, gross, out=np.zeros_like(demeaned),
                      where=gross > 1e-12 * np.maximum(scale, 1e-300))
@@ -117,7 +110,7 @@ def portfolio_returns(realised: np.ndarray, predicted: np.ndarray) -> np.ndarray
     """
     Realised return of the proportional long-short portfolio, (T,).
     Weights are formed from the forecast for period t and applied to the
-    realised return of period t -- the forecast uses only information dated
+    realised return of period t; the forecast uses only information dated
     t-1 or earlier, which is enforced upstream by the backtest loop.
     """
     return (proportional_weights(predicted) * realised).sum(axis=0)
@@ -130,15 +123,11 @@ def sharpe_ratio(returns: np.ndarray, annualise: bool = True) -> float:
     No risk-free subtraction: the inputs are already excess returns and the
     portfolio is zero-cost, so its return is an excess return by
     construction. Annualisation multiplies by sqrt(12), the usual convention
-    for monthly data, which assumes serial independence -- an approximation
+    for monthly data, which assumes serial independence, an approximation
     worth stating but standard.
     """
     returns = np.asarray(returns, dtype=float)
     sd = returns.std(ddof=1)
-    # A constant series does not have sd exactly 0 in floating point --
-    # np.std of twelve copies of 0.01 returns ~5e-19 -- so an `sd == 0` test
-    # silently divides by near-zero and reports a Sharpe of order 1e16. Test
-    # against the scale of the data instead.
     scale = np.abs(returns).max()
     if not np.isfinite(sd) or sd <= 1e-12 * scale:
         return np.nan
@@ -172,18 +161,15 @@ def expanding_mean_benchmark(R: np.ndarray, start: int) -> np.ndarray:
     forecast date t >= start, the mean of that asset's returns over periods
     0 .. t-1.
 
-    Strictly point-in-time -- the forecast for period t uses returns up to
+    Strictly point-in-time: the forecast for period t uses returns up to
     t-1 only, never t itself. Computed by cumulative sum rather than a loop
     so it is O(T) and obviously free of off-by-one drift.
     """
     csum = np.cumsum(R, axis=1)
     counts = np.arange(1, R.shape[1] + 1, dtype=float)
-    running = csum / counts                       # running[:, t] = mean of 0..t
-    return running[:, start - 1:-1]               # forecast for t uses 0..t-1
+    running = csum / counts
+    return running[:, start - 1:-1]
 
-# ---------------------------------------------------------------------------
-# Testing whether one model forecasts better than another
-# ---------------------------------------------------------------------------
 
 def _newey_west_variance(d: np.ndarray, lags: int | None = None) -> float:
     """
@@ -191,7 +177,7 @@ def _newey_west_variance(d: np.ndarray, lags: int | None = None) -> float:
     (Newey & West 1987).
 
     A plain variance would understate the sampling error of the mean whenever
-    the series is serially correlated -- and forecast-error differences are,
+    the series is serially correlated, and forecast-error differences are,
     because the same coefficient vector is reused for every month between
     refits, so consecutive errors share an estimation error. Ignoring that
     would inflate the test statistic and manufacture significance.
@@ -237,7 +223,7 @@ def diebold_mariano(realised: np.ndarray, predicted_a: np.ndarray,
     mean is a nested comparison, where DM is known to be undersized and
     Clark & West (2007) is the appropriate correction. Comparing two
     different shrinkage priors against each other is non-nested, which is
-    the case DM is designed for -- so this function is the right tool for
+    the case DM is designed for, so this function is the right tool for
     model-versus-model, and clark_west below for model-versus-benchmark.
     """
     realised, predicted_a, predicted_b = map(np.asarray,
@@ -245,7 +231,7 @@ def diebold_mariano(realised: np.ndarray, predicted_a: np.ndarray,
     if not (realised.shape == predicted_a.shape == predicted_b.shape):
         raise ValueError("realised and both forecast arrays must have the same shape")
 
-    loss_a = ((realised - predicted_a) ** 2).mean(axis=0)     # (T,)
+    loss_a = ((realised - predicted_a) ** 2).mean(axis=0)
     loss_b = ((realised - predicted_b) ** 2).mean(axis=0)
     d = loss_a - loss_b
     T = len(d)
@@ -265,7 +251,7 @@ def diebold_mariano(realised: np.ndarray, predicted_a: np.ndarray,
 def clark_west(realised: np.ndarray, predicted: np.ndarray,
                benchmark: np.ndarray, lags: int | None = None) -> dict:
     """
-    Clark & West (2007) test for NESTED forecast comparison -- the right test
+    Clark & West (2007) test for NESTED forecast comparison, the right test
     for "does the model beat the historical mean?".
 
     Why a different test is needed: the benchmark is nested inside the model
@@ -291,7 +277,7 @@ def clark_west(realised: np.ndarray, predicted: np.ndarray,
     e_bench = (realised - benchmark) ** 2
     e_model = (realised - predicted) ** 2
     adj = (benchmark - predicted) ** 2
-    f = (e_bench - (e_model - adj)).mean(axis=0)              # (T,)
+    f = (e_bench - (e_model - adj)).mean(axis=0)
     T = len(f)
 
     lrv = _newey_west_variance(f, lags)
@@ -301,5 +287,5 @@ def clark_west(realised: np.ndarray, predicted: np.ndarray,
 
     stat = float(f.mean() / np.sqrt(lrv / T))
     from scipy.stats import norm as _norm
-    p = float(1.0 - _norm.cdf(stat))                          # one-sided
+    p = float(1.0 - _norm.cdf(stat))
     return {"statistic": stat, "p_value": p, "mean_f": float(f.mean()), "n_periods": T}
